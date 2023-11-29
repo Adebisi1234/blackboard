@@ -5,11 +5,13 @@ const Board = ({ toolName }: { toolName: string }) => {
   const svgRef = useRef<SVGSVGElement>(null!);
   const boardRef = useRef<HTMLDivElement>(null!);
   const pathId = useRef(0);
+  const editRef = useRef<HTMLDivElement>(null!);
+  const [text, setText] = useState<SVGTextElement>(null!);
   const [paths, setPaths] = useState<{ type: string; path: string }[]>([]);
   const [deletedPaths, setDeletedPaths] = useState<
     { pathId: number; pathDetails: { type: string; path: string } }[]
   >([]);
-  console.log(paths, deletedPaths);
+  console.log(text);
   const handleKeydown = (ev: KeyboardEvent) => {
     if (ev.ctrlKey && ev.key === "z") {
       const tempPaths = [...paths];
@@ -70,7 +72,7 @@ const Board = ({ toolName }: { toolName: string }) => {
     const path = pathDetails.path;
     return type === "pencil" ? (
       <path d={path} stroke="white" strokeWidth={2} key={key}></path>
-    ) : (
+    ) : type === "eraser" ? (
       <path
         d={path}
         stroke="#363434"
@@ -78,6 +80,31 @@ const Board = ({ toolName }: { toolName: string }) => {
         strokeLinecap="round"
         key={key}
       ></path>
+    ) : type === "text" ? (
+      <text
+        x={path.split(" ")[0]}
+        y={path.split(" ")[1]}
+        height={20}
+        key={key}
+        id={`${key}`}
+        style={{ minWidth: "30px" }}
+        fill="white"
+        focusable={true}
+        tabIndex={-1}
+        onFocus={(ev) => {
+          ev.target.classList.add("focused");
+          console.log("focused");
+          setText(ev.target);
+          editRef.current.focus();
+        }}
+        onBlur={(ev) => {
+          ev.target.classList.remove("focused");
+        }}
+      >
+        Test
+      </text>
+    ) : (
+      type === "shape"
     );
   });
 
@@ -112,8 +139,31 @@ const Board = ({ toolName }: { toolName: string }) => {
             });
           }
         }}
-        onPointerDown={(ev: React.PointerEvent<SVGSVGElement>) => {
+        onPointerDown={(ev) => {
           setToolActive(true);
+          if (toolName === "text") {
+            if ((ev.target as SVGTextElement).tagName === "text") {
+              return;
+            }
+            setPaths((currentPath) => {
+              const tempPath = [...currentPath];
+              if (tempPath[pathId.current]) {
+                tempPath[pathId.current].type = "text";
+                tempPath[pathId.current].path += `${ev.clientX} ${
+                  ev.clientY - boardRef.current.offsetTop
+                }`;
+              } else {
+                tempPath[pathId.current] = {
+                  type: "text",
+                  path: `${ev.clientX} ${
+                    ev.clientY - boardRef.current.offsetTop
+                  }`,
+                };
+              }
+
+              return tempPath;
+            });
+          }
           if (toolName === "eraser") {
             setPaths((currentPath) => {
               const tempPath = [...currentPath];
@@ -133,7 +183,7 @@ const Board = ({ toolName }: { toolName: string }) => {
               return tempPath;
             });
           }
-          if (toolName !== "pencil") {
+          if (toolName === "pencil") {
             setPaths((currentPath) => {
               const tempPath = [...currentPath];
               if (tempPath[pathId.current]) {
@@ -153,7 +203,7 @@ const Board = ({ toolName }: { toolName: string }) => {
             });
           }
         }}
-        onPointerMove={(ev: React.PointerEvent<SVGSVGElement>) => {
+        onPointerMove={(ev) => {
           if (toolActive) {
             if (deletedPaths.length > 0) {
               setDeletedPaths([]);
@@ -185,6 +235,22 @@ const Board = ({ toolName }: { toolName: string }) => {
           }
         }}
       >
+        <foreignObject>
+          <div
+            contentEditable
+            ref={editRef}
+            tabIndex={-1}
+            onFocus={() => {
+              console.log("Focus");
+            }}
+            onInput={(ev) => {
+              text.textContent = (ev.target as HTMLDivElement).textContent;
+            }}
+            onBlur={(ev) => {
+              ev.target.textContent = "";
+            }}
+          ></div>
+        </foreignObject>
         {pathElements}
       </svg>
     </div>

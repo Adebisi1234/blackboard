@@ -106,3 +106,9 @@ footer {
   width: 200px;
   height: 200px;
 }
+
+.text_input {
+  position: fixed;
+  inset: 50%;
+  width: 90px;
+}
