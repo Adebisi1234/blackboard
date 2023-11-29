@@ -1,5 +1,4 @@
 const Header = ({ toolName }: { toolName: string }) => {
-  console.log("Header Rendered");
   return (
     <header>
       <div className="menu">{toolName}</div>

@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { Tools } from "../context/ActiveTools";
+import { useEffect, useRef } from "react";
+import { type Tools } from "../types/ActiveTools";
 
 const Footer = ({
   setTool,
@@ -9,8 +9,11 @@ const Footer = ({
   tool: Tools;
 }) => {
   const shapeDialogRef = useRef<HTMLDialogElement>(null!);
+  const pencilRef = useRef<HTMLDivElement>(null!);
   const handleChangeTool = (
-    ev: React.MouseEvent<HTMLDivElement, MouseEvent>
+    ev:
+      | React.MouseEvent<HTMLDivElement, MouseEvent>
+      | { target: HTMLDivElement }
   ) => {
     shapeDialogRef.current.open && (shapeDialogRef.current.open = false);
     const target = ev.target as HTMLDivElement;
@@ -20,22 +23,34 @@ const Footer = ({
         toolName === "pencil" ||
         toolName === "eraser" ||
         toolName === "pointer" ||
-        toolName === "shapes"
+        toolName === "shapes" ||
+        toolName === "text"
       )
     ) {
       return console.error("Error with Tool Selected");
     }
+
     tool.toolElement?.classList.remove("active");
     setTool({ toolName, toolElement: target });
   };
+  useEffect(() => {
+    handleChangeTool({ target: pencilRef.current });
+  }, []);
   return (
     <footer>
       <div className="tools">
+        <div
+          className="pointer"
+          onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            handleChangeTool(ev);
+          }}
+        ></div>
         <div
           className="pencil"
           onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             handleChangeTool(ev);
           }}
+          ref={pencilRef}
         ></div>
         <div
           className="eraser"
@@ -44,7 +59,7 @@ const Footer = ({
           }}
         ></div>
         <div
-          className="pointer"
+          className="text"
           onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             handleChangeTool(ev);
           }}
