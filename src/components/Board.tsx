@@ -5,8 +5,8 @@ type Paths = {
   path: string;
   x?: number;
   y?: number;
-  y2?: number;
-  x2?: number;
+  width?: number;
+  height?: number;
   content?: string;
   shape?: string;
 };
@@ -137,7 +137,7 @@ const Board = ({
   const handlePointerDown = (ev: React.PointerEvent<SVGSVGElement>) => {
     ev.preventDefault();
     setToolActive(true);
-    if ((toolName = "shape")) {
+    if (toolName === "shape") {
       setPaths((currentPath) => {
         const tempPath = [...currentPath];
         tempPath[pathId.current] = {
@@ -146,15 +146,22 @@ const Board = ({
           content: "",
           x: ev.clientX,
           y: getY(ev.clientY),
-          x2: ev.clientX + 20,
-          y2: getY(ev.clientY) + 20,
+          width: 16,
+          height: 16,
         };
         return tempPath;
       });
     }
     if (toolName === "pointer") {
       console.log(ev.target);
-      if ((ev.target as SVGSVGElement).tagName === "svg") return;
+      if ((ev.target as SVGSVGElement).tagName === "svg") {
+        setActiveEl((prevEl) => {
+          if (prevEl) {
+            prevEl.style.outline = "inherit";
+          }
+          return null!;
+        });
+      }
       setActiveEl((prevEl) => {
         if (prevEl) {
           prevEl.style.outline = "inherit";
@@ -165,13 +172,6 @@ const Board = ({
         }
         (ev.target as HTMLElement).style.outline = "dashed";
         return ev.target as HTMLElement;
-      });
-    } else {
-      setActiveEl((prevEl) => {
-        if (prevEl) {
-          prevEl.style.outline = "inherit";
-        }
-        return null!;
       });
     }
     if (toolName === "text") {
@@ -238,6 +238,19 @@ const Board = ({
     if (toolActive) {
       if (deletedPaths.length > 0) {
         setDeletedPaths([]);
+      }
+      if (toolName === "shape") {
+        setPaths((currentPath) => {
+          const tempPath = [...currentPath];
+          if (tempPath[pathId.current]) {
+            tempPath[pathId.current].width =
+              ev.clientX - tempPath[pathId.current].x!;
+            tempPath[pathId.current].height =
+              getY(ev.clientY) - tempPath[pathId.current].y!;
+          }
+
+          return tempPath;
+        });
       }
       if (toolName === "eraser") {
         setPaths((currentPath) => {
@@ -344,8 +357,10 @@ const Board = ({
               id={`${key}`}
               x={details.x}
               y={details.y}
-              x2={details.x2}
-              y2={details.y2}
+              fill="none"
+              stroke="white"
+              width={details.width}
+              height={details.height}
             ></rect>
           </g>
         );
