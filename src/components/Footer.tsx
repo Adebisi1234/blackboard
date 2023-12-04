@@ -23,15 +23,23 @@ const Footer = ({
         toolName === "pencil" ||
         toolName === "eraser" ||
         toolName === "pointer" ||
-        toolName === "shapes" ||
+        toolName === "shape" ||
         toolName === "text"
       )
     ) {
       return console.error("Error with Tool Selected");
     }
-
     tool.toolElement?.classList.remove("active");
-    setTool({ toolName, toolElement: target });
+    if (target.classList.contains("shape")) {
+      const shape = target.classList[1];
+      setTool({
+        toolName,
+        toolElement: target.parentElement!.parentElement as HTMLDivElement,
+        shape,
+      });
+    } else {
+      setTool({ toolName, toolElement: target });
+    }
   };
   useEffect(() => {
     handleChangeTool({ target: pencilRef.current });
@@ -71,8 +79,22 @@ const Footer = ({
               ? (shapeDialogRef.current.open = false)
               : (shapeDialogRef.current.open = true);
           }}
-        ></div>
-        <dialog className="shape-dialog" ref={shapeDialogRef}></dialog>
+        >
+          <dialog
+            className="shape-dialog"
+            ref={shapeDialogRef}
+            onPointerLeave={() => {
+              shapeDialogRef.current.open = false;
+            }}
+          >
+            <div
+              className="shape rect"
+              onClick={(ev) => {
+                handleChangeTool(ev);
+              }}
+            ></div>
+          </dialog>
+        </div>
       </div>
     </footer>
   );

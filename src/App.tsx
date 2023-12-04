@@ -16,7 +16,7 @@ function App() {
   return (
     <>
       <Header toolName={tool.toolName} />
-      <Board toolName={tool.toolName} />
+      <Board toolName={tool.toolName} shape={tool.shape} />
       <Footer setTool={setTool} tool={tool} />
     </>
   );
