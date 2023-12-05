@@ -9,6 +9,7 @@ type Paths = {
   height?: number;
   content?: string;
   shape?: string;
+  r?: number;
 };
 /* 
     Once a user drag the Pointer a line should be draw following it
@@ -46,6 +47,9 @@ const Board = ({
     { id: number; pathDetails: Paths }[]
   >([]);
 
+  const pythag = (x: number, y: number) => {
+    return Math.floor(Math.hypot(x, y));
+  };
   // So as to support multiple screen sizes, Getting hella messy I'll do this later
   // useEffect(() => {
   //   const updateView = () => {
@@ -85,9 +89,7 @@ const Board = ({
           inputMap.set(id, node!);
         }}
         key={key}
-        onFocus={() => {
-          console.log("ready");
-        }}
+        value={paths[id] ? paths[id].content : ""}
         onInput={(ev) => {
           const tempPath = [...paths];
           if (!(tempPath[id] && tempPath[id].type === "text")) return;
@@ -99,6 +101,13 @@ const Board = ({
   });
 
   const handleKeydown = (ev: KeyboardEvent) => {
+    if (
+      (ev.target as HTMLElement).tagName !== "TEXTAREA" &&
+      ev.ctrlKey &&
+      (ev.key === "z" || ev.key === "y")
+    ) {
+      ev.preventDefault();
+    }
     if (ev.ctrlKey && ev.key === "z") {
       const tempPaths = [...paths];
 
@@ -110,6 +119,11 @@ const Board = ({
       if (deletedPath) {
         setDeletedPaths([...deletedPaths, deletedPath]);
         tempPaths.splice(pathId.current - (deletedPaths.length + 1), 1);
+        deletedPath.pathDetails?.type === "text" &&
+          setInputs((prevInputs) => {
+            prevInputs.splice(prevInputs.length - 1);
+            return prevInputs;
+          });
       }
 
       setPaths(tempPaths);
@@ -118,6 +132,12 @@ const Board = ({
       const restoredPath = deletedPaths[deletedPaths.length - 1];
       if (restoredPath) {
         tempPaths[restoredPath.id] = restoredPath.pathDetails;
+        if (restoredPath.pathDetails.type === "text") {
+          setInputs((currentInputs) => {
+            currentInputs.push(restoredPath.id);
+            return currentInputs;
+          });
+        }
         setDeletedPaths((currentDeletedPaths) => {
           const tempDeletedPath = [...currentDeletedPaths];
           tempDeletedPath.pop();
@@ -142,18 +162,16 @@ const Board = ({
         const tempPath = [...currentPath];
         tempPath[pathId.current] = {
           type: "shape",
+          shape,
           path: "",
           content: "",
           x: ev.clientX,
           y: getY(ev.clientY),
-          width: 16,
-          height: 16,
         };
         return tempPath;
       });
     }
     if (toolName === "pointer") {
-      console.log(ev.target);
       if ((ev.target as SVGSVGElement).tagName === "svg") {
         setActiveEl((prevEl) => {
           if (prevEl) {
@@ -173,13 +191,19 @@ const Board = ({
         (ev.target as HTMLElement).style.outline = "dashed";
         return ev.target as HTMLElement;
       });
+    } else {
+      setActiveEl((prevEl) => {
+        if (prevEl) {
+          prevEl.style.outline = "inherit";
+        }
+        return null!;
+      });
     }
     if (toolName === "text") {
       if (
         (ev.target as SVGTextElement).tagName === "text" ||
         (ev.target as SVGTextElement).tagName === "tspan"
       ) {
-        console.log(ev.target);
         (ev.target as SVGTextElement).focus();
         return;
       }
@@ -240,17 +264,31 @@ const Board = ({
         setDeletedPaths([]);
       }
       if (toolName === "shape") {
-        setPaths((currentPath) => {
-          const tempPath = [...currentPath];
-          if (tempPath[pathId.current]) {
-            tempPath[pathId.current].width =
-              ev.clientX - tempPath[pathId.current].x!;
-            tempPath[pathId.current].height =
-              getY(ev.clientY) - tempPath[pathId.current].y!;
-          }
+        if (shape === "rect") {
+          setPaths((currentPath) => {
+            const tempPath = [...currentPath];
+            if (tempPath[pathId.current]) {
+              tempPath[pathId.current].width =
+                ev.clientX - tempPath[pathId.current].x!;
+              tempPath[pathId.current].height =
+                getY(ev.clientY) - tempPath[pathId.current].y!;
+            }
 
-          return tempPath;
-        });
+            return tempPath;
+          });
+        } else if (shape === "circle") {
+          setPaths((currentPath) => {
+            const tempPath = [...currentPath];
+            if (tempPath[pathId.current]) {
+              tempPath[pathId.current].r = pythag(
+                ev.clientX - tempPath[pathId.current].x!,
+                getY(ev.clientY) - tempPath[pathId.current].y!
+              );
+            }
+
+            return tempPath;
+          });
+        }
       }
       if (toolName === "eraser") {
         setPaths((currentPath) => {
@@ -351,19 +389,38 @@ const Board = ({
       case "pointer":
         return;
       case "shape":
-        return (
-          <g key={key}>
-            <rect
-              id={`${key}`}
-              x={details.x}
-              y={details.y}
-              fill="none"
-              stroke="white"
-              width={details.width}
-              height={details.height}
-            ></rect>
-          </g>
-        );
+        if (details.shape === "rect") {
+          return (
+            <g key={key}>
+              <rect
+                id={`${key}`}
+                x={details.x}
+                y={details.y}
+                fill="none"
+                stroke="white"
+                strokeWidth={2}
+                width={details.width}
+                height={details.height}
+              ></rect>
+            </g>
+          );
+        } else if (details.shape === "circle") {
+          return (
+            <g key={key}>
+              <circle
+                cx={details.x}
+                cy={details.y}
+                r={details.r}
+                id={`${key}`}
+                fill="none"
+                stroke="white"
+                strokeWidth={2}
+              ></circle>
+            </g>
+          );
+        }
+        return null;
+
       case "text":
         return (
           <g key={key}>
@@ -384,6 +441,9 @@ const Board = ({
 
                 inputsRef.current.get(+ev.target.id)?.focus();
               }}
+              onClick={(ev) => {
+                inputsRef.current.get(+(ev.target as HTMLElement).id)?.focus();
+              }}
             >
               {details.content
                 ? details.content.split(/\n/).map((value, i) => (
@@ -399,6 +459,11 @@ const Board = ({
                           .get(+ev.target.parentElement!.id)
                           ?.focus();
                       }}
+                      onClick={(ev) => {
+                        inputsRef.current
+                          .get(+(ev.target as HTMLElement).parentElement!.id)
+                          ?.focus();
+                      }}
                     >
                       {value}
                     </tspan>
@@ -411,7 +476,6 @@ const Board = ({
         break;
     }
   });
-  console.log(paths);
 
   return (
     <div className="board" ref={boardRef}>

@@ -74,6 +74,9 @@ const Footer = ({
         ></div>
         <div
           className="shapes"
+          onPointerLeave={() => {
+            shapeDialogRef.current.open = false;
+          }}
           onClick={() => {
             shapeDialogRef.current.open
               ? (shapeDialogRef.current.open = false)
@@ -87,12 +90,22 @@ const Footer = ({
               shapeDialogRef.current.open = false;
             }}
           >
-            <div
-              className="shape rect"
-              onClick={(ev) => {
-                handleChangeTool(ev);
-              }}
-            ></div>
+            <div className="dialog_container">
+              <div
+                className="shape rect"
+                onClick={(ev) => {
+                  shapeDialogRef.current.open = false;
+                  handleChangeTool(ev);
+                }}
+              ></div>
+              <div
+                className="shape circle"
+                onClick={(ev) => {
+                  shapeDialogRef.current.open = false;
+                  handleChangeTool(ev);
+                }}
+              ></div>
+            </div>
           </dialog>
         </div>
       </div>
