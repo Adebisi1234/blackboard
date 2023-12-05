@@ -179,25 +179,19 @@ const Board = ({
           }
           return null!;
         });
+      } else {
+        setActiveEl((prevEl) => {
+          if (prevEl) {
+            prevEl.style.outline = "inherit";
+          }
+          if ((ev.target as HTMLElement).tagName === "tspan") {
+            (ev.target as HTMLElement).parentElement!.style.outline = "dashed";
+            return (ev.target as HTMLElement).parentElement!;
+          }
+          (ev.target as HTMLElement).style.outline = "dashed";
+          return ev.target as HTMLElement;
+        });
       }
-      setActiveEl((prevEl) => {
-        if (prevEl) {
-          prevEl.style.outline = "inherit";
-        }
-        if ((ev.target as HTMLElement).tagName === "tspan") {
-          (ev.target as HTMLElement).parentElement!.style.outline = "dashed";
-          return (ev.target as HTMLElement).parentElement!;
-        }
-        (ev.target as HTMLElement).style.outline = "dashed";
-        return ev.target as HTMLElement;
-      });
-    } else {
-      setActiveEl((prevEl) => {
-        if (prevEl) {
-          prevEl.style.outline = "inherit";
-        }
-        return null!;
-      });
     }
     if (toolName === "text") {
       if (
@@ -289,6 +283,11 @@ const Board = ({
             return tempPath;
           });
         }
+      }
+      if (toolName === "pointer" && activeEl) {
+        activeEl.style.transform = `translate3d(${ev.clientX % innerWidth}px, ${
+          ev.clientY % innerHeight
+        }px, 10px) translate(-50%, -50%) `;
       }
       if (toolName === "eraser") {
         setPaths((currentPath) => {
