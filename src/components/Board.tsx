@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useWindowSize from "../hooks/useWindowSize";
+import { ToolName } from "../types/ActiveTools";
 type Paths = {
   type: "pencil" | "eraser" | "pointer" | "text" | "shape";
   path: pathObj;
@@ -31,16 +32,19 @@ type pathObj = { func: "M" | "L"; x: number; y: number }[] | null;
 const Board = ({
   toolName,
   shape,
+  color,
 }: {
-  toolName: string;
+  toolName: ToolName;
   shape: string | undefined;
+  color: string;
 }) => {
   const [toolActive, setToolActive] = useState(false);
   const [windowWidth, windowHeight] = useWindowSize();
   const [activeEl, setActiveEl] = useState<HTMLElement>(null!);
   const [viewBox, setViewBox] = useState([0, 0]);
-  const SCALE = [1, 1];
+  const SCALE = [1, 1]; // For screens with different size [x, y]
   const STROKE_WIDTH = 3;
+  const BASE_COLOR = "#fff";
   const svgRef = useRef<SVGSVGElement>(null!);
   const boardRef = useRef<HTMLDivElement>(null!);
   const pathId = useRef(0);
@@ -146,7 +150,7 @@ const Board = ({
     } else if (ev.ctrlKey && ev.key === "y") {
       const tempPaths = [...paths];
       const restoredPath = deletedPaths[deletedPaths.length - 1];
-      if (restoredPath) {
+      if (Object.keys(restoredPath).length > 0) {
         tempPaths[restoredPath.id] = restoredPath.pathDetails;
         if (restoredPath.pathDetails.type === "text") {
           setInputs((currentInputs) => {
@@ -159,8 +163,12 @@ const Board = ({
           tempDeletedPath.pop();
           return tempDeletedPath;
         });
-
-        setPaths(tempPaths);
+      } else {
+        setDeletedPaths((currentDeletedPaths) => {
+          const tempDeletedPath = [...currentDeletedPaths];
+          tempDeletedPath.pop();
+          return tempDeletedPath;
+        });
       }
     } else if (ev.key === "Delete") {
       const tempPath = [...paths];
@@ -173,7 +181,15 @@ const Board = ({
   const handlePointerDown = (ev: React.PointerEvent<SVGSVGElement>) => {
     ev.preventDefault();
     setToolActive(true);
-    if (toolName === "shape") {
+    if (toolName !== "pointer" && activeEl) {
+      setActiveEl((prevEl) => {
+        if (prevEl) {
+          prevEl.style.outline = "inherit";
+        }
+        return null!;
+      });
+    }
+    if (toolName === "shapes") {
       setPaths((currentPath) => {
         const tempPath = [...currentPath];
         tempPath[pathId.current] = {
@@ -183,11 +199,11 @@ const Board = ({
           content: "",
           x: ev.clientX,
           y: getY(ev.clientY),
+          color,
         };
         return tempPath;
       });
-    }
-    if (toolName === "pointer") {
+    } else if (toolName === "pointer") {
       if (
         (ev.target as SVGSVGElement).tagName === "svg" ||
         (ev.target as SVGPathElement).classList.contains("eraser")
@@ -211,8 +227,7 @@ const Board = ({
           return ev.target as HTMLElement;
         });
       }
-    }
-    if (toolName === "text") {
+    } else if (toolName === "text") {
       if (
         (ev.target as SVGTextElement).tagName === "text" ||
         (ev.target as SVGTextElement).tagName === "tspan"
@@ -228,6 +243,7 @@ const Board = ({
           x: ev.clientX,
           y: getY(ev.clientY),
           content: "",
+          color,
         };
         return tempPath;
       });
@@ -235,8 +251,7 @@ const Board = ({
         currentInputs.push(pathId.current);
         return currentInputs;
       });
-    }
-    if (toolName === "eraser") {
+    } else if (toolName === "eraser") {
       setPaths((currentPath) => {
         const tempPath = [...currentPath];
         if (tempPath[pathId.current]) {
@@ -254,8 +269,7 @@ const Board = ({
         }
         return tempPath;
       });
-    }
-    if (toolName === "pencil") {
+    } else if (toolName === "pencil") {
       setPaths((currentPath) => {
         const tempPath = [...currentPath];
         if (tempPath[pathId.current]) {
@@ -269,6 +283,7 @@ const Board = ({
           tempPath[pathId.current] = {
             type: "pencil",
             path: [{ func: "M", x: ev.clientX, y: getY(ev.clientY) }],
+            color,
           };
         }
         return tempPath;
@@ -280,7 +295,7 @@ const Board = ({
       if (deletedPaths.length > 0) {
         setDeletedPaths([]);
       }
-      if (toolName === "shape") {
+      if (toolName === "shapes") {
         if (shape === "rect") {
           setPaths((currentPath) => {
             const tempPath = [...currentPath];
@@ -306,13 +321,11 @@ const Board = ({
             return tempPath;
           });
         }
-      }
-      if (toolName === "pointer" && activeEl) {
+      } else if (toolName === "pointer" && activeEl) {
         activeEl.style.transform = `translate3d(${ev.clientX % innerWidth}px, ${
           ev.clientY % innerHeight
         }px, 10px) translate(-50%, -50%) `;
-      }
-      if (toolName === "eraser") {
+      } else if (toolName === "eraser") {
         setPaths((currentPath) => {
           const tempPath = [...currentPath];
           if (tempPath[pathId.current]) {
@@ -324,8 +337,7 @@ const Board = ({
 
           return tempPath;
         });
-      }
-      if (toolName === "pencil") {
+      } else if (toolName === "pencil") {
         setPaths((currentPath) => {
           const tempPath = [...currentPath];
           if (tempPath[pathId.current]) {
@@ -369,9 +381,9 @@ const Board = ({
             d={scalePath(path)}
             focusable={true}
             tabIndex={0}
-            stroke="white"
+            stroke={details.color || BASE_COLOR}
             id={`${key}`}
-            strokeWidth={2}
+            strokeWidth={STROKE_WIDTH}
             key={key}
           ></path>
         );
@@ -400,8 +412,8 @@ const Board = ({
                 x={details.x}
                 y={details.y}
                 fill="none"
-                stroke="white"
-                strokeWidth={2}
+                stroke={details.color || BASE_COLOR}
+                strokeWidth={STROKE_WIDTH}
                 width={details.width}
                 height={details.height}
               ></rect>
@@ -416,8 +428,8 @@ const Board = ({
                 r={details.r}
                 id={`${key}`}
                 fill="none"
-                stroke="white"
-                strokeWidth={2}
+                stroke={details.color || BASE_COLOR}
+                strokeWidth={STROKE_WIDTH}
               ></circle>
             </g>
           );
@@ -436,8 +448,9 @@ const Board = ({
                 minWidth: "30px",
                 fontSize: "24px",
                 opacity: details.content === "" ? 0.5 : 1,
+                color: details.color,
               }}
-              fill="white"
+              fill={details.color}
               tabIndex={0}
               onFocus={(ev) => {
                 ev.target.style.opacity = "1";
@@ -481,7 +494,7 @@ const Board = ({
   });
 
   return (
-    <div className="board" ref={boardRef}>
+    <div className="board" ref={boardRef} data-tool={toolName}>
       {inputEl}
       <svg
         className="drawingBoard"

@@ -3,8 +3,9 @@ import "./App.css";
 import Board from "./components/Board";
 import Footer from "./components/Footer";
 // import Header from "./components/Header";
-import { type Tools } from "./types/ActiveTools";
+import { type Colors, type Tools } from "./types/ActiveTools";
 function App() {
+  const [color, setColor] = useState<Colors>("#fff");
   const [tool, setTool] = useState<Tools>({
     toolName: "",
     toolElement: null!,
@@ -15,8 +16,8 @@ function App() {
 
   return (
     <>
-      <Board toolName={tool.toolName} shape={tool.shape} />
-      <Footer setTool={setTool} tool={tool} />
+      <Board toolName={tool.toolName} shape={tool.shape} color={color} />
+      <Footer setTool={setTool} tool={tool} setColor={setColor} color={color} />
     </>
   );
 }

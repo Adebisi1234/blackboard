@@ -27,6 +27,11 @@ footer {
   width: 20px;
   height: 20px;
   margin: 0 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  fill: white;
+  stroke: white;
 }
 
 .title {
@@ -41,19 +46,42 @@ footer {
 .tool {
   width: 32px;
   height: 32px;
-  fill: currentColor;
-  color: white;
+  stroke: rgba(255, 255, 255, 0.255);
+  fill: rgba(255, 255, 255, 0.255);
   background-repeat: no-repeat;
-
   transition: all ease-in 250ms;
   background-size: contain;
   background-position: center;
 }
 
+.tool.active {
+  transform: translateY(-10px);
+  stroke: white;
+  fill: white;
+}
+
+.tool:hover,
+.tool:focus,
+.tool:active {
+  stroke: white;
+  fill: white;
+}
+
 .board {
   height: calc(100% - 53px);
   width: 100%;
-  cursor: url("./cursor.png");
+  cursor: auto;
+}
+
+.board[data-tool="pencil"] {
+  cursor: url(./assets/pencil.png) 64 64, auto;
+}
+.board[data-tool="eraser"] {
+  cursor: url(./assets/eraser.png) 0 0, auto;
+}
+
+.board[data-tool="text"] {
+  cursor: text;
 }
 
 .tools {
@@ -67,17 +95,13 @@ footer {
   align-items: center;
 }
 
-.tools > *.active {
-  transform: translateY(-10px);
-}
-
 .shape-dialog {
   bottom: 100%;
   left: 80%;
   padding: 0;
   margin: 0;
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 60px;
 }
 
 text {
@@ -98,15 +122,15 @@ textarea {
 }
 
 .shape {
-  width: 40%;
-  height: 40%;
-  background-color: #363434;
+  width: 40px;
+  height: 40px;
+  border: 2px solid white;
 }
 .circle {
   border-radius: 50%;
 }
-.dialog_container {
-  background-color: aqua;
+.shapes_container {
+  background-color: #1e1e1e;
   padding: 4px;
   display: flex;
   justify-content: space-between;
@@ -114,21 +138,38 @@ textarea {
   height: 100%;
 }
 
-.pencil {
-  background-image: url(./pencil.svg);
-}
-.eraser {
-  background-image: url(./eraser.svg);
-}
-.text {
-  background-image: url(./text.svg);
-}
-.shapes {
-  background-image: url(./line.svg);
-}
-
 .colors {
   margin-left: auto;
-  width: 1px;
-  height: 1px;
+  margin-right: 12px;
+  width: fit-content;
+  padding: 8px;
+  position: relative;
+  height: fit-content;
+  background-color: #1e1e1e;
+  border: 1px solid #ffffff29;
+  border-radius: 50%;
+}
+.color {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  background-color: aqua;
+}
+
+.colors_dialog {
+  bottom: 35px;
+  height: fit-content;
+  width: fit-content;
+  padding: 10px;
+  left: calc(0% - 230px);
+  border-radius: 23px;
+  background-color: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.colors_container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  gap: 10px;
 }
