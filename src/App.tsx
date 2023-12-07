@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Board from "./components/Board";
 import Footer from "./components/Footer";
-// import Header from "./components/Header";
 import { type Colors, type Tools } from "./types/ActiveTools";
 function App() {
   const [color, setColor] = useState<Colors>("#fff");
