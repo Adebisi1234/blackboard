@@ -156,23 +156,28 @@ const Footer = ({
           <dialog
             className="shape-dialog"
             ref={shapeDialogRef}
-            onPointerLeave={() => {
+            onPointerLeave={(ev) => {
               shapeDialogRef.current.open = false;
+
+              if (
+                (ev.target as HTMLDivElement).classList.contains("rect") ||
+                (ev.target as HTMLDivElement).classList.contains("circle")
+              ) {
+                handleChangeTool(ev.target as HTMLDivElement, "shapes");
+              }
             }}
           >
             <div className="shapes_container">
               <div
                 className="shape rect"
-                onClick={(ev) => {
+                onClick={() => {
                   shapeDialogRef.current.open = false;
-                  handleChangeTool(ev.target as HTMLDivElement, "shapes");
                 }}
               ></div>
               <div
                 className="shape circle"
-                onClick={(ev) => {
+                onClick={() => {
                   shapeDialogRef.current.open = false;
-                  handleChangeTool(ev.target as HTMLDivElement, "shapes");
                 }}
               ></div>
             </div>

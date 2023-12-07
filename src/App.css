@@ -71,6 +71,7 @@ footer {
   height: calc(100% - 53px);
   width: 100%;
   cursor: auto;
+  touch-action: none;
 }
 
 .board[data-tool="pencil"] {
@@ -172,4 +173,10 @@ textarea {
   height: fit-content;
   display: flex;
   gap: 10px;
+}
+
+@media screen and (max-width: 500px) {
+  .title {
+    display: none;
+  }
 }
