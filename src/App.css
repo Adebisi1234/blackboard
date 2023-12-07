@@ -68,7 +68,7 @@ footer {
 }
 
 .board {
-  height: calc(100svh - 70px);
+  height: calc(100svh - 80px);
   width: 100%;
   cursor: auto;
   touch-action: none;
