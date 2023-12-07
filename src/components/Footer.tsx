@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { type Tools } from "../types/ActiveTools";
 
+type ToolName = "pencil" | "eraser" | "pointer" | "shape" | "text";
 const Footer = ({
   setTool,
   tool,
@@ -10,10 +11,9 @@ const Footer = ({
 }) => {
   const shapeDialogRef = useRef<HTMLDialogElement>(null!);
   const pencilRef = useRef<HTMLDivElement>(null!);
+  const toolsRef = useRef<Map<ToolName, SVGSVGElement>>(null!);
   const handleChangeTool = (
-    ev:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | { target: HTMLDivElement }
+    ev: React.MouseEvent<SVGSVGElement | HTMLDivElement, MouseEvent>
   ) => {
     shapeDialogRef.current.open && (shapeDialogRef.current.open = false);
     const target = ev.target as HTMLDivElement;
@@ -34,55 +34,70 @@ const Footer = ({
       const shape = target.classList[1];
       setTool({
         toolName,
-        toolElement: target.parentElement!.parentElement as HTMLDivElement,
+        toolElement: target.parentElement!.parentElement!
+          .parentElement as HTMLDivElement,
         shape,
       });
     } else {
       setTool({ toolName, toolElement: target });
     }
   };
-  useEffect(() => {
-    handleChangeTool({ target: pencilRef.current });
-  }, []);
+  // useEffect(() => {
+  //   handleChangeTool({ target: pencilRef.current });
+  // }, []);
   return (
     <footer>
+      <div className="menu"></div>
+      <input
+        className="title"
+        placeholder="Enter a title"
+        type="text"
+        name="title"
+      />
       <div className="tools">
-        <div
-          className="pointer"
-          onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        <svg
+          className="pointer tool"
+          onClick={(ev: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
             handleChangeTool(ev);
-          }}
-        ></div>
-        <div
-          className="pencil"
-          onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            handleChangeTool(ev);
-          }}
-          ref={pencilRef}
-        ></div>
-        <div
-          className="eraser"
-          onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            handleChangeTool(ev);
-          }}
-        ></div>
-        <div
-          className="text"
-          onClick={(ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            handleChangeTool(ev);
-          }}
-        ></div>
-        <div
-          className="shapes"
-          onPointerLeave={() => {
-            shapeDialogRef.current.open = false;
-          }}
-          onClick={() => {
-            shapeDialogRef.current.open
-              ? (shapeDialogRef.current.open = false)
-              : (shapeDialogRef.current.open = true);
           }}
         >
+          <use xlinkHref="#ic-pointer"></use>
+        </svg>
+        <svg
+          className="pencil tool"
+          onClick={(ev: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+            handleChangeTool(ev);
+          }}
+        >
+          <use xlinkHref="#ic-pencil"></use>
+        </svg>
+        <svg
+          className="eraser tool"
+          onClick={(ev: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+            handleChangeTool(ev);
+          }}
+        >
+          <use xlinkHref="#ic-eraser"></use>
+        </svg>
+        <svg
+          className="text tool"
+          onClick={(ev: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+            handleChangeTool(ev);
+          }}
+        >
+          <use xlinkHref="#ic-text"></use>
+        </svg>
+        <div>
+          <svg
+            className="shapes tool"
+            onClick={() => {
+              shapeDialogRef.current.open
+                ? (shapeDialogRef.current.open = false)
+                : (shapeDialogRef.current.open = true);
+            }}
+          >
+            <use xlinkHref="#ic-shapes"></use>
+          </svg>
           <dialog
             className="shape-dialog"
             ref={shapeDialogRef}
@@ -108,6 +123,16 @@ const Footer = ({
             </div>
           </dialog>
         </div>
+      </div>
+      <div className="colors">
+        <div className="color"></div>
+        <div className="color"></div>
+        <div className="color"></div>
+        <div className="color"></div>
+        <div className="color"></div>
+        <div className="color"></div>
+        <div className="color"></div>
+        <div className="color"></div>
       </div>
     </footer>
   );

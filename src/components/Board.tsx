@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import useWindowSize from "../hooks/useWindowSize";
 type Paths = {
   type: "pencil" | "eraser" | "pointer" | "text" | "shape";
-  path: string;
+  path: pathObj;
   x?: number;
   y?: number;
   width?: number;
@@ -10,7 +10,9 @@ type Paths = {
   content?: string;
   shape?: string;
   r?: number;
+  color?: string;
 };
+type pathObj = { func: "M" | "L"; x: number; y: number }[] | null;
 /* 
     Once a user drag the Pointer a line should be draw following it
     When ctrl + z is pressed delete the most recent line
@@ -37,6 +39,8 @@ const Board = ({
   const [windowWidth, windowHeight] = useWindowSize();
   const [activeEl, setActiveEl] = useState<HTMLElement>(null!);
   const [viewBox, setViewBox] = useState([0, 0]);
+  const SCALE = [1, 1];
+  const STROKE_WIDTH = 3;
   const svgRef = useRef<SVGSVGElement>(null!);
   const boardRef = useRef<HTMLDivElement>(null!);
   const pathId = useRef(0);
@@ -49,6 +53,18 @@ const Board = ({
 
   const pythag = (x: number, y: number) => {
     return Math.floor(Math.hypot(x, y));
+  };
+
+  const scalePath = (path: pathObj) => {
+    let newPath = "";
+    if (!path?.length) return;
+    path.forEach((value, i) => {
+      if (!value) return;
+      newPath += `${value.func} ${value.x * SCALE[0]} ${value.y * SCALE[1]} ${
+        i === path.length - 1 ? "z" : ""
+      }`;
+    });
+    return newPath;
   };
   // So as to support multiple screen sizes, Getting hella messy I'll do this later
   // useEffect(() => {
@@ -163,7 +179,7 @@ const Board = ({
         tempPath[pathId.current] = {
           type: "shape",
           shape,
-          path: "",
+          path: null,
           content: "",
           x: ev.clientX,
           y: getY(ev.clientY),
@@ -172,7 +188,10 @@ const Board = ({
       });
     }
     if (toolName === "pointer") {
-      if ((ev.target as SVGSVGElement).tagName === "svg") {
+      if (
+        (ev.target as SVGSVGElement).tagName === "svg" ||
+        (ev.target as SVGPathElement).classList.contains("eraser")
+      ) {
         setActiveEl((prevEl) => {
           if (prevEl) {
             prevEl.style.outline = "inherit";
@@ -205,7 +224,7 @@ const Board = ({
         const tempPath = [...currentPath];
         tempPath[pathId.current] = {
           type: "text",
-          path: "",
+          path: null,
           x: ev.clientX,
           y: getY(ev.clientY),
           content: "",
@@ -222,13 +241,15 @@ const Board = ({
         const tempPath = [...currentPath];
         if (tempPath[pathId.current]) {
           tempPath[pathId.current].type = "eraser";
-          tempPath[pathId.current].path += `M ${ev.clientX} ${getY(
-            ev.clientY
-          )}`;
+          tempPath[pathId.current].path?.push({
+            func: "M",
+            x: ev.clientX,
+            y: getY(ev.clientY),
+          });
         } else {
           tempPath[pathId.current] = {
             type: "eraser",
-            path: `M ${ev.clientX} ${getY(ev.clientY)}`,
+            path: [{ func: "M", x: ev.clientX, y: getY(ev.clientY) }],
           };
         }
         return tempPath;
@@ -239,13 +260,15 @@ const Board = ({
         const tempPath = [...currentPath];
         if (tempPath[pathId.current]) {
           tempPath[pathId.current].type = "pencil";
-          tempPath[pathId.current].path += `M ${ev.clientX} ${getY(
-            ev.clientY
-          )}`;
+          tempPath[pathId.current].path?.push({
+            func: "M",
+            x: ev.clientX,
+            y: getY(ev.clientY),
+          });
         } else {
           tempPath[pathId.current] = {
             type: "pencil",
-            path: `M ${ev.clientX} ${getY(ev.clientY)}`,
+            path: [{ func: "M", x: ev.clientX, y: getY(ev.clientY) }],
           };
         }
         return tempPath;
@@ -293,9 +316,10 @@ const Board = ({
         setPaths((currentPath) => {
           const tempPath = [...currentPath];
           if (tempPath[pathId.current]) {
-            tempPath[pathId.current].path += ` L ${ev.clientX} ${getY(
-              ev.clientY
-            )} M ${ev.clientX} ${getY(ev.clientY)}`;
+            tempPath[pathId.current].path?.push(
+              { func: "L", x: ev.clientX, y: getY(ev.clientY) },
+              { func: "M", x: ev.clientX, y: getY(ev.clientY) }
+            );
           }
 
           return tempPath;
@@ -305,9 +329,10 @@ const Board = ({
         setPaths((currentPath) => {
           const tempPath = [...currentPath];
           if (tempPath[pathId.current]) {
-            tempPath[pathId.current].path += ` L ${ev.clientX} ${getY(
-              ev.clientY
-            )} M ${ev.clientX} ${getY(ev.clientY)}`;
+            tempPath[pathId.current].path?.push(
+              { func: "L", x: ev.clientX, y: getY(ev.clientY) },
+              { func: "M", x: ev.clientX, y: getY(ev.clientY) }
+            );
           }
 
           return tempPath;
@@ -318,28 +343,6 @@ const Board = ({
   const handlePointerUp = () => {
     setToolActive(false);
     pathId.current += 1;
-
-    if (toolName === "eraser") {
-      setPaths((currentPath) => {
-        const tempPath = [...currentPath];
-        if (tempPath[pathId.current]) {
-          tempPath[pathId.current].path += "z";
-        }
-
-        return tempPath;
-      });
-    }
-
-    if (toolName !== "pencil") {
-      setPaths((currentPath) => {
-        const tempPath = [...currentPath];
-        if (tempPath[pathId.current]) {
-          tempPath[pathId.current].path += "z";
-        }
-
-        return tempPath;
-      });
-    }
   };
   useEffect(() => {
     window.addEventListener("keydown", handleKeydown);
@@ -363,7 +366,7 @@ const Board = ({
       case "pencil":
         return (
           <path
-            d={path}
+            d={scalePath(path)}
             focusable={true}
             tabIndex={0}
             stroke="white"
@@ -377,9 +380,10 @@ const Board = ({
           <path
             focusable={true}
             tabIndex={0}
-            d={path}
-            stroke="#363434"
+            d={scalePath(path)}
+            stroke="#222"
             id={`${key}`}
+            className="eraser"
             strokeWidth={50}
             strokeLinecap="round"
             key={key}

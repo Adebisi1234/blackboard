@@ -6,94 +6,65 @@
   width: 100vw;
   margin: 0 auto;
   text-align: center;
+  background-color: #222;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-header,
 footer {
-  height: 10%;
-  background-color: black;
-  color: white;
+  min-height: 53px;
+  width: 100%;
+  background-color: #1e1e1e;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
   display: flex;
   align-items: center;
-}
-
-header {
-  justify-content: space-between;
-  padding: 0% 2rem;
-  gap: 20px;
-
-  > * {
-    background-color: green;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-}
-
-.logo {
-  width: 50%;
-}
-
-.menu {
-  width: 10%;
-}
-
-.profile {
-  width: 10%;
-  gap: 20px;
-
-  > * {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: brown;
-    height: 100%;
-    flex: 1;
-  }
-}
-
-footer {
   justify-content: center;
 }
 
-.board {
-  height: 80%;
-  background-color: #363434;
+.menu {
+  width: 20px;
+  height: 20px;
+  margin: 0 15px;
+}
+
+.title {
+  width: 300px;
+  background-color: transparent;
+  outline: transparent;
+  font-size: 24px;
+  border: none;
+  color: #fff;
+}
+
+.tool {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
   color: white;
+  background-repeat: no-repeat;
+
+  transition: all ease-in 250ms;
+  background-size: contain;
+  background-position: center;
+}
+
+.board {
+  height: calc(100% - 53px);
+  width: 100%;
+  cursor: url("./cursor.png");
 }
 
 .tools {
-  max-width: fit-content;
-  height: 100%;
-  position: relative;
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  margin: auto;
   display: flex;
-  gap: 4px;
-  justify-content: space-evenly;
+  gap: 24px;
+  justify-content: center;
   align-items: center;
-}
-
-.tools::before,
-.tools::after {
-  content: "";
-  height: 100%;
-  width: 3rem;
-  background-color: red;
-}
-
-.tools::before {
-  border-top-left-radius: 100%;
-}
-.tools::after {
-  border-top-right-radius: 100%;
-}
-.tools > * {
-  background-color: aqua;
-  aspect-ratio: 1;
-  flex: auto;
-  height: 100%;
-  transition: transform 0.3s ease-in-out;
 }
 
 .tools > *.active {
@@ -141,4 +112,23 @@ textarea {
   justify-content: space-between;
   width: 100%;
   height: 100%;
+}
+
+.pencil {
+  background-image: url(./pencil.svg);
+}
+.eraser {
+  background-image: url(./eraser.svg);
+}
+.text {
+  background-image: url(./text.svg);
+}
+.shapes {
+  background-image: url(./line.svg);
+}
+
+.colors {
+  margin-left: auto;
+  width: 1px;
+  height: 1px;
 }
