@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 #root {
-  height: 100vh;
+  height: 100svh;
   width: 100vw;
   margin: 0 auto;
   text-align: center;
