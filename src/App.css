@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 #root {
-  height: 100vh;
+  height: 100svh;
   width: 100vw;
   margin: 0 auto;
   text-align: center;
@@ -67,7 +67,7 @@ footer {
 }
 
 .board {
-  height: calc(100% - 53px);
+  height: calc(100svh - 80px);
   width: 100%;
   cursor: auto;
   touch-action: none;
