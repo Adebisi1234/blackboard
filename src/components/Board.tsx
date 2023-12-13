@@ -52,7 +52,15 @@ const Board = ({
   const svgRef = useRef<SVGSVGElement>(null!);
   const boardRef = useRef<HTMLDivElement>(null!);
   const pathId = useRef(0);
-  const [paths, setPaths] = useState<Paths[]>([]);
+  const [paths, setPaths] = useState<Paths[]>(() => {
+    const tempPaths = localStorage.getItem("paths");
+    if (tempPaths) {
+      pathId.current = JSON.parse(tempPaths).length;
+
+      return JSON.parse(tempPaths);
+    }
+    return [];
+  });
   const inputsRef = useRef<Map<number, HTMLTextAreaElement>>(null!);
   const [inputs, setInputs] = useState<number[]>([]);
   const [deletedPaths, setDeletedPaths] = useState<
@@ -154,26 +162,22 @@ const Board = ({
     } else if (ev.ctrlKey && ev.key === "y") {
       const tempPaths = [...paths];
       const restoredPath = deletedPaths[deletedPaths.length - 1];
-      if (Object.keys(restoredPath).length > 0) {
+
+      if (restoredPath && Object.keys(restoredPath).length > 0) {
         tempPaths[restoredPath.id] = restoredPath.pathDetails;
-        if (restoredPath.pathDetails.type === "text") {
+        if (restoredPath.pathDetails?.type === "text") {
           setInputs((currentInputs) => {
             currentInputs.push(restoredPath.id);
             return currentInputs;
           });
         }
-        setDeletedPaths((currentDeletedPaths) => {
-          const tempDeletedPath = [...currentDeletedPaths];
-          tempDeletedPath.pop();
-          return tempDeletedPath;
-        });
-      } else {
-        setDeletedPaths((currentDeletedPaths) => {
-          const tempDeletedPath = [...currentDeletedPaths];
-          tempDeletedPath.pop();
-          return tempDeletedPath;
-        });
       }
+      setDeletedPaths((currentDeletedPaths) => {
+        const tempDeletedPath = [...currentDeletedPaths];
+        tempDeletedPath.pop();
+        return tempDeletedPath;
+      });
+      setPaths(tempPaths);
     } else if (ev.key === "Delete") {
       const tempPath = [...paths];
       tempPath.splice(+activeEl.id, 1);
@@ -358,18 +362,22 @@ const Board = ({
     setToolActive(false);
     pathId.current += 1;
   };
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeydown);
+    paths.length !== 0 && localStorage.setItem("paths", JSON.stringify(paths));
+    console.log(paths);
     return () => window.removeEventListener("keydown", handleKeydown);
   }, [paths]);
   useEffect(() => {
     svgRef.current.viewBox.baseVal.height = boardRef.current.offsetHeight;
     svgRef.current.viewBox.baseVal.width = boardRef.current.offsetWidth;
-    if (!(viewBox[0] === 0 && viewBox[1] === 0)) return;
+
     setViewBox([
       svgRef.current.viewBox.baseVal.width,
       svgRef.current.viewBox.baseVal.height,
     ]);
+    console.log(viewBox);
   }, [windowWidth, windowHeight]);
 
   const pathElements = paths.map((details, key) => {

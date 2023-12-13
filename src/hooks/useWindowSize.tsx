@@ -5,7 +5,6 @@ const useWindowSize = () => {
   const [windowHeight, setHeight] = useState(innerHeight);
 
   const handleResize = () => {
-    console.log("resized");
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
   };
@@ -16,7 +15,7 @@ const useWindowSize = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [innerWidth, innerHeight]);
-  return [ windowWidth, windowHeight ];
+  return [windowWidth, windowHeight];
 };
 
 export default useWindowSize;
