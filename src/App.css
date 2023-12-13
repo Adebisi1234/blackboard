@@ -90,7 +90,7 @@ svg {
 }
 
 .board[data-tool="pencil"] {
-  cursor: url(./assets/pencil.png) 32 32, auto;
+  cursor: url(./assets/pencil.png) 64 64, auto;
 }
 
 .board[data-tool="text"] {

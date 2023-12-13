@@ -179,10 +179,16 @@ const Board = ({
       });
       setPaths(tempPaths);
     } else if (ev.key === "Delete") {
-      const tempPath = [...paths];
-      tempPath.splice(+activeEl.id, 1);
-      setPaths(tempPath);
-      setActiveEl(null!);
+      setActiveEl((prevEl) => {
+        if (prevEl) {
+          const tempPath = [...paths];
+          tempPath.splice(+prevEl.id, 1);
+          setPaths(tempPath);
+        }
+
+        return null!;
+      });
+      // console.log(activeEl);
     }
   };
   const getY = (num: number) => num - boardRef.current.offsetTop;
@@ -362,7 +368,7 @@ const Board = ({
     setToolActive(false);
     pathId.current += 1;
   };
-
+  console.log(activeEl);
   useEffect(() => {
     window.addEventListener("keydown", handleKeydown);
     paths.length !== 0 && localStorage.setItem("paths", JSON.stringify(paths));
