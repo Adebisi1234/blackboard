@@ -29,6 +29,11 @@ type pathObj = { func: "M" | "L"; x: number; y: number }[] | null;
       path: string
     }
   */
+
+/* 
+    How to handle multi-screen
+      each Path will have the viewBox value
+ */
 const Board = ({
   toolName,
   shape,
@@ -42,7 +47,6 @@ const Board = ({
   const [windowWidth, windowHeight] = useWindowSize();
   const [activeEl, setActiveEl] = useState<HTMLElement>(null!);
   const [viewBox, setViewBox] = useState([0, 0]);
-  const SCALE = [1, 1]; // For screens with different size [x, y]
   const STROKE_WIDTH = 3;
   const BASE_COLOR = "#fff";
   const svgRef = useRef<SVGSVGElement>(null!);
@@ -64,7 +68,7 @@ const Board = ({
     if (!path?.length) return;
     path.forEach((value, i) => {
       if (!value) return;
-      newPath += `${value.func} ${value.x * SCALE[0]} ${value.y * SCALE[1]} ${
+      newPath += `${value.func} ${value.x} ${value.y} ${
         i === path.length - 1 ? "z" : ""
       }`;
     });
@@ -322,9 +326,7 @@ const Board = ({
           });
         }
       } else if (toolName === "pointer" && activeEl) {
-        activeEl.style.transform = `translate3d(${ev.clientX % innerWidth}px, ${
-          ev.clientY % innerHeight
-        }px, 10px) translate(-50%, -50%) `;
+        activeEl.style.transform = `translate(calc(${ev.clientX}px - 50%), calc(${ev.clientY}px - 50%))  `;
       } else if (toolName === "eraser") {
         setPaths((currentPath) => {
           const tempPath = [...currentPath];
