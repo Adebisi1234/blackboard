@@ -53,13 +53,12 @@ const Board = ({
   const boardRef = useRef<HTMLDivElement>(null!);
   const pathId = useRef(0);
   const [paths, setPaths] = useState<Paths[]>(() => {
-    const tempPaths = localStorage.getItem("paths");
-    if (tempPaths) {
-      pathId.current = JSON.parse(tempPaths).length;
-
-      return JSON.parse(tempPaths);
-    }
-    return [];
+    const tempPaths: Paths[] = localStorage.getItem("paths")
+      ? JSON.parse(localStorage.getItem("paths")!)
+      : [];
+    pathId.current = tempPaths.length;
+    console.log(pathId.current);
+    return tempPaths;
   });
   const inputsRef = useRef<Map<number, HTMLTextAreaElement>>(null!);
   const [inputs, setInputs] = useState<number[]>([]);
@@ -95,10 +94,10 @@ const Board = ({
   //         const y = string.split(" ")[2]
   //         return `${func} ${x} ${y}`
   //       })
-  //       console.log(path);
+
   //       return path;
   //     });
-  //     console.log(numberRegEx);
+
   //   };
   //   updateView();
   // }, [paths]);
@@ -180,15 +179,14 @@ const Board = ({
       setPaths(tempPaths);
     } else if (ev.key === "Delete") {
       setActiveEl((prevEl) => {
-        if (prevEl) {
+        if (!prevEl) return null!;
+        if (paths[+prevEl.id]) {
           const tempPath = [...paths];
           tempPath.splice(+prevEl.id, 1);
           setPaths(tempPath);
         }
-
         return null!;
       });
-      // console.log(activeEl);
     }
   };
   const getY = (num: number) => num - boardRef.current.offsetTop;
@@ -366,12 +364,13 @@ const Board = ({
   };
   const handlePointerUp = () => {
     setToolActive(false);
+    if (toolName === "pointer") return;
     pathId.current += 1;
   };
-  console.log(activeEl);
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeydown);
-    paths.length !== 0 && localStorage.setItem("paths", JSON.stringify(paths));
+    localStorage.setItem("paths", JSON.stringify(paths));
     console.log(paths);
     return () => window.removeEventListener("keydown", handleKeydown);
   }, [paths]);
@@ -383,7 +382,6 @@ const Board = ({
       svgRef.current.viewBox.baseVal.width,
       svgRef.current.viewBox.baseVal.height,
     ]);
-    console.log(viewBox);
   }, [windowWidth, windowHeight]);
 
   const pathElements = paths.map((details, key) => {
