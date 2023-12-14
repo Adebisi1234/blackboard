@@ -13,6 +13,11 @@ function App() {
     tool.toolElement?.classList.add("active");
   }, [tool]);
 
+  useEffect(() => {
+    if (localStorage.getItem("title")) {
+      document.title = localStorage.getItem("title")!;
+    }
+  }, []);
   return (
     <>
       <Board toolName={tool.toolName} shape={tool.shape} color={color} />

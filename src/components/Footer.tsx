@@ -82,11 +82,12 @@ const Footer = ({
           if ((ev.target as HTMLInputElement).value === "") {
             document.title =
               "Blackboard | Beautiful Interactive board you can share with friends";
-            return;
+          } else {
+            document.title = `Blackboard | ${
+              (ev.target as HTMLInputElement).value
+            }`;
           }
-          document.title = `Blackboard | ${
-            (ev.target as HTMLInputElement).value
-          }`;
+          localStorage.setItem("title", document.title);
         }}
       />
       <div className="tools">
