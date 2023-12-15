@@ -48,7 +48,7 @@ const Board = ({
   const [toolActive, setToolActive] = useState(false);
   const [windowWidth, windowHeight] = useWindowSize();
   const [activeEl, setActiveEl] = useState<HTMLElement>(null!);
-  const [viewBox, setViewBox] = useState([0, 0]);
+  // const [viewBox, setViewBox] = useState([0, 0]);
   const STROKE_WIDTH = 3;
   const BASE_COLOR = "#fff";
   const svgRef = useRef<SVGSVGElement>(null!);
@@ -391,10 +391,10 @@ const Board = ({
     svgRef.current.viewBox.baseVal.height = boardRef.current.offsetHeight;
     svgRef.current.viewBox.baseVal.width = boardRef.current.offsetWidth;
 
-    setViewBox([
-      svgRef.current.viewBox.baseVal.width,
-      svgRef.current.viewBox.baseVal.height,
-    ]);
+    // setViewBox([
+    //   svgRef.current.viewBox.baseVal.width,
+    //   svgRef.current.viewBox.baseVal.height,
+    // ]);
     // document.body.style.setProperty("--svg-w", `${viewBox[0]}px`);
     // document.body.style.setProperty("--svg-h", `${viewBox[1]}px`);
   }, [windowWidth, windowHeight]);
