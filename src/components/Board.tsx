@@ -38,10 +38,12 @@ const Board = ({
   toolName,
   shape,
   color,
+  setTitle,
 }: {
   toolName: ToolName;
   shape: string | undefined;
   color: string;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [toolActive, setToolActive] = useState(false);
   const [windowWidth, windowHeight] = useWindowSize();
@@ -51,6 +53,7 @@ const Board = ({
   const BASE_COLOR = "#fff";
   const svgRef = useRef<SVGSVGElement>(null!);
   const boardRef = useRef<HTMLDivElement>(null!);
+  const clearRef = useRef<HTMLDivElement>(null!);
   const pathId = useRef(0);
   const [paths, setPaths] = useState<Paths[]>(() => {
     const tempPaths: Paths[] = localStorage.getItem("paths")
@@ -185,6 +188,7 @@ const Board = ({
           tempPath.splice(+prevEl.id, 1);
           setPaths(tempPath);
         }
+        prevEl.style.outline = "initial";
         return null!;
       });
     }
@@ -334,7 +338,9 @@ const Board = ({
           });
         }
       } else if (toolName === "pointer" && activeEl) {
-        activeEl.style.transform = `translate(calc(${ev.clientX}px - 50%), calc(${ev.clientY}px - 50%))  `;
+        activeEl.style.transform = `translate(calc(${
+          ev.clientX % innerWidth
+        }px - 50%), calc(${ev.clientY % innerHeight}px - 50%))  `;
       } else if (toolName === "eraser") {
         setPaths((currentPath) => {
           const tempPath = [...currentPath];
@@ -371,7 +377,14 @@ const Board = ({
   useEffect(() => {
     window.addEventListener("keydown", handleKeydown);
     localStorage.setItem("paths", JSON.stringify(paths));
-    console.log(paths);
+    if (paths.length === 0) {
+      clearRef.current.classList.add("hidden");
+    } else if (
+      paths.length !== 0 &&
+      clearRef.current.classList.contains("hidden")
+    ) {
+      clearRef.current.classList.remove("hidden");
+    }
     return () => window.removeEventListener("keydown", handleKeydown);
   }, [paths]);
   useEffect(() => {
@@ -382,6 +395,8 @@ const Board = ({
       svgRef.current.viewBox.baseVal.width,
       svgRef.current.viewBox.baseVal.height,
     ]);
+    // document.body.style.setProperty("--svg-w", `${viewBox[0]}px`);
+    // document.body.style.setProperty("--svg-h", `${viewBox[1]}px`);
   }, [windowWidth, windowHeight]);
 
   const pathElements = paths.map((details, key) => {
@@ -509,6 +524,17 @@ const Board = ({
 
   return (
     <div className="board" ref={boardRef} data-tool={toolName}>
+      <div
+        className="clear"
+        ref={clearRef}
+        onClick={() => {
+          setPaths([]);
+          localStorage.setItem("title", "");
+          setTitle("");
+        }}
+      >
+        clear
+      </div>
       {inputEl}
       <svg
         className="drawingBoard"

@@ -192,3 +192,17 @@ textarea {
     display: none;
   }
 }
+
+.clear {
+  padding: 8px 4px;
+  border: 1px solid #fff;
+  left: 10px;
+  top: 10px;
+  width: fit-content;
+  position: absolute;
+  transition: all 1s ease-in;
+}
+
+.clear.hidden {
+  top: -110%;
+}

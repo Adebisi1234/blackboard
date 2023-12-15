@@ -6,11 +6,15 @@ const Footer = ({
   tool,
   color,
   setColor,
+  title,
+  setTitle,
 }: {
   setTool: React.Dispatch<React.SetStateAction<Tools>>;
   tool: Tools;
   color: Colors;
   setColor: React.Dispatch<React.SetStateAction<Colors>>;
+  title: string;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const shapeDialogRef = useRef<HTMLDialogElement>(null!);
   const colorDialogRef = useRef<HTMLDialogElement>(null!);
@@ -25,6 +29,7 @@ const Footer = ({
     "#fff",
   ]);
   const toolsRef = useRef<Map<ToolName, SVGSVGElement>>(null!);
+
   const handleChangeTool = (
     target: SVGSVGElement | HTMLDivElement | undefined,
     toolName: ToolName
@@ -78,16 +83,9 @@ const Footer = ({
         placeholder="Enter a title"
         type="text"
         name="title"
+        value={title}
         onInput={(ev) => {
-          if ((ev.target as HTMLInputElement).value === "") {
-            document.title =
-              "Blackboard | Beautiful Interactive board you can share with friends";
-          } else {
-            document.title = `Blackboard | ${
-              (ev.target as HTMLInputElement).value
-            }`;
-          }
-          localStorage.setItem("title", document.title);
+          setTitle((ev.target as HTMLInputElement).value);
         }}
       />
       <div className="tools">

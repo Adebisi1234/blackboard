@@ -9,19 +9,39 @@ function App() {
     toolName: "",
     toolElement: null!,
   });
+  const [title, setTitle] = useState(() => {
+    return localStorage.getItem("title") ?? "";
+  });
+
   useEffect(() => {
     tool.toolElement?.classList.add("active");
   }, [tool]);
 
   useEffect(() => {
-    if (localStorage.getItem("title")) {
-      document.title = localStorage.getItem("title")!;
+    if (title === "") {
+      document.title =
+        "Blackboard | Beautiful Interactive board you can share with friends";
+    } else {
+      document.title = `Blackboard | ${title}`;
     }
-  }, []);
+    localStorage.setItem("title", title);
+  }, [title]);
   return (
     <>
-      <Board toolName={tool.toolName} shape={tool.shape} color={color} />
-      <Footer setTool={setTool} tool={tool} setColor={setColor} color={color} />
+      <Board
+        toolName={tool.toolName}
+        shape={tool.shape}
+        color={color}
+        setTitle={setTitle}
+      />
+      <Footer
+        setTool={setTool}
+        tool={tool}
+        setColor={setColor}
+        color={color}
+        title={title}
+        setTitle={setTitle}
+      />
     </>
   );
 }
