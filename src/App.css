@@ -109,12 +109,12 @@ svg {
 }
 
 .shape-dialog {
-  bottom: 100%;
+  bottom: 130%;
   left: 80%;
   padding: 0;
   margin: 0;
   width: 100px;
-  height: 60px;
+  height: fit-content;
 }
 
 text {
@@ -139,16 +139,22 @@ textarea {
   height: 40px;
   border: 2px solid white;
 }
+.svg_shape {
+  border: none;
+}
 .circle {
   border-radius: 50%;
 }
 .shapes_container {
   background-color: #1e1e1e;
   padding: 4px;
+  gap: 2px;
+  align-items: center;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   width: 100%;
-  height: 100%;
+  height: fit-content;
 }
 
 .colors {

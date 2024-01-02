@@ -6,14 +6,25 @@ type Paths = {
   path: pathObj;
   x?: number;
   y?: number;
+  x1?: number;
+  y1?: number;
   width?: number;
   height?: number;
   content?: string;
   shape?: string;
   r?: number;
+  rx?: number;
+  ry?: number;
+  cx?: number;
+  cy?: number;
   color?: string;
+  triPath?: [
+    { x?: number; y?: number },
+    { x?: number; y?: number },
+    { x?: number; y?: number }
+  ];
 };
-type pathObj = { func: "M" | "L"; x: number; y: number }[] | null;
+type pathObj = { func: "M" | "L" | "T"; x: number; y: number }[] | null;
 /* 
     Once a user drag the Pointer a line should be draw following it
     When ctrl + z is pressed delete the most recent line
@@ -60,7 +71,7 @@ const Board = ({
       ? JSON.parse(localStorage.getItem("paths")!)
       : [];
     pathId.current = tempPaths.length;
-    console.log(pathId.current);
+
     return tempPaths;
   });
   const inputsRef = useRef<Map<number, HTMLTextAreaElement>>(null!);
@@ -213,8 +224,6 @@ const Board = ({
           shape,
           path: null,
           content: "",
-          x: ev.clientX,
-          y: getY(ev.clientY),
           color,
         };
         return tempPath;
@@ -316,10 +325,32 @@ const Board = ({
           setPaths((currentPath) => {
             const tempPath = [...currentPath];
             if (tempPath[pathId.current]) {
-              tempPath[pathId.current].width =
-                ev.clientX - tempPath[pathId.current].x!;
-              tempPath[pathId.current].height =
-                getY(ev.clientY) - tempPath[pathId.current].y!;
+              if (!(tempPath[pathId.current].x && tempPath[pathId.current].y)) {
+                tempPath[pathId.current].x = ev.clientX;
+                tempPath[pathId.current].x1 = ev.clientX;
+                tempPath[pathId.current].y = getY(ev.clientY);
+                tempPath[pathId.current].y1 = getY(ev.clientY);
+              }
+              if (ev.clientX < tempPath[pathId.current].x1!) {
+                let diff = Math.abs(ev.clientX - tempPath[pathId.current].x1!);
+                tempPath[pathId.current].x! =
+                  tempPath[pathId.current].x1! - diff;
+                tempPath[pathId.current].width = diff;
+              } else {
+                tempPath[pathId.current].width =
+                  ev.clientX - tempPath[pathId.current].x!;
+              }
+              if (getY(ev.clientY) < tempPath[pathId.current].y1!) {
+                let diff = Math.abs(
+                  getY(ev.clientY) - tempPath[pathId.current].y1!
+                );
+                tempPath[pathId.current].y! =
+                  tempPath[pathId.current].y1! - diff;
+                tempPath[pathId.current].height = diff;
+              } else {
+                tempPath[pathId.current].height =
+                  getY(ev.clientY) - tempPath[pathId.current].y!;
+              }
             }
 
             return tempPath;
@@ -328,6 +359,10 @@ const Board = ({
           setPaths((currentPath) => {
             const tempPath = [...currentPath];
             if (tempPath[pathId.current]) {
+              if (!(tempPath[pathId.current].x && tempPath[pathId.current].y)) {
+                tempPath[pathId.current].x = ev.clientX;
+                tempPath[pathId.current].y = getY(ev.clientY);
+              }
               tempPath[pathId.current].r = pythag(
                 ev.clientX - tempPath[pathId.current].x!,
                 getY(ev.clientY) - tempPath[pathId.current].y!
@@ -336,6 +371,46 @@ const Board = ({
 
             return tempPath;
           });
+        } else if (shape === "oval") {
+          const tempPath = [...paths];
+
+          if (!(tempPath[pathId.current].x && tempPath[pathId.current].y)) {
+            tempPath[pathId.current].x = ev.clientX;
+            tempPath[pathId.current].y = getY(ev.clientY);
+          }
+          tempPath[pathId.current].cx =
+            tempPath[pathId.current].x ?? ev.clientX;
+          tempPath[pathId.current].cy =
+            tempPath[pathId.current].y ?? getY(ev.clientY);
+          tempPath[pathId.current].rx =
+            Math.abs(ev.clientX - tempPath[pathId.current].x!) ?? 0;
+          tempPath[pathId.current].ry =
+            Math.abs(getY(ev.clientY) - tempPath[pathId.current].y!) ?? 0;
+
+          setPaths(tempPath);
+        } else if (shape === "triangle") {
+          const tempPath = [...paths];
+
+          if (tempPath[pathId.current]) {
+            if (!(tempPath[pathId.current].x1 && tempPath[pathId.current].y1)) {
+              tempPath[pathId.current].x1 = ev.clientX;
+              tempPath[pathId.current].y1 = getY(ev.clientY);
+            }
+            tempPath[pathId.current].x = ev.clientX;
+            tempPath[pathId.current].y = getY(ev.clientY);
+            tempPath[pathId.current].width = Math.abs(
+              ev.clientX - tempPath[pathId.current].x1!
+            );
+          }
+          tempPath[pathId.current].triPath = createTrianglePath(
+            tempPath[pathId.current].x1,
+            tempPath[pathId.current].y1,
+            tempPath[pathId.current].x,
+            tempPath[pathId.current].y,
+            tempPath[pathId.current].width
+          );
+
+          setPaths(tempPath);
         }
       } else if (toolName === "pointer" && activeEl) {
         activeEl.style.transform = `translate(calc(${
@@ -462,6 +537,35 @@ const Board = ({
               ></circle>
             </g>
           );
+        } else if (details.shape === "oval") {
+          return (
+            <g key={key}>
+              <ellipse
+                rx={details.rx}
+                ry={details.ry}
+                x={details.x}
+                y={details.y}
+                id={`${key}`}
+                cx={details.cx}
+                cy={details.cy}
+                fill="none"
+                stroke={details.color || BASE_COLOR}
+                strokeWidth={STROKE_WIDTH}
+              ></ellipse>
+            </g>
+          );
+        } else if (details.shape === "triangle") {
+          return (
+            <g key={key}>
+              <polygon
+                points={joinTrianglePath(details.triPath)}
+                id={`${key}`}
+                fill="none"
+                stroke={details.color || BASE_COLOR}
+                strokeWidth={STROKE_WIDTH}
+              ></polygon>
+            </g>
+          );
         }
         return null;
 
@@ -544,9 +648,48 @@ const Board = ({
         onPointerMove={handlePointerMove}
       >
         {pathElements}
+        {/* <ellipse cx="75" cy="75" rx="20" ry="5" stroke="red" fill="transparent" stroke-width="5"/> // ellipse guide  */}
+        {/* <polygon points="100,100 150,50 200,100"></polygon> //triangle guide */}
       </svg>
     </div>
   );
+};
+
+const joinTrianglePath = (path: Paths["triPath"]) => {
+  const trianglePath = path
+    ?.map(({ x, y }) => {
+      return `${x}, ${y} `;
+    })
+    .join("");
+
+  return trianglePath;
+};
+
+const createTrianglePath = (
+  x1: number | undefined,
+  y1: number | undefined,
+  x: number | undefined,
+  y: number | undefined,
+  width: number | undefined
+) => {
+  if (x && y && y1 && x1 && width) {
+    let top = { x: x1, y: y1 };
+    let leftBottom = { x: 0, y: y };
+    let rightBottom = { x: 0, y: y };
+    if (x > x1) {
+      leftBottom = { x: x1 - width, y };
+      rightBottom = { x, y };
+    } else if (x < x1) {
+      leftBottom = { x, y };
+      rightBottom = { x: x1 + width, y };
+    }
+    return [leftBottom, top, rightBottom] as Paths["triPath"];
+  }
+  return [
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+  ] as Paths["triPath"];
 };
 
 export default Board;

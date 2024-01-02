@@ -50,6 +50,7 @@ const Footer = ({
     tool.toolElement?.classList.remove("active");
     if (target.classList.contains("shape")) {
       const shape = target.classList[1];
+      console.log(shape);
       setTool({
         toolName,
         toolElement: toolsRef.current.get(toolName)!,
@@ -155,27 +156,71 @@ const Footer = ({
           <dialog
             className="shape-dialog"
             ref={shapeDialogRef}
-            onPointerLeave={(ev) => {
+            onPointerLeave={() => {
               shapeDialogRef.current.open = false;
-
-              if (
-                (ev.target as HTMLDivElement).classList.contains("rect") ||
-                (ev.target as HTMLDivElement).classList.contains("circle")
-              ) {
-                handleChangeTool(ev.target as HTMLDivElement, "shapes");
-              }
             }}
           >
             <div className="shapes_container">
               <div
                 className="shape rect"
-                onClick={() => {
+                onClick={(ev) => {
+                  handleChangeTool(
+                    ev.currentTarget as HTMLDivElement,
+                    "shapes"
+                  );
                   shapeDialogRef.current.open = false;
                 }}
               ></div>
               <div
+                className="shape oval svg_shape"
+                onClick={(ev) => {
+                  handleChangeTool(
+                    ev.currentTarget as HTMLDivElement,
+                    "shapes"
+                  );
+                  shapeDialogRef.current.open = false;
+                }}
+              >
+                <svg viewBox="0 0 40 40" className="shape oval svg_shape">
+                  <ellipse
+                    cx="20"
+                    cy="20"
+                    ry={10}
+                    rx={18}
+                    width={40}
+                    height={20}
+                    stroke="white"
+                    fill="transparent"
+                    strokeWidth="2"
+                  />
+                </svg>
+              </div>
+              <div
+                className="shape triangle svg_shape"
+                onClick={(ev) => {
+                  handleChangeTool(
+                    ev.currentTarget as HTMLDivElement,
+                    "shapes"
+                  );
+                  shapeDialogRef.current.open = false;
+                }}
+              >
+                <svg viewBox="0 0 40 40" className="shape triangle svg_shape">
+                  <polygon
+                    points="0,40 20,0 40,40"
+                    fill="transparent"
+                    stroke="white"
+                    strokeWidth={2}
+                  ></polygon>
+                </svg>
+              </div>
+              <div
                 className="shape circle"
-                onClick={() => {
+                onClick={(ev) => {
+                  handleChangeTool(
+                    ev.currentTarget as HTMLDivElement,
+                    "shapes"
+                  );
                   shapeDialogRef.current.open = false;
                 }}
               ></div>
