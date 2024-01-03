@@ -163,7 +163,8 @@ const Footer = ({
             <div className="shapes_container">
               <div
                 className="shape rect"
-                onClick={(ev) => {
+                onPointerDown={(ev) => {
+                  console.log(ev.currentTarget);
                   handleChangeTool(
                     ev.currentTarget as HTMLDivElement,
                     "shapes"
@@ -173,7 +174,8 @@ const Footer = ({
               ></div>
               <div
                 className="shape oval svg_shape"
-                onClick={(ev) => {
+                onPointerDown={(ev) => {
+                  console.log(ev.currentTarget);
                   handleChangeTool(
                     ev.currentTarget as HTMLDivElement,
                     "shapes"
@@ -197,7 +199,8 @@ const Footer = ({
               </div>
               <div
                 className="shape triangle svg_shape"
-                onClick={(ev) => {
+                onPointerDown={(ev) => {
+                  console.log(ev.currentTarget);
                   handleChangeTool(
                     ev.currentTarget as HTMLDivElement,
                     "shapes"
@@ -216,7 +219,8 @@ const Footer = ({
               </div>
               <div
                 className="shape circle"
-                onClick={(ev) => {
+                onPointerDown={(ev) => {
+                  console.log(ev.currentTarget);
                   handleChangeTool(
                     ev.currentTarget as HTMLDivElement,
                     "shapes"
