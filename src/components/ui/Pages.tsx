@@ -1,23 +1,40 @@
 import Button from "./Button";
-import Icon from "./Icon";
+import {
+  ChevronDown,
+  DotVertical,
+  Duplicate,
+  Menu,
+  Redo,
+  Trash,
+  Undo,
+} from "./Svg";
 
 export default function Pages() {
   return (
     <div className="flex items-center gap-1 bg-[#1f1e21]">
       <Button>
-        <Icon className="bg-blue-400 rounded-full"></Icon>
+        <Menu />
+      </Button>
+      <Button className="w-fit gap-4 rounded-md p-1">
+        <div className="w-fit h-full pr-4 flex justify-center items-center text-left">
+          Page 1
+        </div>
+        <ChevronDown />
       </Button>
       <Button>
-        <Icon className="bg-blue-400 rounded-full"></Icon>
+        <Undo />
       </Button>
       <Button>
-        <Icon className="bg-blue-400 rounded-full"></Icon>
+        <Redo />
       </Button>
       <Button>
-        <Icon className="bg-blue-400 rounded-full"></Icon>
+        <Trash />
       </Button>
       <Button>
-        <Icon className="bg-blue-400 rounded-full"></Icon>
+        <Duplicate />
+      </Button>
+      <Button>
+        <DotVertical />
       </Button>
     </div>
   );

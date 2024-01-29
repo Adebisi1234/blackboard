@@ -1,5 +1,7 @@
 export default function Canvas() {
-  return <div className="absolute min-w-screen min-h-screen inset-0"></div>;
+  return (
+    <div className="absolute min-w-screen min-h-screen inset-0 canvas"></div>
+  );
 }
 
 /* 

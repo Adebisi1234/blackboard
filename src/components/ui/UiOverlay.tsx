@@ -1,3 +1,4 @@
+import { ActiveTool } from "../../App";
 import Button from "./Button";
 import Controls from "./Controls";
 import Help from "./Help";
@@ -5,7 +6,11 @@ import Icon from "./Icon";
 import Pages from "./Pages";
 import Panel from "./Panel";
 import Zoom from "./Zoom";
-export default function Overlay() {
+type Prop = {
+  activeTool: ActiveTool;
+  setActiveTool: React.Dispatch<React.SetStateAction<ActiveTool>>;
+};
+export default function Overlay({ activeTool, setActiveTool }: Prop) {
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div className="flex justify-between items-start mt-1">
@@ -23,13 +28,11 @@ export default function Overlay() {
         </div>
       </div>
       <div className="flex h-10 justify-between items-center relative">
-        <Button>
-          <Zoom />
-        </Button>
-        <Controls />
-        <Button>
-          <Help />
-        </Button>
+        <Zoom />
+
+        <Controls activeTool={activeTool} setActiveTool={setActiveTool} />
+
+        <Help />
       </div>
     </div>
   );

@@ -1,8 +1,17 @@
+* {
+  -webkit-user-drag: none;
+}
+
 #root {
   width: 100svw;
   height: 100svh;
   background-color: #131315;
   color: white;
+  position: relative;
+}
+
+.canvas * {
+  position: absolute;
 }
 
 svg {
@@ -11,4 +20,47 @@ svg {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.slider-range {
+  z-index: 1;
+}
+
+.slider-range,
+.slider::before {
+  height: 4px;
+  border-radius: 8px;
+  width: 50%;
+  background-color: green;
+}
+.slider::before {
+  width: calc(100% - 16px);
+  background-color: #333438;
+  content: "";
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  margin-left: 8px;
+}
+
+.slider-ball {
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  z-index: 2;
+  background-color: aqua;
+}
+
+.slider-ball::after {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  z-index: 2;
+  background-color: #333438;
+  content: "";
 }
