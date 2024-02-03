@@ -1,15 +1,24 @@
-type Prop = {
+export type PencilProp = {
   color: string;
-  id: string;
-  path: {
-    func: "M" | "L";
-    x: number;
-    y: number;
-  }[];
+  id: number;
+  path: (
+    | {
+        func: "M";
+        x: number;
+        y: number;
+      }
+    | {
+        func: "L";
+        x: number;
+        y: number;
+      }
+  )[];
   opacity: number;
-  strokeWidth: number;
+  strokeWidth?: number;
   scale: number;
   dash: string;
+  highlight?: boolean;
+  type: "pencil";
 };
 export default function Pencil({
   color,
@@ -18,20 +27,22 @@ export default function Pencil({
   opacity,
   scale = 1,
   strokeWidth = 3,
+  highlight = false,
   dash,
-}: Prop) {
+}: PencilProp) {
   const d = path
     .map(({ func, x, y }) => {
       return `${func} ${x * scale} ${y * scale}`;
     })
     .join(" ");
   return (
-    <svg id={id} opacity={opacity}>
+    <svg id={`${id}`} opacity={opacity}>
       <path
-        d={d}
+        d={`${d} z`}
         stroke={color}
         strokeWidth={strokeWidth}
         strokeDasharray={dash}
+        fill="none"
       ></path>
     </svg>
   );

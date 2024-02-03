@@ -10,7 +10,7 @@
   position: relative;
 }
 
-.canvas * {
+.canvas *:not(textarea) {
   position: absolute;
 }
 

@@ -4,7 +4,6 @@ import Canvas from "./components/Canvas";
 import Disclaimer from "./components/ui/Disclaimer";
 import Overlay from "./components/ui/UiOverlay";
 
-export type Paths = {};
 export type ActiveTool =
   | "pointer"
   | "hand"
@@ -16,27 +15,51 @@ export type ActiveTool =
   | "image"
   | "shape";
 
+export type General = {
+  color: string;
+  opacity: number;
+  strokeWidth: number;
+  dash: "draw" | "solid" | "dashed" | "dotted";
+  scale: number;
+  font: number;
+  image: {
+    id: number;
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  }[];
+};
 export default function App() {
-  // const [paths, setPaths] = useState([]);
-  // const [deletedPaths, setDeletedPaths] = useState([]);
-  // const [postiton, setPostiton] = useState([]);
+  const [general, setGeneral] = useState<General>({
+    color: "#FFF",
+    opacity: 1,
+    strokeWidth: 3,
+    dash: "solid",
+    scale: 1,
+    image: [],
+    font: 20,
+  });
+
   const [activeTool, setActiveTool] = useState<ActiveTool>("pointer");
-  // const [isToolActive, setIsToolActive] = useState({});
-  // const pathId = useRef(0);
-  // const [activeEl, setActiveEl] = useState<HTMLElement>(null!);
-  console.log(activeTool);
+  const [shape, setShape] = useState("");
+
   return (
     <>
-      <Canvas />
-      <Overlay activeTool={activeTool} setActiveTool={setActiveTool} />
+      <Canvas
+        activeTool={activeTool}
+        general={general}
+        setActiveTool={setActiveTool}
+      />
+      <Overlay
+        activeTool={activeTool}
+        setActiveTool={setActiveTool}
+        general={general}
+        setGeneral={setGeneral}
+        shape={shape}
+        setShape={setShape}
+      />
       <Disclaimer />
-      {/* 
-      Ui-overlay
-       - Header (page, user, share)
-       - Options
-       - Footer (zoom, controls, help)
-    */}
-      {/* Canvas absolute */}
     </>
   );
 }

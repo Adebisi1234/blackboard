@@ -449,7 +449,7 @@ export function FillSolid() {
         />
         <path
           fill="#fff"
-          fill-opacity=".32"
+          fillOpacity=".32"
           d="M4 8h18v18H4z"
           className="fill-current"
         />

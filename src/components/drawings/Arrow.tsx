@@ -1,5 +1,5 @@
-type Prop = {
-  id: string;
+export type ArrowProp = {
+  id: number;
   color: string;
   // Curve to
   startPos: {
@@ -11,7 +11,9 @@ type Prop = {
     y: number;
   };
   opacity: number;
-  strokeWidth: number;
+  strokeWidth?: number;
+  type: "arrow";
+  highlight?: boolean;
 };
 
 export default function Arrow({
@@ -21,9 +23,11 @@ export default function Arrow({
   color,
   opacity,
   strokeWidth = 3,
-}: Prop) {
+  highlight = false,
+}: ArrowProp) {
+  console.log(highlight);
   return (
-    <svg id={id} opacity={opacity}>
+    <svg id={`${id}`} opacity={opacity}>
       <path
         d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
         stroke={color}

@@ -25,7 +25,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="pointer"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -40,7 +40,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="hand"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -55,7 +55,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="pencil"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -70,7 +70,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="eraser"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -85,7 +85,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="arrow"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -100,7 +100,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="text"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -115,7 +115,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="note"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -130,7 +130,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="image"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
@@ -145,7 +145,7 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         }`}
         tool="shape"
         onClick={(e) => {
-          console.log(e.currentTarget.getAttribute("data-tool"));
+          e.currentTarget.getAttribute("data-tool");
           setActiveTool(
             (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
               activeTool
