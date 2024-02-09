@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowHead } from "./ArrowHead";
-import { pythag } from "../../utils/drawings";
+import { getDiff, pythag } from "../../utils/drawings";
+import { useLocationDispatch } from "../../context/StateContext";
 
 export type ArrowProp = {
   id: number;
@@ -32,6 +33,18 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
   }: ArrowProp,
   activeCompRef
 ) {
+  const dispatch = useLocationDispatch();
+  useEffect(() => {
+    dispatch({
+      id: id,
+      loc: {
+        x: getRelativeMin(startPos.x, endPos.x),
+        y: getRelativeMin(startPos.y, endPos.y),
+        width: getDiff(startPos.x, endPos.x),
+        height: getDiff(startPos.y, endPos.y),
+      },
+    });
+  }, [startPos, endPos]);
   const angle = (() => {
     const dx = endPos.x - startPos.x;
     const dy = endPos.y - startPos.y;
@@ -101,3 +114,10 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
     </svg>
   );
 });
+
+function getRelativeMin(v1: number, v2: number) {
+  if (v1 < v2) {
+    return v1;
+  }
+  return v2;
+}

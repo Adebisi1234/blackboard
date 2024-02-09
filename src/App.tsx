@@ -3,6 +3,7 @@ import "./App.css";
 import Canvas from "./components/Canvas";
 import Disclaimer from "./components/ui/Disclaimer";
 import Overlay from "./components/ui/UiOverlay";
+import { useLocation } from "./context/StateContext";
 
 export type ActiveTool =
   | "pointer"
@@ -59,6 +60,8 @@ export default function App() {
 
   const [activeTool, setActiveTool] = useState<ActiveTool>("pointer"); //Probably turn this into a context
   const [shape, setShape] = useState("");
+  const location = useLocation();
+  console.log({ location });
 
   return (
     <>

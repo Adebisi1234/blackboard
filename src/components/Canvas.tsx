@@ -33,8 +33,10 @@ export type Drawings = (
   | EraserProp
   | HandProp
 )[];
+export type Location = { x: number; y: number; width: number; height: number };
 export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const [drawing, setDrawing] = useState<Drawings>([]);
+  const [location, setLocation] = useState<Location[]>([]);
   const [isToolActive, setIsToolActive] = useState(false);
   const activeCompRef = useRef<HTMLElement | null>(null);
 
@@ -93,7 +95,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const components = drawing.map((x) => drawOnCanvas(x, activeCompRef));
   return (
     <div
-      className="absolute inset-0 h-screen w-screen canvas"
+      className="absolute inset-0 w-screen h-screen canvas"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

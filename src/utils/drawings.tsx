@@ -466,7 +466,7 @@ function getImage({ image, id }: GetImageProp) {
   return image.find((img) => img.id === id);
 }
 
-function getDiff(prev: number, curr: number) {
+export function getDiff(prev: number, curr: number) {
   return Math.abs(curr - prev);
 }
 
