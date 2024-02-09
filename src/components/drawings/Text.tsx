@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import React, { useImperativeHandle, useRef } from "react";
 
 export type TextProp = {
   id: number;
@@ -12,16 +12,18 @@ export type TextProp = {
   type: "text";
   font: number;
 };
-export default function Text({
-  id,
-  color,
-  pos,
-  opacity,
-  highlight = false,
-  font,
-}: TextProp) {
+export default React.forwardRef<HTMLTextAreaElement, TextProp>(function Text(
+  { id, color, pos, opacity, highlight = false, font }: TextProp,
+  activeCompRef
+) {
   const textRef = useRef<HTMLTextAreaElement>(null);
-
+  useImperativeHandle(
+    activeCompRef,
+    () => {
+      return textRef.current!;
+    },
+    []
+  );
   return (
     <textarea
       name={`${id}`}
@@ -42,4 +44,4 @@ export default function Text({
       }}
     ></textarea>
   );
-}
+});

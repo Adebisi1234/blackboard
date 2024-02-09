@@ -27,14 +27,18 @@ export default function Pointer({
     <>
       {highlight && (
         <svg id={`${id}`} className="w-full h-full">
-          <rect
-            width={width}
-            height={height}
-            x={pos.x}
-            y={pos.y}
-            strokeWidth={strokeWidth}
-            stroke="#fff"
-          ></rect>
+          <g>
+            <rect
+              width={width}
+              height={height}
+              x={pos.x}
+              y={pos.y}
+              strokeWidth={strokeWidth}
+              stroke="#fff"
+              fill="#333438"
+              fillOpacity={0.3}
+            ></rect>
+          </g>
         </svg>
       )}
     </>

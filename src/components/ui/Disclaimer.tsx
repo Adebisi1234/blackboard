@@ -7,8 +7,8 @@ export default function Disclaimer() {
       className="text-center absolute w-full h-fit p-2 top-0"
       ref={containerRef}
     >
-      <p className="text-red-500">
-        I don't own the design or the assets, It's gotten from{" "}
+      <p className="text-red-600">
+        This project is inspired by{" "}
         <a href="http://tldraw.com" className="underline">
           tldraw.com
         </a>{" "}

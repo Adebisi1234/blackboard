@@ -1,36 +1,23 @@
-type Prop = {
+export interface Prop extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: JSX.Element | JSX.Element[];
   className?: string;
   id?: string;
   title?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   tool?: string;
-};
-export default function Button({
-  className,
-  children,
-  title,
-  id,
-  onClick,
-  tool,
-}: Prop) {
-  const prop: { [key: string]: any } = {
+}
+
+export default function Button(prop: Prop) {
+  prop = {
+    ...prop,
     draggable: "false",
-    className: `size-10 shrink-0 flex justify-center items-center cursor-pointer text-xs gap-0 relative hover:bg-[#333438] ${className}`,
+    className: `size-10 shrink-0 flex justify-center items-center cursor-pointer text-xs gap-0 relative hover:bg-[#333438] ${prop.className}`,
   };
-  if (title) {
-    prop.title = title;
-  }
-  if (onClick) {
-    prop.onClick = onClick;
-  }
-  if (tool) {
-    prop.tool = tool;
-  }
+
   return (
     <>
-      <button {...prop} data-tool={tool} data-id={id}>
-        {children}
+      <button {...prop} data-tool={prop.tool} data-id={prop?.id}>
+        {prop.children}
       </button>
     </>
   );

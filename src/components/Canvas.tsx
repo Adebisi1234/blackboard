@@ -15,6 +15,7 @@ import { type TextProp } from "./drawings/Text";
 import { type ShapesProp } from "./drawings/Shapes";
 import { type EraserProp } from "./drawings/Eraser";
 import { type HandProp } from "./drawings/Hand";
+import { act } from "react-dom/test-utils";
 
 type Prop = {
   activeTool: ActiveTool;
@@ -35,10 +36,12 @@ export type Drawings = (
 export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const [drawing, setDrawing] = useState<Drawings>([]);
   const [isToolActive, setIsToolActive] = useState(false);
-  const drawingId = useRef(-1);
+  const activeCompRef = useRef<HTMLElement | null>(null);
+
+  const drawingId = useRef(0);
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    drawingId.current++;
     setIsToolActive(true);
+
     addDrawing({
       e,
       activeTool,
@@ -51,6 +54,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
     if (!isToolActive) {
       return;
     }
+
     modifyDrawing({
       e,
       activeTool,
@@ -67,17 +71,29 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
       drawingId,
       general,
     });
-    setActiveTool("pointer");
+    if (activeTool !== "pointer") {
+      drawingId.current++;
+    }
+    setActiveTool((prev) => {
+      if (
+        prev === "image" ||
+        prev === "note" ||
+        prev === "text" ||
+        prev === "hand"
+      ) {
+        return "pointer";
+      }
+      return prev;
+    });
     setIsToolActive(false);
   };
   /*   useEffect(() => {
     // Update Specific Component general attribute
   }, [general.color, general.dash, general.opacity, general.scale, general.strokeWidth]) // Feeling lazy to refactor general into {diffs: {}, image: []} */
-  const components = drawing.map(drawOnCanvas);
-  console.log(drawingId.current);
+  const components = drawing.map((x) => drawOnCanvas(x, activeCompRef));
   return (
     <div
-      className="absolute inset-0 min-h-screen min-w-screen canvas"
+      className="absolute inset-0 h-screen w-screen canvas"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -88,6 +104,6 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
 }
 
 /* 
-  For multi selector, keep store of every point the on hover the point select all svgs with those points
+  For multi selector, keep store of every components box location and then do the magic
 
 */

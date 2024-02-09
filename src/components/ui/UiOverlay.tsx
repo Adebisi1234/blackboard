@@ -27,15 +27,15 @@ export default function Overlay({
       <div className="flex items-start justify-between mt-1">
         <Pages />
         <div className="flex flex-col items-end mr-1">
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <Button>
               <Icon className="bg-pink-700 rounded-full"></Icon>
             </Button>
-            <Button className="min-w-[40px] w-fit bg-blue-600 px-4 rounded-lg ">
+            <Button className=" !size-fit bg-blue-600 px-4 py-2 rounded-lg ">
               <span>Share</span>
             </Button>
           </div>
-          <Panel />
+          <Panel general={general} setGeneral={setGeneral} />
         </div>
       </div>
       <div className="relative flex items-center justify-between h-10">

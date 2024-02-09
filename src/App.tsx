@@ -15,13 +15,28 @@ export type ActiveTool =
   | "image"
   | "shape";
 
+type Color =
+  | "#ffffff"
+  | "#9398b0"
+  | "#e599f7"
+  | "#ae3ec9"
+  | "#4263eb"
+  | "#4dabf7"
+  | "#ffc034"
+  | "#f76707"
+  | "#099268"
+  | "#40c057"
+  | "#ff8787"
+  | "#e03131";
+
 export type General = {
-  color: string;
+  color: Color;
   opacity: number;
   strokeWidth: number;
+  fill: "none" | "semi" | "solid" | "pattern";
   dash: "draw" | "solid" | "dashed" | "dotted";
   scale: number;
-  font: number;
+  font: 12 | 16 | 20 | 24;
   image: {
     id: number;
     src: string;
@@ -32,16 +47,17 @@ export type General = {
 };
 export default function App() {
   const [general, setGeneral] = useState<General>({
-    color: "#FFF",
+    color: "#ffffff",
     opacity: 1,
     strokeWidth: 3,
     dash: "solid",
+    fill: "none",
     scale: 1,
     image: [],
     font: 20,
   });
 
-  const [activeTool, setActiveTool] = useState<ActiveTool>("pointer");
+  const [activeTool, setActiveTool] = useState<ActiveTool>("pointer"); //Probably turn this into a context
   const [shape, setShape] = useState("");
 
   return (

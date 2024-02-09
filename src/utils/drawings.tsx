@@ -9,6 +9,7 @@ import Pointer, { type PointerProp } from "../components/drawings/Pointer";
 import Shapes, { type ShapesProp } from "../components/drawings/Shapes";
 import { Drawings } from "../components/Canvas";
 import { ActiveTool, General } from "../App";
+import { LegacyRef, MutableRefObject, Ref } from "react";
 
 type ModifyDrawing = {
   e: React.MouseEvent<HTMLDivElement, MouseEvent>;
@@ -44,7 +45,7 @@ export function addDrawing({
           strokeWidth: 3,
           width: 0,
           id: drawingId.current,
-        } as PointerProp;
+        } satisfies PointerProp;
         return temp;
       });
       // The magic
@@ -55,7 +56,8 @@ export function addDrawing({
         const temp = [...prev];
         temp[drawingId.current] = {
           type: "hand",
-        } as HandProp;
+          id: drawingId.current,
+        } satisfies HandProp;
         return temp;
       });
       break;
@@ -77,7 +79,7 @@ export function addDrawing({
           dash: general.dash,
           scale: 1,
           type: "pencil",
-        } as PencilProp;
+        } satisfies PencilProp;
         return temp;
       });
       break;
@@ -87,7 +89,8 @@ export function addDrawing({
         const temp = [...prev];
         temp[drawingId.current] = {
           type: "eraser",
-        } as EraserProp;
+          id: drawingId.current,
+        } satisfies EraserProp;
         return temp;
       });
       break;
@@ -108,7 +111,7 @@ export function addDrawing({
             y: e.clientY,
           },
           opacity: general.opacity,
-        } as ArrowProp;
+        } satisfies ArrowProp;
         return temp;
       });
       break;
@@ -126,7 +129,7 @@ export function addDrawing({
           },
           opacity: general.opacity,
           font: general.font,
-        } as TextProp;
+        } satisfies TextProp;
         return temp;
       });
       break;
@@ -144,7 +147,7 @@ export function addDrawing({
           opacity: general.opacity,
           type: "note",
           font: general.font,
-        } as NoteProp;
+        } satisfies NoteProp;
         return temp;
       });
       break;
@@ -172,7 +175,7 @@ export function addDrawing({
             0,
           opacity: general.opacity,
           id: drawingId.current,
-        } as ImageProp;
+        } satisfies ImageProp;
         return temp;
       });
       break;
@@ -182,7 +185,8 @@ export function addDrawing({
         const temp = [...prev];
         temp[drawingId.current] = {
           type: "shape",
-        } as ShapesProp;
+          id: drawingId.current,
+        } satisfies ShapesProp;
         return temp;
       });
       break;
@@ -338,17 +342,12 @@ export function cleanUpDrawing({
 }: ModifyDrawing) {
   switch (activeTool) {
     case "pointer": {
-      console.log("pointer");
       setDrawing((prev) => {
         const temp = [...prev];
         if (!temp[drawingId.current]) {
-          console.log("wtf", drawingId.current);
           return temp;
         }
-        const edit = { ...temp[drawingId.current] } as PointerProp;
-        edit.highlight = false;
-        console.log({ edit });
-        temp[drawingId.current] = edit;
+        temp.splice(drawingId.current, 1);
         return temp;
       });
       break;
@@ -382,10 +381,22 @@ export function cleanUpDrawing({
     // }
   }
 }
-export function drawOnCanvas(comp: Drawings[0]) {
+export function drawOnCanvas(
+  comp: Drawings[0],
+  activeCompRef: React.MutableRefObject<HTMLElement | SVGSVGElement | null>
+) {
+  if (!comp) {
+    return;
+  }
   switch (comp.type) {
     case "arrow": {
-      return <Arrow key={comp.id} {...(comp as ArrowProp)} />;
+      return (
+        <Arrow
+          ref={activeCompRef as Ref<SVGSVGElement>}
+          key={comp.id}
+          {...(comp satisfies ArrowProp)}
+        />
+      );
     }
     case "eraser": {
       return <Eraser key={comp.id} {...comp} />;
@@ -394,22 +405,46 @@ export function drawOnCanvas(comp: Drawings[0]) {
       return <Hand key={comp.id} />;
     }
     case "image": {
-      return <Image key={comp.id} {...(comp as ImageProp)} />;
+      return (
+        <Image
+          ref={activeCompRef as Ref<HTMLDivElement>}
+          key={comp.id}
+          {...(comp satisfies ImageProp)}
+        />
+      );
     }
     case "note": {
-      return <Note key={comp.id} {...(comp as NoteProp)} />;
+      return (
+        <Note
+          ref={activeCompRef as Ref<HTMLDivElement>}
+          key={comp.id}
+          {...(comp satisfies NoteProp)}
+        />
+      );
     }
     case "pencil": {
-      return <Pencil key={comp.id} {...(comp as PencilProp)} />;
+      return (
+        <Pencil
+          ref={activeCompRef as Ref<SVGSVGElement>}
+          key={comp.id}
+          {...(comp satisfies PencilProp)}
+        />
+      );
     }
     case "pointer": {
-      return <Pointer key={comp.id} {...(comp as PointerProp)} />;
+      return <Pointer key={comp.id} {...(comp satisfies PointerProp)} />;
     }
     case "shape": {
       return <Shapes key={comp.id} />;
     }
     case "text": {
-      return <Text key={comp.id} {...(comp as TextProp)} />;
+      return (
+        <Text
+          ref={activeCompRef as Ref<HTMLTextAreaElement>}
+          key={comp.id}
+          {...(comp satisfies TextProp)}
+        />
+      );
     }
     default:
       console.log(`Error on component`, comp);
@@ -433,4 +468,20 @@ function getImage({ image, id }: GetImageProp) {
 
 function getDiff(prev: number, curr: number) {
   return Math.abs(curr - prev);
+}
+
+export function pythag({
+  x1,
+  y1,
+  x2,
+  y2,
+}: {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}) {
+  const x = getDiff(x1, x2);
+  const y = getDiff(y1, y2);
+  return Math.hypot(x, y);
 }
