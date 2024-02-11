@@ -1,51 +1,11 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import Canvas from "./components/Canvas";
 import Disclaimer from "./components/ui/Disclaimer";
 import Overlay from "./components/ui/UiOverlay";
-import { useLocation } from "./context/StateContext";
 
-export type ActiveTool =
-  | "pointer"
-  | "hand"
-  | "pencil"
-  | "eraser"
-  | "arrow"
-  | "text"
-  | "note"
-  | "image"
-  | "shape";
+import { ActiveTool, General } from "./types/general";
 
-type Color =
-  | "#ffffff"
-  | "#9398b0"
-  | "#e599f7"
-  | "#ae3ec9"
-  | "#4263eb"
-  | "#4dabf7"
-  | "#ffc034"
-  | "#f76707"
-  | "#099268"
-  | "#40c057"
-  | "#ff8787"
-  | "#e03131";
-
-export type General = {
-  color: Color;
-  opacity: number;
-  strokeWidth: number;
-  fill: "none" | "semi" | "solid" | "pattern";
-  dash: "draw" | "solid" | "dashed" | "dotted";
-  scale: number;
-  font: 12 | 16 | 20 | 24;
-  image: {
-    id: number;
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-  }[];
-};
 export default function App() {
   const [general, setGeneral] = useState<General>({
     color: "#ffffff",
@@ -55,13 +15,11 @@ export default function App() {
     fill: "none",
     scale: 1,
     image: [],
-    font: 20,
+    font: 24,
   });
 
   const [activeTool, setActiveTool] = useState<ActiveTool>("pointer"); //Probably turn this into a context
   const [shape, setShape] = useState("");
-  const location = useLocation();
-  console.log({ location });
 
   return (
     <>

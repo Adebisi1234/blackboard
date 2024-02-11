@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ArrowHead } from "./ArrowHead";
-import { getDiff, pythag } from "../../utils/drawings";
+import { getDiff, getRelativeMin, pythag } from "../../utils/drawings";
 import { useLocationDispatch } from "../../context/StateContext";
+import { useActiveTool } from "../Canvas";
 
 export type ArrowProp = {
   id: number;
@@ -34,10 +35,12 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
   activeCompRef
 ) {
   const dispatch = useLocationDispatch();
+  const activeTool = useActiveTool();
   useEffect(() => {
     dispatch({
-      id: id,
+      id,
       loc: {
+        id,
         x: getRelativeMin(startPos.x, endPos.x),
         y: getRelativeMin(startPos.y, endPos.y),
         width: getDiff(startPos.x, endPos.x),
@@ -102,7 +105,7 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
             color={color}
           />
         )}
-        {hovered && (
+        {(hovered || highlight) && activeTool === "pointer" && (
           <path
             d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
             stroke={"green"}
@@ -114,10 +117,3 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
     </svg>
   );
 });
-
-function getRelativeMin(v1: number, v2: number) {
-  if (v1 < v2) {
-    return v1;
-  }
-  return v2;
-}

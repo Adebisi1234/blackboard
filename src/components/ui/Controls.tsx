@@ -1,4 +1,4 @@
-import { ActiveTool } from "../../App";
+import { ActiveTool } from "../../types/general";
 import Button from "./Button";
 import {
   Arrow,

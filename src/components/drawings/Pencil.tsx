@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useLocationDispatch } from "../../context/StateContext";
+import { useActiveTool } from "../Canvas";
 
 export type PencilProp = {
   color: string;
@@ -36,11 +38,27 @@ export default React.forwardRef<SVGSVGElement, PencilProp>(function Pencil(
   activeCompRef
 ) {
   const [hovered, setHovered] = useState(false);
+  const pathRef = useRef<SVGPathElement>(null);
   const d = path
     .map(({ func, x, y }) => {
       return `${func} ${x * scale} ${y * scale}`;
     })
     .join(" ");
+  const dispatch = useLocationDispatch();
+  const activeTool = useActiveTool();
+
+  useEffect(() => {
+    dispatch({
+      id: id,
+      loc: {
+        id,
+        x: pathRef.current?.getBBox().x ?? 0,
+        y: pathRef.current?.getBBox().y ?? 0,
+        width: pathRef.current?.getBBox().width ?? 0,
+        height: pathRef.current?.getBBox().height ?? 0,
+      },
+    });
+  }, [path]);
   return (
     <svg
       id={`${id}`}
@@ -63,6 +81,7 @@ export default React.forwardRef<SVGSVGElement, PencilProp>(function Pencil(
           onMouseOver={() => {
             setHovered(true);
           }}
+          ref={pathRef}
           onMouseLeave={() => setHovered(false)}
           d={`${d} z`}
           stroke={color}
@@ -71,7 +90,7 @@ export default React.forwardRef<SVGSVGElement, PencilProp>(function Pencil(
           fill="none"
           className="z-20"
         ></path>
-        {hovered && (
+        {(hovered || highlight) && activeTool === "pointer" && (
           <path
             id={`${id}`}
             d={`${d} z`}

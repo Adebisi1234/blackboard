@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocationDispatch } from "../../context/StateContext";
 
 export type ImageProp = {
   src: string;
@@ -18,6 +19,18 @@ export default React.forwardRef<HTMLDivElement, ImageProp>(function Image(
   { src, alt, pos, width, height, opacity, highlight = false, id }: ImageProp,
   activeCompRef
 ) {
+  const dispatch = useLocationDispatch();
+  useEffect(() => {
+    dispatch({
+      id,
+      loc: {
+        x: pos.x,
+        y: pos.y,
+        width,
+        height,
+      },
+    });
+  }, [pos, width, height]);
   return (
     <div
       ref={activeCompRef}

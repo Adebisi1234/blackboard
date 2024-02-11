@@ -1,4 +1,4 @@
-import { ActiveTool, General } from "../../App";
+import { ActiveTool, General } from "../../types/general";
 import Button from "./Button";
 import Controls from "./Controls";
 import Help from "./Help";

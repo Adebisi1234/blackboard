@@ -7,9 +7,9 @@ import Eraser, { type EraserProp } from "../components/drawings/Eraser";
 import Hand, { type HandProp } from "../components/drawings/Hand";
 import Pointer, { type PointerProp } from "../components/drawings/Pointer";
 import Shapes, { type ShapesProp } from "../components/drawings/Shapes";
-import { Drawings } from "../components/Canvas";
-import { ActiveTool, General } from "../App";
-import { LegacyRef, MutableRefObject, Ref } from "react";
+import { type Drawings } from "../types/general";
+import { type ActiveTool, type General } from "../types/general";
+import { Ref } from "react";
 
 type ModifyDrawing = {
   e: React.MouseEvent<HTMLDivElement, MouseEvent>;
@@ -484,4 +484,11 @@ export function pythag({
   const x = getDiff(x1, x2);
   const y = getDiff(y1, y2);
   return Math.hypot(x, y);
+}
+
+export function getRelativeMin(v1: number, v2: number) {
+  if (v1 < v2) {
+    return v1;
+  }
+  return v2;
 }

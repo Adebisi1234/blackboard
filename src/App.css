@@ -11,7 +11,7 @@
   overflow: hidden;
 }
 
-.canvas *:not(textarea, svg, path, rect) {
+.canvas *:not(textarea, svg, path, rect, .static) {
   position: absolute;
 }
 

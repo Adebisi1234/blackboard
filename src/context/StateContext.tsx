@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { Location } from "../components/Canvas";
+import { Location } from "../types/general";
 
 const LocationContext = createContext<Location[]>([]);
 
@@ -16,6 +16,7 @@ export function LocationProvider({
   children: JSX.Element | JSX.Element[];
 }) {
   const [Location, dispatch] = useReducer(locationReducer, []);
+  console.log(Location);
 
   return (
     <LocationContext.Provider value={Location}>
