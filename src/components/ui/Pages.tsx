@@ -11,12 +11,12 @@ import {
 
 export default function Pages() {
   return (
-    <div className="flex items-center gap-1 bg-[#1f1e21]">
+    <div className="flex items-center gap-1 bg-[#1f1e21] relative" id="pages">
       <Button>
         <Menu />
       </Button>
-      <Button className="w-fit gap-4 rounded-md p-1">
-        <div className="w-fit h-full pr-4 flex justify-center items-center text-left">
+      <Button className="gap-4 p-1 rounded-md w-fit">
+        <div className="flex items-center justify-center h-full pr-4 text-left w-fit">
           Page 1
         </div>
         <ChevronDown />

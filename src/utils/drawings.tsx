@@ -12,7 +12,7 @@ import { type ActiveTool, type General } from "../types/general";
 import { Ref } from "react";
 
 type ModifyDrawing = {
-  e: React.MouseEvent<HTMLDivElement, MouseEvent>;
+  e: { clientX: number; clientY: number };
   activeTool: ActiveTool;
   setDrawing: React.Dispatch<React.SetStateAction<Drawings>>;
   drawingId: React.MutableRefObject<number>;
@@ -440,7 +440,7 @@ export function drawOnCanvas(
     case "text": {
       return (
         <Text
-          ref={activeCompRef as Ref<HTMLTextAreaElement>}
+          ref={activeCompRef as Ref<HTMLDivElement>}
           key={comp.id}
           {...(comp satisfies TextProp)}
         />
