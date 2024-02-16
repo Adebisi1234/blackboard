@@ -3,8 +3,6 @@ import Text, { type TextProp } from "../components/drawings/Text";
 import Image, { type ImageProp } from "../components/drawings/Image";
 import Note, { type NoteProp } from "../components/drawings/Note";
 import Pencil, { type PencilProp } from "../components/drawings/Pencil";
-import Eraser, { type EraserProp } from "../components/drawings/Eraser";
-import Hand, { type HandProp } from "../components/drawings/Hand";
 import Pointer, { type PointerProp } from "../components/drawings/Pointer";
 import Shapes, { type ShapesProp } from "../components/drawings/Shapes";
 import { type Drawings } from "../types/general";
@@ -27,6 +25,9 @@ export function addDrawing({
   general,
 }: ModifyDrawing) {
   switch (activeTool) {
+    case "hand":
+    case "eraser":
+      break;
     case "pointer": {
       setDrawing((prev) => {
         const temp = [...prev];
@@ -51,17 +52,7 @@ export function addDrawing({
       // The magic
       break;
     }
-    case "hand": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          type: "hand",
-          id: drawingId.current,
-        } satisfies HandProp;
-        return temp;
-      });
-      break;
-    }
+
     case "pencil": {
       setDrawing((prev) => {
         const temp = [...prev];
@@ -84,17 +75,7 @@ export function addDrawing({
       });
       break;
     }
-    case "eraser": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          type: "eraser",
-          id: drawingId.current,
-        } satisfies EraserProp;
-        return temp;
-      });
-      break;
-    }
+
     case "arrow": {
       setDrawing((prev) => {
         const temp = [...prev];
@@ -111,6 +92,7 @@ export function addDrawing({
             y: e.clientY,
           },
           opacity: general.opacity,
+          dash: general.dash,
         } satisfies ArrowProp;
         return temp;
       });
@@ -212,6 +194,9 @@ export function modifyDrawing({
   general,
 }: ModifyDrawing) {
   switch (activeTool) {
+    case "hand":
+    case "eraser":
+      break;
     case "pointer": {
       setDrawing((prev) => {
         const temp = [...prev];
@@ -237,13 +222,7 @@ export function modifyDrawing({
       // The magic
       break;
     }
-    case "hand": {
-      // setDrawing((prev) => {
-      //   const temp = [...prev];
-      //   return temp;
-      // });
-      break;
-    }
+
     case "pencil": {
       setDrawing((prev) => {
         const temp = [...prev];
@@ -261,13 +240,7 @@ export function modifyDrawing({
       });
       break;
     }
-    case "eraser": {
-      // setDrawing((prev) => {
-      //   const temp = [...prev];
-      //   return temp;
-      // });
-      break;
-    }
+
     case "arrow": {
       setDrawing((prev) => {
         const temp = [...prev];
@@ -398,12 +371,7 @@ export function drawOnCanvas(
         />
       );
     }
-    case "eraser": {
-      return <Eraser key={comp.id} {...comp} />;
-    }
-    case "hand": {
-      return <Hand key={comp.id} />;
-    }
+
     case "image": {
       return (
         <Image
@@ -491,4 +459,17 @@ export function getRelativeMin(v1: number, v2: number) {
     return v1;
   }
   return v2;
+}
+
+export function removeComp(
+  id: number,
+  setDrawing: React.Dispatch<React.SetStateAction<Drawings>>
+) {
+  if (id === -1) return;
+  setDrawing((prev) => {
+    const temp = [...prev];
+    if (!temp[id]) return temp;
+    temp[id] = { ...temp[id], opacity: 0 } as ArrowProp; //To keep the counter correct
+    return temp;
+  });
 }

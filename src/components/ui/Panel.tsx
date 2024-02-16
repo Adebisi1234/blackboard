@@ -1,4 +1,5 @@
-import { General } from "../../App";
+import { useRef } from "react";
+import { General } from "../../types/general";
 import Button from "./Button";
 import Icon from "./Icon";
 import {
@@ -42,7 +43,7 @@ export default function Panel({ general, setGeneral }: Prop) {
           id="white"
           title="Color - white"
         >
-          <Icon className="rounded-full bg-white"></Icon>
+          <Icon className="bg-white rounded-full"></Icon>
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
@@ -266,8 +267,18 @@ export default function Panel({ general, setGeneral }: Prop) {
         </Button>
       </div>
       <Button className="w-full slider !justify-start px-2">
-        <span className="slider-range"></span>
-        <span className="slider-ball" style={{ left: "50%" }}></span>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.1}
+          onInput={(e) =>
+            setGeneral((prev) => ({
+              ...prev,
+              opacity: +(e.target as HTMLInputElement).value,
+            }))
+          }
+        ></input>
       </Button>
       <div className="grid grid-cols-4 overflow-hidden">
         <Button
@@ -432,16 +443,16 @@ export default function Panel({ general, setGeneral }: Prop) {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.font === 12 && "bg-[#333438]"
+            general.font === 18 && "bg-[#333438]"
           }`}
-          onClick={(prev) => {
-            if (general.font === 12) {
+          onClick={() => {
+            if (general.font === 18) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
-                font: 12,
+                font: 18,
               };
             });
           }}
@@ -452,16 +463,16 @@ export default function Panel({ general, setGeneral }: Prop) {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.font === 16 && "bg-[#333438]"
+            general.font === 24 && "bg-[#333438]"
           }`}
-          onClick={(prev) => {
-            if (general.font === 16) {
+          onClick={() => {
+            if (general.font === 24) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
-                font: 16,
+                font: 24,
               };
             });
           }}
@@ -472,16 +483,16 @@ export default function Panel({ general, setGeneral }: Prop) {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.font === 20 && "bg-[#333438]"
+            general.font === 36 && "bg-[#333438]"
           }`}
-          onClick={(prev) => {
-            if (general.font === 20) {
+          onClick={() => {
+            if (general.font === 36) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
-                font: 20,
+                font: 36,
               };
             });
           }}
@@ -492,16 +503,16 @@ export default function Panel({ general, setGeneral }: Prop) {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.font === 24 && "bg-[#333438]"
+            general.font === 44 && "bg-[#333438]"
           }`}
-          onClick={(prev) => {
-            if (general.font === 24) {
+          onClick={() => {
+            if (general.font === 44) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
-                font: 24,
+                font: 44,
               };
             });
           }}

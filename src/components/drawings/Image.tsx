@@ -24,6 +24,7 @@ export default React.forwardRef<HTMLDivElement, ImageProp>(function Image(
     dispatch({
       id,
       loc: {
+        id,
         x: pos.x,
         y: pos.y,
         width,

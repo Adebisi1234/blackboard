@@ -20,6 +20,7 @@ export type ArrowProp = {
   strokeWidth?: number;
   type: "arrow";
   highlight?: boolean;
+  dash: "draw" | "solid" | "dashed" | "dotted";
 };
 
 export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
@@ -65,7 +66,6 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
         setHovered(true);
       }}
       onMouseLeave={() => setHovered(false)}
-      opacity={opacity}
       ref={activeCompRef}
     >
       <g
@@ -73,6 +73,7 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
         onMouseOver={() => {
           setHovered(true);
         }}
+        opacity={opacity}
         onMouseLeave={() => setHovered(false)}
       >
         <path

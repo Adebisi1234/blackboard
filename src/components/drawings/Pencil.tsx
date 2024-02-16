@@ -62,7 +62,6 @@ export default React.forwardRef<SVGSVGElement, PencilProp>(function Pencil(
   return (
     <svg
       id={`${id}`}
-      opacity={opacity}
       ref={activeCompRef}
       onMouseOver={() => {
         setHovered(true);
@@ -71,6 +70,7 @@ export default React.forwardRef<SVGSVGElement, PencilProp>(function Pencil(
     >
       <g
         id={`${id}`}
+        opacity={opacity}
         onMouseOver={() => {
           setHovered(true);
         }}
@@ -89,6 +89,8 @@ export default React.forwardRef<SVGSVGElement, PencilProp>(function Pencil(
           strokeDasharray={dash}
           fill="none"
           className="z-20"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         ></path>
         {(hovered || highlight) && activeTool === "pointer" && (
           <path

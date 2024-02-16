@@ -5,8 +5,6 @@ import { type PencilProp } from "../components/drawings/Pencil";
 import { type PointerProp } from "../components/drawings/Pointer";
 import { type TextProp } from "../components/drawings/Text";
 import { type ShapesProp } from "../components/drawings/Shapes";
-import { type EraserProp } from "../components/drawings/Eraser";
-import { type HandProp } from "../components/drawings/Hand";
 
 export type ActiveTool =
   | "pointer"
@@ -58,8 +56,6 @@ export type Drawings = (
   | PointerProp
   | TextProp
   | ShapesProp
-  | EraserProp
-  | HandProp
 )[];
 export type Location = {
   x: number;
