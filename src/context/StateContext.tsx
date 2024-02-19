@@ -16,7 +16,6 @@ export function LocationProvider({
   children: JSX.Element | JSX.Element[];
 }) {
   const [Location, dispatch] = useReducer(locationReducer, []);
-  console.log(Location);
 
   return (
     <LocationContext.Provider value={Location}>

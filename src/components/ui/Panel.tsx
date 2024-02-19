@@ -446,13 +446,14 @@ export default function Panel({ general, setGeneral }: Prop) {
             general.font === 18 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.font === 18) {
+            if (general.font === 18 && general.strokeWidth === 2) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
                 font: 18,
+                strokeWidth: 2,
               };
             });
           }}
@@ -466,13 +467,14 @@ export default function Panel({ general, setGeneral }: Prop) {
             general.font === 24 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.font === 24) {
+            if (general.font === 24 && general.strokeWidth === 3.5) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
                 font: 24,
+                strokeWidth: 3.5,
               };
             });
           }}
@@ -486,13 +488,14 @@ export default function Panel({ general, setGeneral }: Prop) {
             general.font === 36 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.font === 36) {
+            if (general.font === 36 && general.strokeWidth === 5) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
                 font: 36,
+                strokeWidth: 5,
               };
             });
           }}
@@ -506,13 +509,14 @@ export default function Panel({ general, setGeneral }: Prop) {
             general.font === 44 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.font === 44) {
+            if (general.font === 44 && general.strokeWidth === 10) {
               return;
             }
             setGeneral((prev) => {
               return {
                 ...prev,
                 font: 44,
+                strokeWidth: 10,
               };
             });
           }}

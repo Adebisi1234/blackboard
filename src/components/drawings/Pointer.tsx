@@ -32,10 +32,10 @@ export default function Pointer({
   const setHighlighted = useHighlighted();
   useEffect(() => {
     setHighlighted(CompInRange(location, pos, width, height));
-
     return () => setHighlighted([]);
   }, [width, height, pos]);
 
+  console.log(pos);
   return (
     <>
       {highlight && (
@@ -58,7 +58,7 @@ export default function Pointer({
   );
 }
 
-function CompInRange(
+export function CompInRange(
   location: Location[],
   pos: PointerProp["pos"],
   width: number,

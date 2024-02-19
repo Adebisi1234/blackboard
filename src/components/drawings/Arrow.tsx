@@ -17,22 +17,14 @@ export type ArrowProp = {
     y: number;
   };
   opacity: number;
-  strokeWidth?: number;
+  strokeWidth: number;
   type: "arrow";
   highlight?: boolean;
   dash: "draw" | "solid" | "dashed" | "dotted";
 };
 
 export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
-  {
-    startPos,
-    endPos,
-    id,
-    color,
-    opacity,
-    strokeWidth = 3,
-    highlight,
-  }: ArrowProp,
+  { startPos, endPos, id, color, opacity, strokeWidth, highlight }: ArrowProp,
   activeCompRef
 ) {
   const dispatch = useLocationDispatch();

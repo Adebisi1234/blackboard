@@ -43,7 +43,7 @@ export function addDrawing({
             x: e.clientX,
             y: e.clientY,
           },
-          strokeWidth: 3,
+          strokeWidth: general.strokeWidth,
           width: 0,
           id: drawingId.current,
         } satisfies PointerProp;
@@ -69,6 +69,7 @@ export function addDrawing({
           opacity: general.opacity,
           dash: general.dash,
           scale: 1,
+          strokeWidth: general.strokeWidth,
           type: "pencil",
         } satisfies PencilProp;
         return temp;
@@ -92,6 +93,7 @@ export function addDrawing({
             y: e.clientY,
           },
           opacity: general.opacity,
+          strokeWidth: general.strokeWidth,
           dash: general.dash,
         } satisfies ArrowProp;
         return temp;

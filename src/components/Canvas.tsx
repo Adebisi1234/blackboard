@@ -18,14 +18,11 @@ import Button from "./ui/Button";
 import { createPortal } from "react-dom";
 import { NoteProp } from "./drawings/Note";
 import Minimap from "./ui/Minimap";
+import { ChevronNe } from "./ui/Svg";
 type Prop = {
   activeTool: ActiveTool;
   general: General;
   setActiveTool: React.Dispatch<React.SetStateAction<ActiveTool>>;
-};
-type Pan = {
-  x: number;
-  y: number;
 };
 
 const ActiveToolProvider = createContext<ActiveTool>("pointer");
@@ -44,10 +41,21 @@ export const useDrawingDispatch = () => useContext(DrawingDispatch);
 export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const [drawing, setDrawing] = useState<Drawings>([]);
   const [highlighted, setHighlighted] = useState<number[]>([]);
+  const [miniCompActive, setMiniCompActive] = useState(false);
   const posRef = useRef({ x: 0, y: 0 });
   const [isToolActive, setIsToolActive] = useState(false);
   const activeCompRef = useRef<HTMLElement | number[] | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const minX = 0 - (canvasRef.current?.getBoundingClientRect().x ?? 0);
+  const minY = 0 - (canvasRef.current?.getBoundingClientRect().y ?? 0);
+  const totalWidth = innerWidth + Math.abs(posRef.current.x);
+  const totalHeight = innerHeight + Math.abs(posRef.current.y);
+  console.log(minX, minY);
+  useEffect(() => {
+    // wait for document.getElementById("minimap") to not be null
+    setMiniCompActive(true);
+  }, []);
+
   useEffect(() => {
     if (highlighted.length === 0) {
       return;
@@ -79,6 +87,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
             color: general.color,
             dash: general.dash,
             opacity: general.opacity,
+            strokeWidth: general.strokeWidth,
           };
         });
         return temp;
@@ -93,6 +102,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
         color: general.color,
         dash: general.dash,
         opacity: general.opacity,
+        strokeWidth: general.strokeWidth,
       };
       if (temp[id].type === "note" || temp[id].type === "text") {
         (temp[id] as NoteProp).font = general.font;
@@ -115,11 +125,14 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const drawingId = useRef(0);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!canvasRef.current) {
+      return;
+    }
     setIsToolActive(true);
     addDrawing({
       e: {
-        clientX: e.clientX - canvasRef.current!.getBoundingClientRect().x,
-        clientY: e.clientY - canvasRef.current!.getBoundingClientRect().y,
+        clientX: e.clientX - canvasRef.current.getBoundingClientRect().x,
+        clientY: e.clientY - canvasRef.current.getBoundingClientRect().y,
       },
       activeTool,
       setDrawing,
@@ -133,14 +146,17 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
     }
   };
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!canvasRef.current) {
+      return;
+    }
     if (!isToolActive) {
       return;
     }
 
     modifyDrawing({
       e: {
-        clientX: e.clientX - canvasRef.current!.getBoundingClientRect().x,
-        clientY: e.clientY - canvasRef.current!.getBoundingClientRect().y,
+        clientX: e.clientX - canvasRef.current.getBoundingClientRect().x,
+        clientY: e.clientY - canvasRef.current.getBoundingClientRect().y,
       },
       activeTool,
       setDrawing,
@@ -157,6 +173,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
       canvasRef.current.style.transform = `translate(${posRef.current.x}px, ${posRef.current.y}px)`;
     }
   };
+
   const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     cleanUpDrawing({
       e,
@@ -191,6 +208,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
       </Button>
     );
   }
+
   const components = drawing.map((x) =>
     drawOnCanvas(x, activeCompRef as RefObject<HTMLElement>)
   );
@@ -209,10 +227,18 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
           <Highlighted.Provider value={setHighlighted}>
             <DrawingDispatch.Provider value={setDrawing}>
               <DrawingCtx.Provider value={drawing}>
-                <Minimap
-                  translateX={posRef.current.x}
-                  translateY={posRef.current.y}
-                />
+                {miniCompActive &&
+                  createPortal(
+                    <Minimap
+                      minX={(minX / totalWidth) * 200}
+                      minY={(minY / totalHeight) * 150}
+                      totalWidth={totalWidth}
+                      totalHeight={totalHeight}
+                      minHeight={(innerHeight / totalHeight) * 150}
+                      minWidth={(innerWidth / totalWidth) * 200}
+                    />,
+                    document.getElementById("minimap")!
+                  )}
                 {components}
                 {(posRef.current.x > 500 || posRef.current.y > 500) &&
                   createPortal(
