@@ -41,7 +41,11 @@ export default function Overlay({
       <div className="relative flex items-center justify-between h-10">
         <Zoom />
 
-        <Controls activeTool={activeTool} setActiveTool={setActiveTool} />
+        <Controls
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+          setGeneral={setGeneral}
+        />
 
         <Help />
       </div>

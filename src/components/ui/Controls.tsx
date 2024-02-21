@@ -1,4 +1,4 @@
-import { ActiveTool } from "../../types/general";
+import { ActiveTool, General } from "../../types/general";
 import Button from "./Button";
 import {
   Arrow,
@@ -15,8 +15,13 @@ import {
 type Prop = {
   activeTool: ActiveTool;
   setActiveTool: React.Dispatch<React.SetStateAction<ActiveTool>>;
+  setGeneral: React.Dispatch<React.SetStateAction<General>>;
 };
-export default function Controls({ activeTool, setActiveTool }: Prop) {
+export default function Controls({
+  activeTool,
+  setActiveTool,
+  setGeneral,
+}: Prop) {
   return (
     <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1">
       <Button
@@ -125,10 +130,10 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
         <Note />
       </Button>
       <Button
-        className={`rounded-lg hover:bg-[#2e3034] ${
+        className={`rounded-lg relative hover:bg-[#2e3034] ${
           activeTool === "image" && "bg-[#4387f4]"
         }`}
-        tool="image"
+        tool="pointer"
         onClick={(e) => {
           e.currentTarget.getAttribute("data-tool");
           setActiveTool(
@@ -137,7 +142,43 @@ export default function Controls({ activeTool, setActiveTool }: Prop) {
           );
         }}
       >
-        <ImageIcon />
+        <label htmlFor="image">
+          <ImageIcon />
+        </label>
+        <input
+          type="file"
+          name="file"
+          id="image"
+          className="absolute size-full inset-0 z-1 invisible"
+          tabIndex={-1}
+          multiple={false}
+          accept=".jpg,.png"
+          onChange={(e) => {
+            if (!e.target.files) return;
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(e.target.files[0]);
+            const imageSrc = e.target.files[0];
+            img.addEventListener("load", () => {
+              console.log(img.naturalHeight, innerHeight);
+              console.log(img.naturalWidth, innerWidth);
+              setGeneral((prev) => {
+                return {
+                  ...prev,
+                  image: [
+                    ...prev.image,
+                    {
+                      id: imageSrc.lastModified,
+                      src: img.src,
+                      alt: "Image uploaded by user",
+                      width: img.naturalWidth,
+                      height: img.naturalHeight,
+                    },
+                  ],
+                };
+              });
+            });
+          }}
+        />
       </Button>
       <Button
         className={`rounded-lg hover:bg-[#2e3034] ${

@@ -1,6 +1,7 @@
 import {
   RefObject,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -14,11 +15,12 @@ import {
   modifyDrawing,
   removeComp,
 } from "../utils/drawings";
-import Button from "./ui/Button";
+
 import { createPortal } from "react-dom";
 import { NoteProp } from "./drawings/Note";
 import Minimap from "./ui/Minimap";
-import { ChevronNe } from "./ui/Svg";
+
+import BackToContent from "./ui/BackToContent";
 type Prop = {
   activeTool: ActiveTool;
   general: General;
@@ -41,8 +43,9 @@ export const useDrawingDispatch = () => useContext(DrawingDispatch);
 export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const [drawing, setDrawing] = useState<Drawings>([]);
   const [highlighted, setHighlighted] = useState<number[]>([]);
-  const [miniCompActive, setMiniCompActive] = useState(false);
+
   const posRef = useRef({ x: 0, y: 0 });
+  const drawingId = useRef(0);
   const [isToolActive, setIsToolActive] = useState(false);
   const activeCompRef = useRef<HTMLElement | number[] | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -50,11 +53,6 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
   const minY = 0 - (canvasRef.current?.getBoundingClientRect().y ?? 0);
   const totalWidth = innerWidth + Math.abs(posRef.current.x);
   const totalHeight = innerHeight + Math.abs(posRef.current.y);
-  console.log(minX, minY);
-  useEffect(() => {
-    // wait for document.getElementById("minimap") to not be null
-    setMiniCompActive(true);
-  }, []);
 
   useEffect(() => {
     if (highlighted.length === 0) {
@@ -122,92 +120,85 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
     setHighlighted([]);
   }
 
-  const drawingId = useRef(0);
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!canvasRef.current) {
-      return;
-    }
-    setIsToolActive(true);
-    addDrawing({
-      e: {
-        clientX: e.clientX - canvasRef.current.getBoundingClientRect().x,
-        clientY: e.clientY - canvasRef.current.getBoundingClientRect().y,
-      },
-      activeTool,
-      setDrawing,
-      drawingId,
-      general,
-    });
-    if (activeTool === "eraser") {
-      // First implementation
-      const id = +(e.target as HTMLElement).id ?? -1;
-      removeComp(id, setDrawing);
-    }
-  };
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!canvasRef.current) {
-      return;
-    }
-    if (!isToolActive) {
-      return;
-    }
-
-    modifyDrawing({
-      e: {
-        clientX: e.clientX - canvasRef.current.getBoundingClientRect().x,
-        clientY: e.clientY - canvasRef.current.getBoundingClientRect().y,
-      },
-      activeTool,
-      setDrawing,
-      drawingId,
-      general,
-    });
-    if (activeTool === "hand") {
-      // First implementation
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (!canvasRef.current) {
         return;
       }
-      posRef.current.x += e.movementX;
-      posRef.current.y += e.movementY;
-      canvasRef.current.style.transform = `translate(${posRef.current.x}px, ${posRef.current.y}px)`;
-    }
-  };
-
-  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    cleanUpDrawing({
-      e,
-      activeTool,
-      setDrawing,
-      drawingId,
-      general,
-    });
-    if (!(activeTool === "pointer" || activeTool === "hand")) {
-      drawingId.current++;
-    }
-    setActiveTool((prev) => {
-      if (prev === "image" || prev === "note" || prev === "text") {
-        return "pointer";
+      setIsToolActive(true);
+      addDrawing({
+        e: {
+          clientX: e.clientX - canvasRef.current.getBoundingClientRect().x,
+          clientY: e.clientY - canvasRef.current.getBoundingClientRect().y,
+        },
+        activeTool,
+        setDrawing,
+        drawingId,
+        general,
+      });
+      if (activeTool === "eraser") {
+        // First implementation
+        const id = +(e.target as HTMLElement).id ?? -1;
+        removeComp(id, setDrawing);
       }
-      return prev;
-    });
-    setIsToolActive(false);
-  };
+    },
+    [activeTool, isToolActive]
+  );
 
-  function BackToContent() {
-    return (
-      <Button
-        className="!absolute px-2 py-1 mt-2 rounded-md top-full left-2 w-fit bg-[#333438] z-20"
-        onMouseDown={() => {
-          if (!canvasRef.current) return;
-          canvasRef.current.style.transform = "translate(0,0)";
-          posRef.current = { x: 0, y: 0 };
-        }}
-      >
-        <p>Back to Content</p>
-      </Button>
-    );
-  }
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (!canvasRef.current) {
+        return;
+      }
+      if (!isToolActive) {
+        return;
+      }
+
+      modifyDrawing({
+        e: {
+          clientX: e.clientX - canvasRef.current.getBoundingClientRect().x,
+          clientY: e.clientY - canvasRef.current.getBoundingClientRect().y,
+        },
+        activeTool,
+        setDrawing,
+        drawingId,
+        general,
+      });
+      if (activeTool === "hand") {
+        // First implementation
+        if (!canvasRef.current) {
+          return;
+        }
+        posRef.current.x += e.movementX;
+        posRef.current.y += e.movementY;
+        canvasRef.current.style.transform = `translate(${posRef.current.x}px, ${posRef.current.y}px)`;
+      }
+    },
+    [activeTool, isToolActive]
+  );
+
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      cleanUpDrawing({
+        e,
+        activeTool,
+        setDrawing,
+        drawingId,
+        general,
+      });
+      if (!(activeTool === "pointer" || activeTool === "hand")) {
+        drawingId.current++;
+      }
+      setActiveTool((prev) => {
+        if (prev === "image" || prev === "note" || prev === "text") {
+          return "pointer";
+        }
+        return prev;
+      });
+      setIsToolActive(false);
+    },
+    [activeTool, isToolActive]
+  );
 
   const components = drawing.map((x) =>
     drawOnCanvas(x, activeCompRef as RefObject<HTMLElement>)
@@ -227,7 +218,7 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
           <Highlighted.Provider value={setHighlighted}>
             <DrawingDispatch.Provider value={setDrawing}>
               <DrawingCtx.Provider value={drawing}>
-                {miniCompActive &&
+                {document.getElementById("minimap") &&
                   createPortal(
                     <Minimap
                       minX={(minX / totalWidth) * 200}
@@ -242,7 +233,10 @@ export default function Canvas({ activeTool, general, setActiveTool }: Prop) {
                 {components}
                 {(posRef.current.x > 500 || posRef.current.y > 500) &&
                   createPortal(
-                    <BackToContent />,
+                    <BackToContent
+                      posRef={posRef.current}
+                      canvasRef={canvasRef.current!}
+                    />,
                     document.getElementById("pages")!
                   )}
               </DrawingCtx.Provider>
