@@ -1,11 +1,3 @@
-import { type ArrowProp } from "../components/drawings/Arrow";
-import { type ImageProp } from "../components/drawings/Image";
-import { type NoteProp } from "../components/drawings/Note";
-import { type PencilProp } from "../components/drawings/Pencil";
-import { type PointerProp } from "../components/drawings/Pointer";
-import { type TextProp } from "../components/drawings/Text";
-import { type ShapesProp } from "../components/drawings/Shapes";
-
 export type ActiveTool =
   | "pointer"
   | "hand"
@@ -39,28 +31,111 @@ export type General = {
   dash: "draw" | "solid" | "dashed" | "dotted";
   scale: number;
   font: 18 | 24 | 36 | 44;
-  image: {
-    id: number;
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-  }[];
+  highlight: boolean;
 };
 
-export type Drawings = (
-  | ArrowProp
-  | ImageProp
-  | NoteProp
-  | PencilProp
-  | PointerProp
-  | TextProp
-  | ShapesProp
-)[];
+export type Drawings<T = undefined> = ({
+  id: number;
+  prop: T extends "arrow"
+    ? ArrowProp
+    : T extends "image"
+    ? ImageProp
+    : T extends "note"
+    ? NoteProp
+    : T extends "pencil"
+    ? PencilProp
+    : T extends "pointer"
+    ? PointerProp
+    : T extends "text"
+    ? TextProp
+    : T extends "shapes"
+    ? ShapesProp
+    :
+        | ArrowProp
+        | ImageProp
+        | NoteProp
+        | PencilProp
+        | PointerProp
+        | TextProp
+        | ShapesProp;
+  pos: Partial<Location>;
+} & General)[];
+
 export type Location = {
   x: number;
   y: number;
   width: number;
-  height: number;
   id: number;
+  height: number;
+};
+
+export type ShapesProp = {
+  type: "shape";
+};
+
+export type TextProp = {
+  type: "text";
+  value?: string | undefined;
+};
+
+export type PointerProp = {
+  startPos: {
+    x: number;
+    y: number;
+  };
+  width: number;
+  height: number;
+  type: "pointer";
+  pos: {
+    x: number;
+    y: number;
+  };
+};
+
+export type PencilProp = {
+  path: (
+    | {
+        func: "M";
+        x: number;
+        y: number;
+      }
+    | {
+        func: "L";
+        x: number;
+        y: number;
+      }
+  )[];
+  type: "pencil";
+};
+export type NoteProp = {
+  type: "note";
+  value?: string | undefined;
+};
+
+export type ArrowProp = {
+  startPos: {
+    x: number;
+    y: number;
+  };
+  endPos: {
+    x: number;
+    y: number;
+  };
+  angle: number;
+  type: "arrow";
+};
+export type ImageProp = {
+  src: string;
+  type: "image";
+  alt: string;
+  width: number;
+  height: number;
+};
+
+export type ImageType = {
+  id: number;
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
 };

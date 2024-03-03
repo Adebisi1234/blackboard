@@ -1,44 +1,25 @@
-import React, { useEffect } from "react";
-import { useLocationDispatch } from "../../context/StateContext";
+import { forwardRef } from "react";
+import { type Drawings } from "../../types/general";
 
-export type ImageProp = {
-  src: string;
-  type: "image";
-  alt: string;
-  pos: {
-    x: number;
-    y: number;
-  };
-  width: number;
-  height: number;
-  opacity: number;
-  highlight?: boolean;
-  id: number;
-};
-export default React.forwardRef<HTMLDivElement, ImageProp>(function Image(
-  { src, alt, pos, width, height, opacity, highlight = false, id }: ImageProp,
+export default forwardRef<HTMLDivElement, Drawings<"image">[0]>(function Image(
+  prop,
   activeCompRef
 ) {
-  const dispatch = useLocationDispatch();
-  useEffect(() => {
-    dispatch({
-      id,
-      loc: {
-        id,
-        x: pos.x,
-        y: pos.y,
-        width,
-        height,
-      },
-    });
-  }, [pos, width, height]);
+  const { src, alt, width, height } = prop.prop;
+
   return (
     <div
       ref={activeCompRef}
-      className={`left-[${pos.x}px] top-[${pos.y}px] -translate-x-1/2 -translate-y-1/2 opacity-[${opacity}]`}
-      id={`${id}`}
+      className={`left-[${prop.pos.x}px] top-[${prop.pos.y}px] -translate-x-1/2 -translate-y-1/2 opacity-[${prop.opacity}]`}
+      id={`${prop.id}`}
     >
-      <img src={src} alt={alt} width={width} height={height} id={`${id}`} />
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        id={`${prop.id}`}
+      />
     </div>
   );
 });

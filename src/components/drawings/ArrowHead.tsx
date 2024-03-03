@@ -1,5 +1,4 @@
-export interface ArrowHeadProp
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ArrowHeadProp extends React.SVGAttributes<SVGPathElement> {
   x: number;
   y: number;
   angle: number;

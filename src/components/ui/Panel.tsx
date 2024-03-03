@@ -1,5 +1,3 @@
-import { useRef } from "react";
-import { General } from "../../types/general";
 import Button from "./Button";
 import Icon from "./Icon";
 import {
@@ -16,12 +14,10 @@ import {
   SizeS,
   SizeXL,
 } from "./Svg";
+import { useGeneral } from "../../store/Store";
 
-type Prop = {
-  general: General;
-  setGeneral: React.Dispatch<React.SetStateAction<General>>;
-};
-export default function Panel({ general, setGeneral }: Prop) {
+export default function Panel() {
+  const { general, setGeneral } = useGeneral();
   return (
     <div className="w-[148px] max-w-[148px] relative mr-2 mb-[7px] border-black border bg-[#232529]  mt-2 rounded-lg">
       <div className="grid grid-cols-4 overflow-hidden">
@@ -33,11 +29,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#ffffff") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#ffffff",
-              };
+            setGeneral({
+              color: "#ffffff",
             });
           }}
           id="white"
@@ -53,11 +46,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#9398b0") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#9398b0",
-              };
+            setGeneral({
+              color: "#9398b0",
             });
           }}
           id="grey"
@@ -73,11 +63,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#e599f7") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#e599f7",
-              };
+            setGeneral({
+              color: "#e599f7",
             });
           }}
           id="light-violet"
@@ -93,11 +80,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#ae3ec9") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#ae3ec9",
-              };
+            setGeneral({
+              color: "#ae3ec9",
             });
           }}
           id="Violet"
@@ -113,11 +97,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#4263eb") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#4263eb",
-              };
+            setGeneral({
+              color: "#4263eb",
             });
           }}
           id="blue"
@@ -133,11 +114,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#4dabf7") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#4dabf7",
-              };
+            setGeneral({
+              color: "#4dabf7",
             });
           }}
           id="light-blue"
@@ -153,11 +131,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#ffc034") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#ffc034",
-              };
+            setGeneral({
+              color: "#ffc034",
             });
           }}
           id="yellow"
@@ -173,11 +148,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#f76707") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#f76707",
-              };
+            setGeneral({
+              color: "#f76707",
             });
           }}
           id="orange"
@@ -193,11 +165,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#099268") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#099268",
-              };
+            setGeneral({
+              color: "#099268",
             });
           }}
           id="green"
@@ -213,11 +182,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#40c057") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#40c057",
-              };
+            setGeneral({
+              color: "#40c057",
             });
           }}
           id="light-green"
@@ -233,11 +199,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#ff8787") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#ff8787",
-              };
+            setGeneral({
+              color: "#ff8787",
             });
           }}
           id="light-red"
@@ -253,11 +216,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.color === "#e03131") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                color: "#e03131",
-              };
+            setGeneral({
+              color: "#e03131",
             });
           }}
           id="red"
@@ -273,10 +233,9 @@ export default function Panel({ general, setGeneral }: Prop) {
           max={1}
           step={0.1}
           onInput={(e) =>
-            setGeneral((prev) => ({
-              ...prev,
+            setGeneral({
               opacity: +(e.target as HTMLInputElement).value,
-            }))
+            })
           }
         ></input>
       </Button>
@@ -289,11 +248,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.fill === "none") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                fill: "none",
-              };
+            setGeneral({
+              fill: "none",
             });
           }}
         >
@@ -309,11 +265,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.fill === "semi") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                fill: "semi",
-              };
+            setGeneral({
+              fill: "semi",
             });
           }}
         >
@@ -329,11 +282,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.fill === "solid") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                fill: "solid",
-              };
+            setGeneral({
+              fill: "solid",
             });
           }}
         >
@@ -349,11 +299,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.fill === "pattern") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                fill: "pattern",
-              };
+            setGeneral({
+              fill: "pattern",
             });
           }}
         >
@@ -369,11 +316,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.dash === "draw") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                dash: "draw",
-              };
+            setGeneral({
+              dash: "draw",
             });
           }}
         >
@@ -389,11 +333,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.dash === "dashed") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                dash: "dashed",
-              };
+            setGeneral({
+              dash: "dashed",
             });
           }}
         >
@@ -409,11 +350,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.dash === "dotted") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                dash: "dotted",
-              };
+            setGeneral({
+              dash: "dotted",
             });
           }}
         >
@@ -429,11 +367,8 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.dash === "solid") {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                dash: "solid",
-              };
+            setGeneral({
+              dash: "solid",
             });
           }}
         >
@@ -449,12 +384,9 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.font === 18 && general.strokeWidth === 2) {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                font: 18,
-                strokeWidth: 2,
-              };
+            setGeneral({
+              font: 18,
+              strokeWidth: 2,
             });
           }}
         >
@@ -470,12 +402,9 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.font === 24 && general.strokeWidth === 3.5) {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                font: 24,
-                strokeWidth: 3.5,
-              };
+            setGeneral({
+              font: 24,
+              strokeWidth: 3.5,
             });
           }}
         >
@@ -491,12 +420,9 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.font === 36 && general.strokeWidth === 5) {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                font: 36,
-                strokeWidth: 5,
-              };
+            setGeneral({
+              font: 36,
+              strokeWidth: 5,
             });
           }}
         >
@@ -512,12 +438,9 @@ export default function Panel({ general, setGeneral }: Prop) {
             if (general.font === 44 && general.strokeWidth === 10) {
               return;
             }
-            setGeneral((prev) => {
-              return {
-                ...prev,
-                font: 44,
-                strokeWidth: 10,
-              };
+            setGeneral({
+              font: 44,
+              strokeWidth: 10,
             });
           }}
         >

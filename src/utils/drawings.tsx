@@ -1,89 +1,55 @@
-import Arrow, { type ArrowProp } from "../components/drawings/Arrow";
-import Text, { type TextProp } from "../components/drawings/Text";
-import Image, { type ImageProp } from "../components/drawings/Image";
-import Note, { type NoteProp } from "../components/drawings/Note";
-import Pencil, { type PencilProp } from "../components/drawings/Pencil";
-import Pointer, { type PointerProp } from "../components/drawings/Pointer";
-import Shapes, { type ShapesProp } from "../components/drawings/Shapes";
-import { type Drawings } from "../types/general";
-import { type ActiveTool, type General } from "../types/general";
+import Arrow from "../components/drawings/Arrow";
+import Text from "../components/drawings/Text";
+import Image from "../components/drawings/Image";
+import Note from "../components/drawings/Note";
+import Pencil from "../components/drawings/Pencil";
+import Pointer from "../components/drawings/Pointer";
+import Shapes from "../components/drawings/Shapes";
+import {
+  General,
+  type ImageType,
+  type Drawings,
+  ActiveTool,
+} from "../types/general";
 import { Ref } from "react";
+import {
+  useActiveTool,
+  useDrawing,
+  useGeneral,
+  useImage,
+} from "../store/Store";
+import { getDiff, getRelativeMin } from "./math";
 
 type ModifyDrawing = {
   e: { clientX: number; clientY: number };
-  activeTool: ActiveTool;
-  setDrawing: React.Dispatch<React.SetStateAction<Drawings>>;
   drawingId: React.MutableRefObject<number>;
+  drawing: Drawings;
+  setDrawing?: (payload: Drawings[0]) => void;
+  updateDrawing?: (id: number, payload: Drawings[0]) => void;
   general: General;
+  image?: ImageType;
+  clearImage?: () => void;
+  activeTool: ActiveTool;
+  clearPointer?: (id: number) => void;
 };
 
 export function addDrawing({
   e,
+  drawingId,
   activeTool,
   setDrawing,
-  drawingId,
   general,
+  image,
+  clearImage,
 }: ModifyDrawing) {
   switch (activeTool) {
     case "hand":
     case "eraser":
       break;
-    case "pointer": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          type: "pointer",
-          height: 0,
-          highlight: true,
-          pos: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-          startPos: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-          strokeWidth: general.strokeWidth,
-          width: 0,
-          id: drawingId.current,
-        } satisfies PointerProp;
-        return temp;
-      });
-      // The magic
-      break;
-    }
-
-    case "pencil": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          color: general.color,
-          id: drawingId.current,
-          path: [
-            {
-              func: "M",
-              x: e.clientX,
-              y: e.clientY,
-            },
-          ],
-          opacity: general.opacity,
-          dash: general.dash,
-          scale: 1,
-          strokeWidth: general.strokeWidth,
-          type: "pencil",
-        } satisfies PencilProp;
-        return temp;
-      });
-      break;
-    }
-
     case "arrow": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          id: drawingId.current,
-          type: "arrow",
-          color: general.color,
+      const newArrowComp = {
+        ...general,
+        prop: {
           startPos: {
             x: e.clientX,
             y: e.clientY,
@@ -92,87 +58,135 @@ export function addDrawing({
             x: e.clientX,
             y: e.clientY,
           },
-          opacity: general.opacity,
-          strokeWidth: general.strokeWidth,
-          dash: general.dash,
-        } satisfies ArrowProp;
-        return temp;
-      });
+          type: "arrow",
+          angle: 0,
+        },
+        id: drawingId.current,
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      } satisfies Drawings<"arrow">[0];
+      setDrawing!(newArrowComp);
+      break;
+    }
+
+    case "pencil": {
+      const newPencilComp = {
+        id: drawingId.current,
+        ...general,
+        prop: {
+          type: "pencil",
+          path: [
+            {
+              func: "M",
+              x: e.clientX,
+              y: e.clientY,
+            },
+          ],
+        },
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      } satisfies Drawings<"pencil">[0];
+      setDrawing!(newPencilComp);
+      break;
+    }
+
+    case "pointer": {
+      const newPointerComp = {
+        id: drawingId.current,
+        ...general,
+        prop: {
+          type: "pointer",
+          startPos: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+          pos: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+          width: 0,
+          height: 0,
+        },
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      } satisfies Drawings<"pointer">[0];
+      setDrawing!(newPointerComp);
       break;
     }
     case "text": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          id: drawingId.current,
+      const newTextComp = {
+        id: drawingId.current,
+        ...general,
+        prop: {
           type: "text",
-          color: general.color,
-          pos: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-          opacity: general.opacity,
-          font: general.font,
-        } satisfies TextProp;
-        return temp;
-      });
+          value: "",
+        },
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      } satisfies Drawings<"text">[0];
+      setDrawing!(newTextComp);
       break;
     }
     case "note": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
-          color: general.color,
-          id: drawingId.current,
-          pos: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-          opacity: general.opacity,
+      const newNoteComp = {
+        ...general,
+        id: drawingId.current,
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+        prop: {
           type: "note",
-          font: general.font,
-        } satisfies NoteProp;
-        return temp;
-      });
+          value: "",
+        },
+      } satisfies Drawings<"note">[0];
+      setDrawing!(newNoteComp);
       break;
     }
     case "image": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
+      if (!image) {
+        break;
+      }
+      const newImageComp = {
+        id: drawingId.current,
+        ...general,
+        prop: {
           type: "image",
-          src:
-            getImage({ image: general.image, id: drawingId.current })?.src ??
-            "",
-          alt:
-            getImage({ image: general.image, id: drawingId.current })?.alt ??
-            "",
-          pos: {
-            x: e.clientX,
-            y: e.clientY,
-          },
-          width:
-            getImage({ image: general.image, id: drawingId.current })?.width ??
-            0,
-          height:
-            getImage({ image: general.image, id: drawingId.current })?.height ??
-            0,
-          opacity: general.opacity,
-          id: drawingId.current,
-        } satisfies ImageProp;
-        return temp;
-      });
+          src: image.src,
+          alt: image.alt,
+          width: image.width,
+          height: image.height,
+        },
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      } satisfies Drawings<"image">[0];
+      setDrawing!(newImageComp);
+      clearImage!();
       break;
     }
     case "shape": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        temp[drawingId.current] = {
+      const newShapeComp = {
+        id: drawingId.current,
+        ...general,
+        prop: {
           type: "shape",
-          id: drawingId.current,
-        } satisfies ShapesProp;
-        return temp;
-      });
+        },
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      } satisfies Drawings<"shape">[0];
+      setDrawing!(newShapeComp);
       break;
     }
     default: {
@@ -190,9 +204,10 @@ export function addDrawing({
 
 export function modifyDrawing({
   e,
-  activeTool,
-  setDrawing,
   drawingId,
+  activeTool,
+  drawing,
+  updateDrawing,
   general,
 }: ModifyDrawing) {
   switch (activeTool) {
@@ -200,96 +215,108 @@ export function modifyDrawing({
     case "eraser":
       break;
     case "pointer": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        if (!temp[drawingId.current]) {
-          return temp;
-        }
-        const edit = { ...temp[drawingId.current] } as PointerProp;
-        if (e.clientX < edit.startPos.x) {
-          edit.pos.x = edit.startPos.x - getDiff(edit.startPos.x, e.clientX);
-          edit.width = getDiff(edit.startPos.x, e.clientX);
-        } else {
-          edit.width = e.clientX - edit.pos.x;
-        }
-        if (e.clientY < edit.startPos.y) {
-          edit.pos.y = edit.startPos.y - getDiff(edit.startPos.y, e.clientY);
-          edit.height = getDiff(edit.startPos.y, e.clientY);
-        } else {
-          edit.height = e.clientY - edit.pos.y;
-        }
-        temp[drawingId.current] = edit;
-        return temp;
-      });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+
+      const edit = { ...drawing[drawingId.current] } as Drawings<"pointer">[0];
+      if (e.clientX < edit.prop.startPos.x) {
+        edit.prop.pos.x =
+          edit.prop.startPos.x - getDiff(edit.prop.startPos.x, e.clientX);
+        edit.prop.width = getDiff(edit.prop.startPos.x, e.clientX);
+      } else {
+        edit.prop.width = e.clientX - edit.prop.pos.x;
+      }
+      if (e.clientY < edit.prop.startPos.y) {
+        edit.prop.pos.y =
+          edit.prop.startPos.y - getDiff(edit.prop.startPos.y, e.clientY);
+        edit.prop.height = getDiff(edit.prop.startPos.y, e.clientY);
+      } else {
+        edit.prop.height = e.clientY - edit.prop.pos.y;
+      }
+      updateDrawing!(drawingId.current, edit);
+
       // The magic
       break;
     }
 
     case "pencil": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        if (!temp[drawingId.current]) {
-          return temp;
-        }
-        const edit = { ...temp[drawingId.current] } as PencilProp;
-        edit.path = [
-          ...edit.path,
-          { func: "L", x: e.clientX, y: e.clientY },
-          { func: "M", x: e.clientX, y: e.clientY },
-        ];
-        temp[drawingId.current] = edit;
-        return temp;
-      });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+      const edit = { ...drawing[drawingId.current] } as Drawings<"pencil">[0];
+      edit.prop.path = [
+        ...edit.prop.path,
+        { func: "L", x: e.clientX, y: e.clientY },
+        { func: "M", x: e.clientX, y: e.clientY },
+      ];
+
+      updateDrawing!(drawingId.current, edit);
+
       break;
     }
 
     case "arrow": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        if (!temp[drawingId.current]) {
-          return temp;
-        }
-        const edit = { ...temp[drawingId.current] } as ArrowProp;
-        edit.endPos = {
-          x: e.clientX,
-          y: e.clientY,
-        };
-        temp[drawingId.current] = edit;
-        return temp;
-      });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+      const edit = { ...drawing[drawingId.current] } as Drawings<"arrow">[0];
+      edit.prop.endPos = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+      edit.pos = {
+        x: getRelativeMin(edit.prop.startPos.x, edit.prop.endPos.x),
+        y: getRelativeMin(edit.prop.startPos.y, edit.prop.endPos.y),
+        width: getDiff(edit.prop.startPos.x, edit.prop.endPos.x),
+        height: getDiff(edit.prop.startPos.y, edit.prop.endPos.y),
+      };
+      updateDrawing!(drawingId.current, edit);
       break;
     }
     case "text": {
-      // setDrawing((prev) => {
-      //   const temp = [...prev];
-      //   return temp;
-      // });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+      const edit = { ...drawing[drawingId.current] } as Drawings<"text">[0];
+      edit.pos = {
+        ...edit.pos,
+        x: e.clientX,
+        y: e.clientY,
+      };
+      updateDrawing!(drawingId.current, edit);
       break;
     }
     case "note": {
-      // setDrawing((prev) => {
-      //   const temp = [...prev];
-      //   return temp;
-      // });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+      const edit = { ...drawing[drawingId.current] } as Drawings<"note">[0];
+      edit.pos = {
+        ...edit.pos,
+        x: e.clientX,
+        y: e.clientY,
+      };
+      updateDrawing!(drawingId.current, edit);
       break;
     }
     case "image": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        if (!temp[drawingId.current]) {
-          return temp;
-        }
-        const edit = { ...temp[drawingId.current] } as ImageProp;
-        edit.pos = {
-          x: e.clientX,
-          y: e.clientY,
-        };
-        return temp;
-      });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+      const edit = { ...drawing[drawingId.current] } as Drawings<"image">[0];
+      edit.pos = {
+        ...edit.pos,
+        x: e.clientX,
+        y: e.clientY,
+        //Width and Height
+      };
+      updateDrawing!(drawingId.current, edit);
+
       break;
     }
     case "shape": {
-      // setDrawing((prev) => {
+      // setDrawing!((prev) => {
       //   const temp = [...prev];
       //   return temp;
       // });
@@ -310,21 +337,18 @@ export function modifyDrawing({
 
 export function cleanUpDrawing({
   e,
-  activeTool,
-  setDrawing,
   drawingId,
-  general,
+  activeTool,
+  drawing,
+  clearPointer,
 }: ModifyDrawing) {
   switch (activeTool) {
     case "pointer": {
-      setDrawing((prev) => {
-        const temp = [...prev];
-        if (!temp[drawingId.current]) {
-          return temp;
-        }
-        temp.splice(drawingId.current, 1);
-        return temp;
-      });
+      if (!drawing[drawingId.current]) {
+        break;
+      }
+      clearPointer!(drawingId.current);
+
       break;
     }
     // case "hand": {
@@ -363,13 +387,13 @@ export function drawOnCanvas(
   if (!comp) {
     return;
   }
-  switch (comp.type) {
+  switch (comp.prop.type) {
     case "arrow": {
       return (
         <Arrow
           ref={activeCompRef as Ref<SVGSVGElement>}
           key={comp.id}
-          {...(comp satisfies ArrowProp)}
+          {...(comp as Drawings<"arrow">[0])}
         />
       );
     }
@@ -379,7 +403,7 @@ export function drawOnCanvas(
         <Image
           ref={activeCompRef as Ref<HTMLDivElement>}
           key={comp.id}
-          {...(comp satisfies ImageProp)}
+          {...(comp as Drawings<"image">[0])}
         />
       );
     }
@@ -388,7 +412,7 @@ export function drawOnCanvas(
         <Note
           ref={activeCompRef as Ref<HTMLDivElement>}
           key={comp.id}
-          {...(comp satisfies NoteProp)}
+          {...(comp as Drawings<"note">[0])}
         />
       );
     }
@@ -397,81 +421,31 @@ export function drawOnCanvas(
         <Pencil
           ref={activeCompRef as Ref<SVGSVGElement>}
           key={comp.id}
-          {...(comp satisfies PencilProp)}
+          {...(comp as Drawings<"pencil">[0])}
         />
       );
     }
     case "pointer": {
-      return <Pointer key={comp.id} {...(comp satisfies PointerProp)} />;
+      return <Pointer key={comp.id} {...(comp as Drawings<"pointer">[0])} />;
     }
     case "shape": {
-      return <Shapes key={comp.id} />;
+      return <Shapes key={comp.id} {...(comp as Drawings<"shape">[0])} />;
     }
     case "text": {
       return (
         <Text
           ref={activeCompRef as Ref<HTMLDivElement>}
           key={comp.id}
-          {...(comp satisfies TextProp)}
+          {...(comp as Drawings<"text">[0])}
         />
       );
     }
     default:
-      console.log(`Error on component`, comp);
+      console.log(`Error in component:`, comp);
   }
 }
 
-type GetImageProp = {
-  image: {
-    id: number;
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-  }[];
-  id: number;
-};
-function getImage({ image, id }: GetImageProp) {
-  if (!image) return;
-  return image.find((img) => img.id === id);
-}
-
-export function getDiff(prev: number, curr: number) {
-  return Math.abs(curr - prev);
-}
-
-export function pythag({
-  x1,
-  y1,
-  x2,
-  y2,
-}: {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-}) {
-  const x = getDiff(x1, x2);
-  const y = getDiff(y1, y2);
-  return Math.hypot(x, y);
-}
-
-export function getRelativeMin(v1: number, v2: number) {
-  if (v1 < v2) {
-    return v1;
-  }
-  return v2;
-}
-
-export function removeComp(
-  id: number,
-  setDrawing: React.Dispatch<React.SetStateAction<Drawings>>
-) {
+export function removeComp(id: number, hideComp: (id: number) => void) {
   if (id === -1) return;
-  setDrawing((prev) => {
-    const temp = [...prev];
-    if (!temp[id]) return temp;
-    temp[id] = { ...temp[id], opacity: 0 } as ArrowProp; //To keep the counter correct
-    return temp;
-  });
+  hideComp(id);
 }

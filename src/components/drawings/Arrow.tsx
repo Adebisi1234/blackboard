@@ -1,46 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useState, forwardRef } from "react";
 import { ArrowHead } from "./ArrowHead";
-import { getDiff, getRelativeMin, pythag } from "../../utils/drawings";
-import { useLocationDispatch } from "../../context/StateContext";
-import { useActiveTool } from "../Canvas";
+import { pythag } from "../../utils/math";
+import { type Drawings } from "../../types/general";
+import { useActiveTool } from "../../store/Store";
 
-export type ArrowProp = {
-  id: number;
-  color: string;
-  // Curve to
-  startPos: {
-    x: number;
-    y: number;
-  };
-  endPos: {
-    x: number;
-    y: number;
-  };
-  opacity: number;
-  strokeWidth: number;
-  type: "arrow";
-  highlight?: boolean;
-  dash: "draw" | "solid" | "dashed" | "dotted";
-};
-
-export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
-  { startPos, endPos, id, color, opacity, strokeWidth, highlight }: ArrowProp,
+export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
+  prop,
   activeCompRef
 ) {
-  const dispatch = useLocationDispatch();
-  const activeTool = useActiveTool();
-  useEffect(() => {
-    dispatch({
-      id,
-      loc: {
-        id,
-        x: getRelativeMin(startPos.x, endPos.x),
-        y: getRelativeMin(startPos.y, endPos.y),
-        width: getDiff(startPos.x, endPos.x),
-        height: getDiff(startPos.y, endPos.y),
-      },
-    });
-  }, [startPos, endPos]);
+  const { activeTool } = useActiveTool();
+  const { startPos, endPos } = prop.prop;
+
   const angle = (() => {
     const dx = endPos.x - startPos.x;
     const dy = endPos.y - startPos.y;
@@ -53,7 +23,7 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
 
   return (
     <svg
-      id={`${id}`}
+      id={`${prop.id}`}
       onMouseOver={() => {
         setHovered(true);
       }}
@@ -61,22 +31,22 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
       ref={activeCompRef}
     >
       <g
-        id={`${id}`}
+        id={`${prop.id}`}
         onMouseOver={() => {
           setHovered(true);
         }}
-        opacity={opacity}
+        opacity={prop.opacity}
         onMouseLeave={() => setHovered(false)}
       >
         <path
-          id={`${id}`}
+          id={`${prop.id}`}
           onMouseOver={() => {
             setHovered(true);
           }}
           onMouseLeave={() => setHovered(false)}
           d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
-          stroke={color}
-          strokeWidth={strokeWidth}
+          stroke={prop.color}
+          strokeWidth={prop.strokeWidth}
           className="z-20"
         ></path>
         {pythag({
@@ -86,7 +56,7 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
           y2: endPos.y,
         }) > 5 && (
           <ArrowHead
-            id={`${id}`}
+            id={`${prop.id}`}
             onMouseOver={() => {
               setHovered(true);
             }}
@@ -94,15 +64,15 @@ export default React.forwardRef<SVGSVGElement, ArrowProp>(function Arrow(
             x={endPos.x}
             y={endPos.y}
             angle={angle}
-            strokeWidth={strokeWidth}
-            color={color}
+            strokeWidth={prop.strokeWidth}
+            color={prop.color}
           />
         )}
-        {(hovered || highlight) && activeTool === "pointer" && (
+        {(hovered || prop.highlight) && activeTool === "pointer" && (
           <path
             d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
             stroke={"green"}
-            strokeWidth={strokeWidth / 2}
+            strokeWidth={prop.strokeWidth / 2}
             className="z-20"
           ></path>
         )}

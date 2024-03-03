@@ -1,3 +1,4 @@
+import { useActiveTool, useGeneral, useImage } from "../../store/Store";
 import { ActiveTool, General } from "../../types/general";
 import Button from "./Button";
 import {
@@ -12,16 +13,11 @@ import {
   Pointer,
   Text,
 } from "./Svg";
-type Prop = {
-  activeTool: ActiveTool;
-  setActiveTool: React.Dispatch<React.SetStateAction<ActiveTool>>;
-  setGeneral: React.Dispatch<React.SetStateAction<General>>;
-};
-export default function Controls({
-  activeTool,
-  setActiveTool,
-  setGeneral,
-}: Prop) {
+
+export default function Controls() {
+  const setImage = useImage((state) => state.setImage);
+  const { activeTool, setActiveTool } = useActiveTool();
+  console.log(activeTool);
   return (
     <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1">
       <Button
@@ -29,13 +25,7 @@ export default function Controls({
           activeTool === "pointer" && "bg-[#4387f4]"
         }`}
         tool="pointer"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("pointer")}
       >
         <Pointer />
       </Button>
@@ -44,13 +34,7 @@ export default function Controls({
           activeTool === "hand" && "bg-[#4387f4]"
         }`}
         tool="hand"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("hand")}
       >
         <Hand />
       </Button>
@@ -59,13 +43,7 @@ export default function Controls({
           activeTool === "pencil" && "bg-[#4387f4]"
         }`}
         tool="pencil"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("pencil")}
       >
         <Pencil />
       </Button>
@@ -74,13 +52,7 @@ export default function Controls({
           activeTool === "eraser" && "bg-[#4387f4]"
         }`}
         tool="eraser"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("eraser")}
       >
         <Eraser />
       </Button>
@@ -89,13 +61,7 @@ export default function Controls({
           activeTool === "arrow" && "bg-[#4387f4]"
         }`}
         tool="arrow"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("arrow")}
       >
         <Arrow />
       </Button>
@@ -104,13 +70,7 @@ export default function Controls({
           activeTool === "text" && "bg-[#4387f4]"
         }`}
         tool="text"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("text")}
       >
         <Text />
       </Button>
@@ -119,13 +79,7 @@ export default function Controls({
           activeTool === "note" && "bg-[#4387f4]"
         }`}
         tool="note"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("note")}
       >
         <Note />
       </Button>
@@ -134,13 +88,7 @@ export default function Controls({
           activeTool === "image" && "bg-[#4387f4]"
         }`}
         tool="pointer"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("pointer")}
       >
         <label htmlFor="image">
           <ImageIcon />
@@ -156,25 +104,17 @@ export default function Controls({
           onChange={(e) => {
             if (!e.target.files) return;
             const img = document.createElement("img");
-            img.src = URL.createObjectURL(e.target.files[0]);
             const imageSrc = e.target.files[0];
+            img.src = URL.createObjectURL(imageSrc);
             img.addEventListener("load", () => {
               console.log(img.naturalHeight, innerHeight);
               console.log(img.naturalWidth, innerWidth);
-              setGeneral((prev) => {
-                return {
-                  ...prev,
-                  image: [
-                    ...prev.image,
-                    {
-                      id: imageSrc.lastModified,
-                      src: img.src,
-                      alt: "Image uploaded by user",
-                      width: img.naturalWidth,
-                      height: img.naturalHeight,
-                    },
-                  ],
-                };
+              setImage({
+                id: imageSrc.lastModified,
+                src: img.src,
+                alt: "Image uploaded by user",
+                width: img.naturalWidth,
+                height: img.naturalHeight,
               });
             });
           }}
@@ -185,13 +125,7 @@ export default function Controls({
           activeTool === "shape" && "bg-[#4387f4]"
         }`}
         tool="shape"
-        onClick={(e) => {
-          e.currentTarget.getAttribute("data-tool");
-          setActiveTool(
-            (e.currentTarget.getAttribute("data-tool") as ActiveTool) ??
-              activeTool
-          );
-        }}
+        onClick={() => setActiveTool("shape")}
       >
         <GeoRect />
       </Button>

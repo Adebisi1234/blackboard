@@ -1,44 +1,23 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "../../context/StateContext";
-import { useHighlighted } from "../Canvas";
-import { Location } from "../../types/general";
-
-export type PointerProp = {
-  pos: {
-    x: number;
-    y: number;
-  };
-  startPos: {
-    x: number;
-    y: number;
-  };
-  strokeWidth: number;
-  width: number;
-  height: number;
-  highlight?: boolean;
-  type: "pointer";
-  id: number;
-};
+import { useEffect } from "react";
+import { Drawings, Location } from "../../types/general";
+import { useHighlighted, useLocation } from "../../store/Store";
 
 export default function Pointer({
-  width,
-  height,
-  pos,
-  highlight = true,
+  highlight,
   id,
-}: PointerProp) {
-  const location = useLocation();
+  prop,
+}: Drawings<"pointer">[0]) {
+  const { pos, startPos, width, height } = prop;
+  // const location = useLocation((state) => state.location);
+  // const { setHighlighted } = useHighlighted();
+  // useEffect(() => {
+  //   setHighlighted(CompInRange(location, pos, width, height));
+  //   return () => setHighlighted([]);
+  // }, [width, height, pos]);
 
-  const setHighlighted = useHighlighted();
-  useEffect(() => {
-    setHighlighted(CompInRange(location, pos, width, height));
-    return () => setHighlighted([]);
-  }, [width, height, pos]);
-
-  console.log(pos);
   return (
     <>
-      {highlight && (
+      {!highlight && (
         <svg id={`${id}`} className="w-full h-full">
           <g>
             <rect
@@ -60,7 +39,7 @@ export default function Pointer({
 
 export function CompInRange(
   location: Location[],
-  pos: PointerProp["pos"],
+  pos: Drawings<"pointer">[0]["prop"]["pos"],
   width: number,
   height: number
 ): number[] {
@@ -71,15 +50,14 @@ export function CompInRange(
 
   // So basically we'll check if any position in the location state is inside or contains the pointer range limits
 
-  return location.map((v) => {
-    if (!v) return -1;
+  return location.map(({ x, y, width, height, id }) => {
     if (
-      v.x > xLowerLimit &&
-      v.y > yLowerLimit &&
-      v.x + v.width < xUpperLimit &&
-      v.y + v.height < yUpperLimit
+      x > xLowerLimit &&
+      y > yLowerLimit &&
+      x + width < xUpperLimit &&
+      y + height < yUpperLimit
     ) {
-      return v.id;
+      return id;
     }
     return -1;
   });
