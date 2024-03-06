@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 import { ChevronNe } from "./Svg";
+import Minimap from "./Minimap";
 
 export default function Zoom() {
   const [miniActive, setMiniActive] = useState(false);
@@ -18,10 +19,9 @@ export default function Zoom() {
             <ChevronNe />
           </Button>
         </div>
-        <div
-          id="minimap"
-          className={`${!miniActive && "invisible size-0"}`}
-        ></div>
+        <div id="minimap" className={`${!miniActive && "invisible size-0"}`}>
+          {/* <Minimap /> */}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { useActiveTool, useGeneral, useImage } from "../../store/Store";
-import { ActiveTool, General } from "../../types/general";
+import { useActiveTool, useDrawing, useImage } from "../../store/Store";
+import { Drawings } from "../../types/general";
 import Button from "./Button";
 import {
   Arrow,
@@ -17,9 +17,8 @@ import {
 export default function Controls() {
   const setImage = useImage((state) => state.setImage);
   const { activeTool, setActiveTool } = useActiveTool();
-  console.log(activeTool);
   return (
-    <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1">
+    <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50">
       <Button
         className={`rounded-lg hover:bg-[#2e3034] ${
           activeTool === "pointer" && "bg-[#4387f4]"
@@ -102,13 +101,11 @@ export default function Controls() {
           multiple={false}
           accept=".jpg,.png"
           onChange={(e) => {
-            if (!e.target.files) return;
+            if (!e.target.files || !e.target.files[0]) return;
             const img = document.createElement("img");
             const imageSrc = e.target.files[0];
             img.src = URL.createObjectURL(imageSrc);
             img.addEventListener("load", () => {
-              console.log(img.naturalHeight, innerHeight);
-              console.log(img.naturalWidth, innerWidth);
               setImage({
                 id: imageSrc.lastModified,
                 src: img.src,

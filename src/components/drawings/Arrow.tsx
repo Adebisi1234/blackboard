@@ -1,8 +1,9 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect, useRef } from "react";
 import { ArrowHead } from "./ArrowHead";
 import { pythag } from "../../utils/math";
 import { type Drawings } from "../../types/general";
-import { useActiveTool } from "../../store/Store";
+import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
+import CompOverlay from "../ui/CompOverlay";
 
 export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
   prop,
@@ -11,7 +12,7 @@ export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
   const { activeTool } = useActiveTool();
   const { startPos, endPos } = prop.prop;
 
-  const angle = (() => {
+  const headAngle = (() => {
     const dx = endPos.x - startPos.x;
     const dy = endPos.y - startPos.y;
     let theta = Math.atan2(dy, dx);
@@ -19,64 +20,65 @@ export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
     if (theta < 0) theta += 360;
     return theta;
   })();
-  const [hovered, setHovered] = useState(false);
-
+  const setLocation = useLocation((state) => state.setLocation);
+  const arrowRef = useRef<SVGPathElement>(null!);
+  const toggleHighlight = useDrawing((state) => state.toggleHighlight);
+  useEffect(() => {
+    if (!arrowRef.current) return;
+    const { width, height, x, y } = arrowRef.current
+      ?.getBoundingClientRect()
+      .toJSON();
+    setLocation({
+      id: prop.id,
+      x,
+      y,
+      width,
+      height,
+    });
+  }, [endPos]);
   return (
-    <svg
-      id={`${prop.id}`}
-      onMouseOver={() => {
-        setHovered(true);
-      }}
-      onMouseLeave={() => setHovered(false)}
-      ref={activeCompRef}
-    >
-      <g
-        id={`${prop.id}`}
-        onMouseOver={() => {
-          setHovered(true);
-        }}
-        opacity={prop.opacity}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <path
-          id={`${prop.id}`}
-          onMouseOver={() => {
-            setHovered(true);
-          }}
-          onMouseLeave={() => setHovered(false)}
-          d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
-          stroke={prop.color}
-          strokeWidth={prop.strokeWidth}
-          className="z-20"
-        ></path>
-        {pythag({
-          x1: startPos.x,
-          x2: endPos.x,
-          y1: startPos.y,
-          y2: endPos.y,
-        }) > 5 && (
-          <ArrowHead
-            id={`${prop.id}`}
-            onMouseOver={() => {
-              setHovered(true);
-            }}
-            onMouseLeave={() => setHovered(false)}
-            x={endPos.x}
-            y={endPos.y}
-            angle={angle}
-            strokeWidth={prop.strokeWidth}
-            color={prop.color}
-          />
-        )}
-        {(hovered || prop.highlight) && activeTool === "pointer" && (
+    <>
+      <svg id={`${prop.id}`} ref={activeCompRef}>
+        <g id={`${prop.id}`} opacity={prop.opacity}>
           <path
+            id={`${prop.id}`}
             d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
-            stroke={"green"}
-            strokeWidth={prop.strokeWidth / 2}
+            stroke={prop.color}
+            strokeWidth={prop.strokeWidth}
             className="z-20"
+            ref={arrowRef}
+            onMouseDown={() => {
+              activeTool === "pointer" && toggleHighlight(prop.id);
+            }}
           ></path>
-        )}
-      </g>
-    </svg>
+          {pythag({
+            x1: startPos.x,
+            x2: endPos.x,
+            y1: startPos.y,
+            y2: endPos.y,
+          }) > 5 && (
+            <ArrowHead
+              id={`${prop.id}`}
+              x={endPos.x}
+              y={endPos.y}
+              angle={headAngle}
+              strokeWidth={prop.strokeWidth}
+              color={prop.color}
+            />
+          )}
+          {prop.hovered && activeTool === "pointer" && (
+            <path
+              d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
+              stroke={"green"}
+              strokeWidth={prop.strokeWidth / 2}
+              className="z-20"
+            ></path>
+          )}
+        </g>
+      </svg>
+      {prop.highlight && (
+        <CompOverlay id={prop.id} type={"arrow"} prop={{ startPos, endPos }} />
+      )}
+    </>
   );
 });

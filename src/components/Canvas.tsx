@@ -13,25 +13,52 @@ import {
   useGeneral,
   useHighlighted,
   useImage,
+  useLocation,
 } from "../store/Store";
+import { Drawings } from "../types/general";
 
 export default function Canvas() {
-  const { drawing, updateDrawing, setDrawing, clearPointer, hideComp } =
-    useDrawing();
-  const { highlighted, reset } = useHighlighted();
+  const {
+    drawing,
+    updateDrawing,
+    setDrawing,
+    clearPointer,
+    hideComp,
+    toggleHighlight,
+    hoverComp,
+    leaveComp,
+  } = useDrawing();
+  const { highlighted, setHighlighted } = useHighlighted();
   const { activeTool, setActiveTool } = useActiveTool();
   const { general } = useGeneral();
 
-  const posRef = useRef({ x: 0, y: 0 });
   const drawingId = useRef(0);
   const [isToolActive, setIsToolActive] = useState(false);
   const activeCompRef = useRef<HTMLElement | number[] | null>(null);
-  const { image, clearImage } = useImage();
-  const { canvasPos, canvasRef, setRef } = useCanvas();
-  // const minX = 0 - canvasPos.x;
-  // const minY = 0 - canvasPos.y;
-  // const totalWidth = innerWidth + Math.abs(posRef.current.x);
-  // const totalHeight = innerHeight + Math.abs(posRef.current.y);
+  const { image } = useImage();
+  const { canvasPos, canvasRef, setRef, setCanvasPos } = useCanvas();
+  const loc = useLocation((state) => state.location);
+  useEffect(() => {
+    if (!image) {
+      return;
+    }
+    const newImageComp = {
+      id: image.id,
+      prop: {
+        type: "image",
+        src: image.src,
+        alt: "Image uploaded by user",
+        width: image.width,
+        height: image.height,
+      },
+      pos: {
+        x: innerWidth / 2,
+        y: Math.max(innerHeight / 2 - image.height / 2, 10),
+      },
+    } satisfies Drawings<"image">[0];
+    setDrawing(newImageComp);
+    ++drawingId.current;
+  }, [image]);
 
   useEffect(() => {
     if (highlighted.length === 0) {
@@ -39,7 +66,6 @@ export default function Canvas() {
     }
     activeCompRef.current = [];
     highlighted.forEach((id) => {
-      if (id === -1) return;
       (activeCompRef.current as number[]).push(id);
       if (!drawing[id]) return;
       updateDrawing(id, { ...drawing[id], highlight: true });
@@ -59,9 +85,10 @@ export default function Canvas() {
           strokeWidth: general.strokeWidth,
         });
       });
+      return;
     }
     const id = +(activeCompRef.current as HTMLElement).id;
-
+    if (!drawing[id]) return;
     const update = {
       ...drawing[id],
       color: general.color,
@@ -80,16 +107,20 @@ export default function Canvas() {
     general.scale,
     general.strokeWidth,
     general.font,
-  ]); // Feeling lazy to refactor general into {diffs: {}, image: []}
+  ]);
 
   if (activeTool !== "pointer" && highlighted.length !== 0) {
-    reset();
+    // highlighted.forEach((id) => {
+    //   updateDrawing(id, { ...drawing[id], highlight: false });
+    // });
+    setHighlighted([]);
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!canvasRef) {
       return;
     }
+
     setIsToolActive(true);
     addDrawing({
       e: {
@@ -102,7 +133,6 @@ export default function Canvas() {
       setDrawing,
       drawingId,
       image,
-      clearImage,
     });
     if (activeTool === "eraser") {
       // First implementation
@@ -116,6 +146,27 @@ export default function Canvas() {
       return;
     }
     if (!isToolActive) {
+      if (activeTool === "pointer") {
+        // First implementation
+        for (const id in loc) {
+          if (Object.prototype.hasOwnProperty.call(loc, id)) {
+            if (
+              e.clientX > loc[id].x &&
+              e.clientX < loc[id].x + loc[id].width &&
+              e.clientY > loc[id].y &&
+              e.clientY < loc[id].y + loc[id].height
+            ) {
+              if (!drawing[id].hovered) {
+                hoverComp(+id);
+              }
+            } else {
+              if (drawing[id].hovered) {
+                leaveComp(+id);
+              }
+            }
+          }
+        }
+      }
       return;
     }
 
@@ -131,13 +182,13 @@ export default function Canvas() {
       general,
     });
     if (activeTool === "hand") {
-      // First implementation
       if (!canvasRef) {
         return;
       }
-      posRef.current.x += e.movementX;
-      posRef.current.y += e.movementY;
-      canvasRef.style.transform = `translate(${posRef.current.x}px, ${posRef.current.y}px)`;
+      canvasPos.x += e.movementX;
+      canvasPos.y += e.movementY;
+      canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
+      setCanvasPos(canvasPos);
     }
   };
   const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -151,6 +202,23 @@ export default function Canvas() {
     });
     if (!(activeTool === "pointer" || activeTool === "hand")) {
       drawingId.current++;
+    }
+    if (activeTool === "pointer") {
+      // First implementation
+      for (const id in loc) {
+        if (Object.prototype.hasOwnProperty.call(loc, id)) {
+          if (
+            e.clientX > loc[id].x &&
+            e.clientX < loc[id].x + loc[id].width &&
+            e.clientY > loc[id].y &&
+            e.clientY < loc[id].y + loc[id].height
+          ) {
+            if (!drawing[id].highlight) {
+              toggleHighlight(+id);
+            }
+          }
+        }
+      }
     }
     if (
       activeTool === "image" ||
@@ -170,7 +238,8 @@ export default function Canvas() {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      className="absolute inset-0 w-screen h-screen canvas"
+      onClickCapture={() => console.log("clk")}
+      className="absolute inset-0 w-screen h-screen canvas bg"
     >
       <div
         className="absolute inset-0 w-screen h-screen canvas"

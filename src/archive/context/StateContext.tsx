@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { Location } from "../types/general";
+import { Location } from "../../types/general";
 
 const LocationContext = createContext<Location[]>([]);
 

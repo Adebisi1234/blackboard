@@ -12,12 +12,7 @@ import {
   ActiveTool,
 } from "../types/general";
 import { Ref } from "react";
-import {
-  useActiveTool,
-  useDrawing,
-  useGeneral,
-  useImage,
-} from "../store/Store";
+
 import { getDiff, getRelativeMin } from "./math";
 
 type ModifyDrawing = {
@@ -152,26 +147,6 @@ export function addDrawing({
       break;
     }
     case "image": {
-      if (!image) {
-        break;
-      }
-      const newImageComp = {
-        id: drawingId.current,
-        ...general,
-        prop: {
-          type: "image",
-          src: image.src,
-          alt: image.alt,
-          width: image.width,
-          height: image.height,
-        },
-        pos: {
-          x: e.clientX,
-          y: e.clientY,
-        },
-      } satisfies Drawings<"image">[0];
-      setDrawing!(newImageComp);
-      clearImage!();
       break;
     }
     case "shape": {
@@ -215,7 +190,10 @@ export function modifyDrawing({
     case "eraser":
       break;
     case "pointer": {
-      if (!drawing[drawingId.current]) {
+      if (
+        !drawing[drawingId.current] ||
+        drawing[drawingId.current].prop.type !== "pointer"
+      ) {
         break;
       }
 
@@ -344,7 +322,10 @@ export function cleanUpDrawing({
 }: ModifyDrawing) {
   switch (activeTool) {
     case "pointer": {
-      if (!drawing[drawingId.current]) {
+      if (
+        !drawing[drawingId.current] ||
+        drawing[drawingId.current].prop.type !== "pointer"
+      ) {
         break;
       }
       clearPointer!(drawingId.current);
@@ -426,7 +407,12 @@ export function drawOnCanvas(
       );
     }
     case "pointer": {
-      return <Pointer key={comp.id} {...(comp as Drawings<"pointer">[0])} />;
+      return (
+        <Pointer
+          key={comp.id * Math.random() * 20 + Math.random()}
+          {...(comp as Drawings<"pointer">[0])}
+        />
+      );
     }
     case "shape": {
       return <Shapes key={comp.id} {...(comp as Drawings<"shape">[0])} />;

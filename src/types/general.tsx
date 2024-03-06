@@ -32,6 +32,7 @@ export type General = {
   scale: number;
   font: 18 | 24 | 36 | 44;
   highlight: boolean;
+  hovered: boolean;
 };
 
 export type Drawings<T = undefined> = ({
@@ -59,7 +60,7 @@ export type Drawings<T = undefined> = ({
         | TextProp
         | ShapesProp;
   pos: Partial<Location>;
-} & General)[];
+} & (T extends "image" | undefined ? Partial<General> : General))[];
 
 export type Location = {
   x: number;

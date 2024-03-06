@@ -1,3 +1,5 @@
+import { useCanvas } from "../../store/Store";
+import BackToContent from "./BackToContent";
 import Button from "./Button";
 import {
   ChevronDown,
@@ -36,6 +38,8 @@ export default function Pages() {
       <Button>
         <DotVertical />
       </Button>
+
+      <BackToContent />
     </div>
   );
 }

@@ -1,36 +1,27 @@
 import { useRef } from "react";
-import { useDrawing } from "../Canvas";
-import { useLocation } from "../../context/StateContext";
 import { Drawings } from "../../types/general";
+import { useCanvas, useDrawing, useLocation } from "../../store/Store";
 
-type Prop = {
-  minX: number;
-  minY: number;
-  totalWidth: number;
-  totalHeight: number;
-  minWidth: number;
-  minHeight: number;
-};
-export default function Minimap({
-  minX,
-  minY,
-  totalWidth,
-  totalHeight,
-  minWidth,
-  minHeight,
-}: Prop) {
+export default function Minimap() {
+  const minWidth = innerWidth,
+    minHeight = innerHeight;
+  const { x, y } = useCanvas((state) => state.canvasPos);
+  const minX = 0 - x;
+  const minY = 0 - y;
+  const totalWidth = innerWidth + Math.abs(x);
+  const totalHeight = innerHeight + Math.abs(y);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useDrawing();
-  const location = useLocation();
+  const drawing = useDrawing((state) => state.drawing);
+  const Loc = useLocation((state) => state.location);
   const renderArr = useRef<Drawings>([]);
   const ctx = canvasRef.current?.getContext("2d");
   const animate = () => {
     renderArr.current = [];
-    renderArr.current = location
-      .map(({ id }) => {
-        return drawing[id];
-      })
-      .filter((x) => x);
+    for (const id in Loc) {
+      if (Object.prototype.hasOwnProperty.call(Loc, id)) {
+        renderArr.current.push(drawing[id]);
+      }
+    }
 
     render({
       ctx,
@@ -94,13 +85,13 @@ function render({
 
   ctx.fillRect(minX, minY, minWidth, minHeight);
   drawings.forEach((drawing) => {
-    switch (drawing.type) {
+    switch (drawing.prop.type) {
       case "arrow": {
         // generate the code that creates a representation of the arrow in the canvas
-        const x1 = (drawing.startPos.x / totalWidth) * 200;
-        const y1 = (drawing.startPos.y / totalHeight) * 150;
-        const x2 = (drawing.endPos.x / totalWidth) * 200;
-        const y2 = (drawing.endPos.y / totalHeight) * 150;
+        const x1 = (drawing.prop.startPos.x / totalWidth) * 200;
+        const y1 = (drawing.prop.startPos.y / totalHeight) * 150;
+        const x2 = (drawing.prop.endPos.x / totalWidth) * 200;
+        const y2 = (drawing.prop.endPos.y / totalHeight) * 150;
         ctx.strokeStyle = "rgb(255,255,255)";
         ctx.beginPath();
         ctx.moveTo(x1, y1);

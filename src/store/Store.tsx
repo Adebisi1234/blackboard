@@ -15,12 +15,14 @@ interface DrawingState {
   updateDrawing: (id: number, payload: Drawings[0]) => void;
   clearPointer: (id: number) => void;
   hideComp: (id: number) => void;
+  toggleHighlight: (id: number) => void;
+  hoverComp: (id: number) => void;
+  leaveComp: (id: number) => void;
 }
 
 interface ImageState {
   image: ImageType | undefined;
   setImage: (payload: ImageState["image"]) => void;
-  clearImage: () => void;
 }
 
 interface GeneralState {
@@ -29,13 +31,12 @@ interface GeneralState {
 }
 
 interface LocationState {
-  location: Location[];
+  location: { [key: number]: Location };
   setLocation: (payload: Location) => void;
 }
 interface HighlightedState {
   highlighted: number[];
   setHighlighted: (payload: number[]) => void;
-  reset: () => void;
 }
 interface ActiveToolState {
   activeTool: ActiveTool;
@@ -49,6 +50,7 @@ interface Canvas {
   };
   canvasRef: HTMLDivElement | undefined;
   setRef: (ref: HTMLDivElement) => void;
+  setCanvasPos: (payload: { x: number; y: number }) => void;
 }
 
 export const useDrawing = create<DrawingState>((set) => ({
@@ -70,13 +72,34 @@ export const useDrawing = create<DrawingState>((set) => ({
     set(({ drawing }) => {
       const temp = [...drawing];
       temp.splice(id, 1);
-      return { drawing: temp };
+      return { drawing: [...temp] };
     });
   },
   hideComp(id) {
     set(({ drawing }) => {
       const temp = [...drawing];
       temp[id].opacity = 0;
+      return { drawing: temp };
+    });
+  },
+  toggleHighlight(id) {
+    set(({ drawing }) => {
+      const temp = [...drawing];
+      temp[id].highlight = !temp[id].highlight;
+      return { drawing: temp };
+    });
+  },
+  hoverComp(id) {
+    set(({ drawing }) => {
+      const temp = [...drawing];
+      temp[id].hovered = true;
+      return { drawing: temp };
+    });
+  },
+  leaveComp(id) {
+    set(({ drawing }) => {
+      const temp = [...drawing];
+      temp[id].hovered = false;
       return { drawing: temp };
     });
   },
@@ -92,6 +115,7 @@ export const useGeneral = create<GeneralState>((set) => ({
     scale: 1,
     highlight: false,
     font: 24,
+    hovered: false,
   },
   setGeneral(payload) {
     set((state) => ({
@@ -111,24 +135,14 @@ export const useHighlighted = create<HighlightedState>((set) => ({
       return state;
     });
   },
-  reset() {
-    set((state) => {
-      console.log(state);
-      state.highlighted = [];
-      return state;
-    });
-  },
 }));
 
 export const useLocation = create<LocationState>((set) => ({
-  location: [],
+  location: {},
   setLocation: (payload: Location) =>
-    set(
-      (state: LocationState) => ({
-        location: [...state.location, payload],
-      }),
-      true
-    ),
+    set((state: LocationState) => ({
+      location: { ...state.location, [payload.id]: payload },
+    })),
 }));
 
 export const useActiveTool = create<ActiveToolState>((set) => ({
@@ -150,6 +164,11 @@ export const useCanvas = create<Canvas>((set) => ({
       canvasRef: ref,
     });
   },
+  setCanvasPos(payload) {
+    set({
+      canvasPos: { ...payload },
+    });
+  },
 }));
 
 export const useImage = create<ImageState>((set) => ({
@@ -157,11 +176,6 @@ export const useImage = create<ImageState>((set) => ({
   setImage(payload) {
     set({
       image: payload,
-    });
-  },
-  clearImage() {
-    set({
-      image: undefined,
     });
   },
 }));

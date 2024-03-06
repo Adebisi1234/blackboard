@@ -13,6 +13,7 @@
 
 .canvas *:not(textarea, svg, path, rect, .static, p) {
   position: absolute;
+  user-select: none;
 }
 
 .slider-range {
