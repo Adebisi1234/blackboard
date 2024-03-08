@@ -1,3 +1,5 @@
+import { useCanvas } from "../../store/Store";
+
 type ArrowProp = {
   startPos: { x: number; y: number };
   endPos: { x: number; y: number };
@@ -15,6 +17,7 @@ type Prop<T = any> = {
 };
 
 export default function CompOverlay(prop: Prop) {
+  const canvasPos = useCanvas((state) => state.canvasPos);
   if (prop.type === "arrow") {
     const { startPos, endPos } = (prop as Prop<"arrow">).prop;
     return (
@@ -22,7 +25,8 @@ export default function CompOverlay(prop: Prop) {
         <g>
           <path
             d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y} z`}
-            strokeWidth={1}
+            strokeWidth={0.5}
+            stroke="green"
           ></path>
           <circle
             cx={startPos.x}
@@ -58,7 +62,9 @@ export default function CompOverlay(prop: Prop) {
       </svg>
     );
   }
-  const { x, y, width, height } = (prop as Prop<"others">).prop;
+  let { x, y, width, height } = (prop as Prop<"others">).prop;
+  x = x - canvasPos.x;
+  y = y - canvasPos.y;
   return (
     <svg className="z-40">
       <g>

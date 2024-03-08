@@ -16,6 +16,9 @@ import {
   useLocation,
 } from "../store/Store";
 import { Drawings } from "../types/general";
+import useAddImage from "../hooks/useAddImage";
+import useAddToActiveComp from "../hooks/useAddToActiveComp";
+import useUpdateGeneral from "../hooks/useUpdateGeneral";
 
 export default function Canvas() {
   const {
@@ -38,76 +41,11 @@ export default function Canvas() {
   const { image } = useImage();
   const { canvasPos, canvasRef, setRef, setCanvasPos } = useCanvas();
   const loc = useLocation((state) => state.location);
-  useEffect(() => {
-    if (!image) {
-      return;
-    }
-    const newImageComp = {
-      id: image.id,
-      prop: {
-        type: "image",
-        src: image.src,
-        alt: "Image uploaded by user",
-        width: image.width,
-        height: image.height,
-      },
-      pos: {
-        x: innerWidth / 2,
-        y: Math.max(innerHeight / 2 - image.height / 2, 10),
-      },
-    } satisfies Drawings<"image">[0];
-    setDrawing(newImageComp);
-    ++drawingId.current;
-  }, [image]);
+  useAddImage(image, drawingId.current);
 
-  useEffect(() => {
-    if (highlighted.length === 0) {
-      return;
-    }
-    activeCompRef.current = [];
-    highlighted.forEach((id) => {
-      (activeCompRef.current as number[]).push(id);
-      if (!drawing[id]) return;
-      updateDrawing(id, { ...drawing[id], highlight: true });
-    });
-  }, [highlighted]);
+  useAddToActiveComp(highlighted, activeCompRef);
 
-  useEffect(() => {
-    if (!activeCompRef.current) return;
-    if (Array.isArray(activeCompRef.current)) {
-      (activeCompRef.current as number[]).forEach((id) => {
-        if (!drawing[id]) return;
-        updateDrawing(id, {
-          ...drawing[id],
-          color: general.color,
-          dash: general.dash,
-          opacity: general.opacity,
-          strokeWidth: general.strokeWidth,
-        });
-      });
-      return;
-    }
-    const id = +(activeCompRef.current as HTMLElement).id;
-    if (!drawing[id]) return;
-    const update = {
-      ...drawing[id],
-      color: general.color,
-      dash: general.dash,
-      opacity: general.opacity,
-      strokeWidth: general.strokeWidth,
-    };
-    if (update.prop.type === "note" || update.prop.type === "text") {
-      update.font = general.font;
-    }
-    updateDrawing(id, update);
-  }, [
-    general.color,
-    general.dash,
-    general.opacity,
-    general.scale,
-    general.strokeWidth,
-    general.font,
-  ]);
+  useUpdateGeneral(activeCompRef);
 
   if (activeTool !== "pointer" && highlighted.length !== 0) {
     // highlighted.forEach((id) => {
