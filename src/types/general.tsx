@@ -27,8 +27,8 @@ export type General = {
   color: Color;
   opacity: number;
   strokeWidth: number;
-  fill: "none" | "semi" | "solid" | "pattern";
-  dash: "draw" | "solid" | "dashed" | "dotted";
+  fill: 0 | 0.5 | 1 | "pattern";
+  dash: "draw" | 0 | 10 | 2;
   scale: number;
   font: 18 | 24 | 36 | 44;
   highlight: boolean;
@@ -72,6 +72,19 @@ export type Location = {
 
 export type ShapesProp = {
   type: "shape";
+  shape?: "rect" | "tri" | "oval";
+  startPos: {
+    x: number;
+    y: number;
+  };
+  pos: {
+    x: number;
+    y: number;
+  };
+  radius?: number;
+  r?: number;
+  width: number;
+  height: number;
 };
 
 export type TextProp = {

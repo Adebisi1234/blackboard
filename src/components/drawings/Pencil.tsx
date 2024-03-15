@@ -41,7 +41,9 @@ export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
               stroke={prop.color}
               strokeWidth={prop.strokeWidth}
               strokeDasharray={prop.dash}
-              fill="none"
+              fillOpacity={prop.fill}
+              fillRule="evenodd"
+              fill={prop.color}
               className="z-20"
               strokeLinecap="round"
               strokeLinejoin="round"

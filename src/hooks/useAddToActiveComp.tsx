@@ -1,25 +1,22 @@
 import { useEffect } from "react";
-import { useDrawing } from "../store/Store";
+import { useActive, useDrawing, useHighlighted } from "../store/Store";
 
-export default function useAddToActiveComp(
-  highlighted: number[],
-  activeCompRef: React.MutableRefObject<number[] | HTMLElement | null>
-) {
+export default function useAddToActiveComp() {
   const { updateDrawing, drawing } = useDrawing();
+  const { setActiveComp, activeComp } = useActive();
+  const highlighted = useHighlighted((state) => state.highlighted);
   useEffect(() => {
     if (highlighted.length === 0) {
-      if (!Array.isArray(activeCompRef.current)) return;
-      activeCompRef.current.forEach((id) => {
+      activeComp.forEach((id) => {
         updateDrawing(id, { ...drawing[id], highlight: false });
       });
-      activeCompRef.current = [];
+      setActiveComp([]);
       return;
     }
-    activeCompRef.current = [];
     highlighted.forEach((id) => {
-      (activeCompRef.current as number[]).push(id);
       if (!drawing[id]) return;
       updateDrawing(id, { ...drawing[id], highlight: true });
     });
+    setActiveComp([...highlighted]);
   }, [highlighted]);
 }

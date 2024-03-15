@@ -1,14 +1,11 @@
-import { useState, forwardRef, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowHead } from "./ArrowHead";
 import { pythag } from "../../utils/math";
 import { type Drawings } from "../../types/general";
 import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
 
-export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
-  prop,
-  activeCompRef
-) {
+export default function Arrow(prop: Drawings<"arrow">[0]) {
   const { activeTool } = useActiveTool();
   const { startPos, endPos } = prop.prop;
 
@@ -38,13 +35,14 @@ export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
   }, [endPos]);
   return (
     <>
-      <svg id={`${prop.id}`} ref={activeCompRef}>
+      <svg id={`${prop.id}`}>
         <g id={`${prop.id}`} opacity={prop.opacity}>
           <path
             id={`${prop.id}`}
             d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
             stroke={prop.color}
             strokeWidth={prop.strokeWidth}
+            strokeDasharray={prop.dash}
             className="z-20"
             ref={arrowRef}
             onMouseDown={() => {
@@ -81,4 +79,4 @@ export default forwardRef<SVGSVGElement, Drawings<"arrow">[0]>(function Arrow(
       )}
     </>
   );
-});
+}

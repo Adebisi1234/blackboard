@@ -241,15 +241,16 @@ export default function Panel() {
       </Button>
       <div className="grid grid-cols-4 overflow-hidden">
         <Button
+          title="fill - None"
           className={`rounded-lg hover:bg-[#333438] ${
-            general.fill === "none" && "bg-[#333438]"
+            general.fill === 0 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.fill === "none") {
+            if (general.fill === 0) {
               return;
             }
             setGeneral({
-              fill: "none",
+              fill: 0,
             });
           }}
         >
@@ -258,15 +259,16 @@ export default function Panel() {
           </Icon>
         </Button>
         <Button
+          title="fill - Semi"
           className={`rounded-lg hover:bg-[#333438] ${
-            general.fill === "semi" && "bg-[#333438]"
+            general.fill === 0.5 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.fill === "semi") {
+            if (general.fill === 0.5) {
               return;
             }
             setGeneral({
-              fill: "semi",
+              fill: 0.5,
             });
           }}
         >
@@ -275,15 +277,16 @@ export default function Panel() {
           </Icon>
         </Button>
         <Button
+          title="fill - Solid"
           className={`rounded-lg hover:bg-[#333438] ${
-            general.fill === "solid" && "bg-[#333438]"
+            general.fill === 1 && "bg-[#333438]"
           }`}
           onClick={() => {
-            if (general.fill === "solid") {
+            if (general.fill === 1) {
               return;
             }
             setGeneral({
-              fill: "solid",
+              fill: 1,
             });
           }}
         >
@@ -292,6 +295,7 @@ export default function Panel() {
           </Icon>
         </Button>
         <Button
+          title="fill - Pattern"
           className={`rounded-lg hover:bg-[#333438] ${
             general.fill === "pattern" && "bg-[#333438]"
           }`}
@@ -312,6 +316,7 @@ export default function Panel() {
           className={`rounded-lg hover:bg-[#333438] ${
             general.dash === "draw" && "bg-[#333438]"
           }`}
+          title="dash - Draw"
           onClick={() => {
             if (general.dash === "draw") {
               return;
@@ -327,14 +332,15 @@ export default function Panel() {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.dash === "dashed" && "bg-[#333438]"
+            general.dash === 10 && "bg-[#333438]"
           }`}
+          title="dash - Dashed"
           onClick={() => {
-            if (general.dash === "dashed") {
+            if (general.dash === 10) {
               return;
             }
             setGeneral({
-              dash: "dashed",
+              dash: 10,
             });
           }}
         >
@@ -344,14 +350,15 @@ export default function Panel() {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.dash === "dotted" && "bg-[#333438]"
+            general.dash === 2 && "bg-[#333438]"
           }`}
+          title="dash - Dotted"
           onClick={() => {
-            if (general.dash === "dotted") {
+            if (general.dash === 2) {
               return;
             }
             setGeneral({
-              dash: "dotted",
+              dash: 2,
             });
           }}
         >
@@ -361,14 +368,15 @@ export default function Panel() {
         </Button>
         <Button
           className={`rounded-lg hover:bg-[#333438] ${
-            general.dash === "solid" && "bg-[#333438]"
+            general.dash === 0 && "bg-[#333438]"
           }`}
+          title="dash - Solid"
           onClick={() => {
-            if (general.dash === "solid") {
+            if (general.dash === 0) {
               return;
             }
             setGeneral({
-              dash: "solid",
+              dash: 0,
             });
           }}
         >

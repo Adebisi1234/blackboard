@@ -155,12 +155,22 @@ export function addDrawing({
         ...general,
         prop: {
           type: "shape",
+          startPos: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+          pos: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+          width: 0,
+          height: 0,
         },
         pos: {
           x: e.clientX,
           y: e.clientY,
         },
-      } satisfies Drawings<"shape">[0];
+      } satisfies Drawings<"shapes">[0];
       setDrawing!(newShapeComp);
       break;
     }
@@ -294,10 +304,22 @@ export function modifyDrawing({
       break;
     }
     case "shape": {
-      // setDrawing!((prev) => {
-      //   const temp = [...prev];
-      //   return temp;
-      // });
+      const edit = { ...drawing[drawingId.current] } as Drawings<"shapes">[0];
+      if (e.clientX < edit.prop.startPos.x) {
+        edit.prop.pos.x =
+          edit.prop.startPos.x - getDiff(edit.prop.startPos.x, e.clientX);
+        edit.prop.width = getDiff(edit.prop.startPos.x, e.clientX);
+      } else {
+        edit.prop.width = e.clientX - edit.prop.pos.x;
+      }
+      if (e.clientY < edit.prop.startPos.y) {
+        edit.prop.pos.y =
+          edit.prop.startPos.y - getDiff(edit.prop.startPos.y, e.clientY);
+        edit.prop.height = getDiff(edit.prop.startPos.y, e.clientY);
+      } else {
+        edit.prop.height = e.clientY - edit.prop.pos.y;
+      }
+      updateDrawing!(drawingId.current, edit);
       break;
     }
     default: {
@@ -361,50 +383,23 @@ export function cleanUpDrawing({
     // }
   }
 }
-export function drawOnCanvas(
-  comp: Drawings[0],
-  activeCompRef: React.MutableRefObject<HTMLElement | SVGSVGElement | null>
-) {
+export function drawOnCanvas(comp: Drawings[0]) {
   if (!comp) {
     return;
   }
   switch (comp.prop.type) {
     case "arrow": {
-      return (
-        <Arrow
-          ref={activeCompRef as Ref<SVGSVGElement>}
-          key={comp.id}
-          {...(comp as Drawings<"arrow">[0])}
-        />
-      );
+      return <Arrow key={comp.id} {...(comp as Drawings<"arrow">[0])} />;
     }
 
     case "image": {
-      return (
-        <Image
-          ref={activeCompRef as Ref<HTMLDivElement>}
-          key={comp.id}
-          {...(comp as Drawings<"image">[0])}
-        />
-      );
+      return <Image key={comp.id} {...(comp as Drawings<"image">[0])} />;
     }
     case "note": {
-      return (
-        <Note
-          ref={activeCompRef as Ref<HTMLDivElement>}
-          key={comp.id}
-          {...(comp as Drawings<"note">[0])}
-        />
-      );
+      return <Note key={comp.id} {...(comp as Drawings<"note">[0])} />;
     }
     case "pencil": {
-      return (
-        <Pencil
-          ref={activeCompRef as Ref<SVGSVGElement>}
-          key={comp.id}
-          {...(comp as Drawings<"pencil">[0])}
-        />
-      );
+      return <Pencil key={comp.id} {...(comp as Drawings<"pencil">[0])} />;
     }
     case "pointer": {
       return (
@@ -415,16 +410,10 @@ export function drawOnCanvas(
       );
     }
     case "shape": {
-      return <Shapes key={comp.id} {...(comp as Drawings<"shape">[0])} />;
+      return <Shapes key={comp.id} {...(comp as Drawings<"shapes">[0])} />;
     }
     case "text": {
-      return (
-        <Text
-          ref={activeCompRef as Ref<HTMLDivElement>}
-          key={comp.id}
-          {...(comp as Drawings<"text">[0])}
-        />
-      );
+      return <Text key={comp.id} {...(comp as Drawings<"text">[0])} />;
     }
     default:
       console.log(`Error in component:`, comp);

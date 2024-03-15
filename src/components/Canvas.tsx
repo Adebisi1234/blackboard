@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   addDrawing,
   cleanUpDrawing,
@@ -7,6 +7,7 @@ import {
   removeComp,
 } from "../utils/drawings";
 import {
+  useActive,
   useActiveTool,
   useCanvas,
   useDrawing,
@@ -15,7 +16,6 @@ import {
   useImage,
   useLocation,
 } from "../store/Store";
-import { Drawings } from "../types/general";
 import useAddImage from "../hooks/useAddImage";
 import useAddToActiveComp from "../hooks/useAddToActiveComp";
 import useUpdateGeneral from "../hooks/useUpdateGeneral";
@@ -37,15 +37,16 @@ export default function Canvas() {
 
   const drawingId = useRef(0);
   const [isToolActive, setIsToolActive] = useState(false);
-  const activeCompRef = useRef<HTMLElement | number[] | null>(null);
+  // const activeCompRef = useRef<HTMLElement | number[] | null>(null);
   const { image } = useImage();
   const { canvasPos, canvasRef, setRef, setCanvasPos } = useCanvas();
   const loc = useLocation((state) => state.location);
+  const setActiveComp = useActive((state) => state.setActiveComp);
   useAddImage(image, drawingId.current);
 
-  useAddToActiveComp(highlighted, activeCompRef);
+  useAddToActiveComp();
 
-  useUpdateGeneral(activeCompRef);
+  useUpdateGeneral();
 
   if (activeTool !== "pointer" && highlighted.length !== 0) {
     // highlighted.forEach((id) => {
@@ -72,6 +73,7 @@ export default function Canvas() {
       drawingId,
       image,
     });
+    setActiveComp(drawingId.current);
     if (activeTool === "eraser") {
       // First implementation
       const id = +(e.target as HTMLElement).id ?? -1;
@@ -168,9 +170,7 @@ export default function Canvas() {
     setIsToolActive(false);
   };
 
-  const components = drawing.map((x) =>
-    drawOnCanvas(x, activeCompRef as RefObject<HTMLElement>)
-  );
+  const components = drawing.map(drawOnCanvas);
   return (
     <div
       onMouseDown={handleMouseDown}

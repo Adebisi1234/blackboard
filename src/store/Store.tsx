@@ -43,6 +43,11 @@ interface ActiveToolState {
   setActiveTool: (payload: ActiveTool) => void;
 }
 
+interface ActiveCompState {
+  activeComp: number[];
+  setActiveComp: (payload: number | number[]) => void;
+}
+
 interface Canvas {
   canvasPos: {
     x: number;
@@ -52,6 +57,15 @@ interface Canvas {
   setRef: (ref: HTMLDivElement) => void;
   setCanvasPos: (payload: { x: number; y: number }) => void;
 }
+
+export const useActive = create<ActiveCompState>((set) => ({
+  activeComp: [],
+  setActiveComp(payload) {
+    set(() => ({
+      activeComp: typeof payload === "number" ? [payload] : payload,
+    }));
+  },
+}));
 
 export const useDrawing = create<DrawingState>((set) => ({
   drawing: [],
@@ -110,8 +124,8 @@ export const useGeneral = create<GeneralState>((set) => ({
     color: "#ffffff",
     opacity: 1,
     strokeWidth: 3,
-    dash: "solid",
-    fill: "none",
+    dash: 0,
+    fill: 0,
     scale: 1,
     highlight: false,
     font: 24,
