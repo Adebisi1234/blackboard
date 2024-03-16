@@ -16,7 +16,7 @@ A simple, fast and efficient drawing tool with the following features
 
 More Ambitious version, aiming for the best of the best drawing board
 
-Currently taking inspiration from (@tldraw)[https://gitHub.com/tldraw]
+Currently taking inspiration from [@tldraw](https://github.com/tldraw)
 
 Currently implemented better versions of all main branch features
 
