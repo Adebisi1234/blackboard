@@ -16,6 +16,7 @@ interface DrawingState {
   clearPointer: (id: number) => void;
   hideComp: (id: number) => void;
   toggleHighlight: (id: number) => void;
+  highlightComp: (id: number) => void;
   hoverComp: (id: number) => void;
   leaveComp: (id: number) => void;
 }
@@ -86,7 +87,8 @@ export const useDrawing = create<DrawingState>((set) => ({
     set(({ drawing }) => {
       const temp = [...drawing];
       temp.splice(id, 1);
-      return { drawing: [...temp] };
+      console.log({ temp });
+      return { drawing: temp };
     });
   },
   hideComp(id) {
@@ -99,7 +101,14 @@ export const useDrawing = create<DrawingState>((set) => ({
   toggleHighlight(id) {
     set(({ drawing }) => {
       const temp = [...drawing];
-      temp[id].highlight = !temp[id].highlight;
+      temp[id].highlight = false;
+      return { drawing: temp };
+    });
+  },
+  highlightComp(id) {
+    set(({ drawing }) => {
+      const temp = [...drawing];
+      temp[id].highlight = true;
       return { drawing: temp };
     });
   },

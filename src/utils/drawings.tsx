@@ -54,7 +54,6 @@ export function addDrawing({
             y: e.clientY,
           },
           type: "arrow",
-          angle: 0,
         },
         id: drawingId.current,
         pos: {
@@ -103,8 +102,8 @@ export function addDrawing({
             x: e.clientX,
             y: e.clientY,
           },
-          width: 0,
-          height: 0,
+          width: 4,
+          height: 4,
         },
         pos: {
           x: e.clientX,
@@ -170,7 +169,7 @@ export function addDrawing({
           x: e.clientX,
           y: e.clientY,
         },
-      } satisfies Drawings<"shapes">[0];
+      } satisfies Drawings<"shape">[0];
       setDrawing!(newShapeComp);
       break;
     }
@@ -204,6 +203,7 @@ export function modifyDrawing({
         !drawing[drawingId.current] ||
         drawing[drawingId.current].prop.type !== "pointer"
       ) {
+        console.log(drawingId.current);
         break;
       }
 
@@ -304,7 +304,7 @@ export function modifyDrawing({
       break;
     }
     case "shape": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"shapes">[0];
+      const edit = { ...drawing[drawingId.current] } as Drawings<"shape">[0];
       if (e.clientX < edit.prop.startPos.x) {
         edit.prop.pos.x =
           edit.prop.startPos.x - getDiff(edit.prop.startPos.x, e.clientX);
@@ -342,45 +342,8 @@ export function cleanUpDrawing({
   drawing,
   clearPointer,
 }: ModifyDrawing) {
-  switch (activeTool) {
-    case "pointer": {
-      if (
-        !drawing[drawingId.current] ||
-        drawing[drawingId.current].prop.type !== "pointer"
-      ) {
-        break;
-      }
-      clearPointer!(drawingId.current);
-
-      break;
-    }
-    // case "hand": {
-    //   break;
-    // }
-    // case "pencil": {
-    //   break;
-    // }
-    // case "eraser": {
-    //   break;
-    // }
-    // case "arrow": {
-    //   break;
-    // }
-    // case "text": {
-    //   break;
-    // }
-    // case "note": {
-    //   break;
-    // }
-    // case "image": {
-    //   break;
-    // }
-    // case "shape": {
-    //   break;
-    // }
-    // default: {
-    //   break;
-    // }
+  if (drawing[drawing.length - 1].prop?.type === "pointer") {
+    clearPointer!(drawing.length - 1);
   }
 }
 export function drawOnCanvas(comp: Drawings[0]) {
@@ -410,7 +373,7 @@ export function drawOnCanvas(comp: Drawings[0]) {
       );
     }
     case "shape": {
-      return <Shapes key={comp.id} {...(comp as Drawings<"shapes">[0])} />;
+      return <Shapes key={comp.id} {...(comp as Drawings<"shape">[0])} />;
     }
     case "text": {
       return <Text key={comp.id} {...(comp as Drawings<"text">[0])} />;

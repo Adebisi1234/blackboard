@@ -1,11 +1,9 @@
 import { forwardRef, useEffect, useRef } from "react";
 import { type Drawings } from "../../types/general";
 import { useLocation } from "../../store/Store";
+import CompOverlay from "../ui/CompOverlay";
 
-export default forwardRef<HTMLDivElement, Drawings<"image">[0]>(function Image(
-  prop,
-  activeCompRef
-) {
+export default function Image(prop: Drawings<"image">[0]) {
   const { src, alt, width, height } = prop.prop;
   const imgRef = useRef<HTMLImageElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
@@ -24,7 +22,6 @@ export default forwardRef<HTMLDivElement, Drawings<"image">[0]>(function Image(
   }, [width, height, prop.pos]);
   return (
     <div
-      ref={activeCompRef}
       className={`size-fit `}
       draggable={false}
       id={`${prop.id}`}
@@ -46,6 +43,12 @@ export default forwardRef<HTMLDivElement, Drawings<"image">[0]>(function Image(
         draggable={false}
         ref={imgRef}
       />
+      {prop.highlight && prop.opacity !== 0 && (
+        <CompOverlay
+          id={prop.id}
+          type={"others"}
+        />
+      )}
     </div>
   );
-});
+}

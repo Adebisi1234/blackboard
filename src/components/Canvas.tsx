@@ -30,6 +30,7 @@ export default function Canvas() {
     toggleHighlight,
     hoverComp,
     leaveComp,
+    highlightComp,
   } = useDrawing();
   const { highlighted, setHighlighted } = useHighlighted();
   const { activeTool, setActiveTool } = useActiveTool();
@@ -41,12 +42,12 @@ export default function Canvas() {
   const { image } = useImage();
   const { canvasPos, canvasRef, setRef, setCanvasPos } = useCanvas();
   const loc = useLocation((state) => state.location);
-  const setActiveComp = useActive((state) => state.setActiveComp);
+  const { setActiveComp, activeComp } = useActive();
   useAddImage(image, drawingId.current);
-
   useAddToActiveComp();
 
   useUpdateGeneral();
+  console.log(drawing);
 
   if (activeTool !== "pointer" && highlighted.length !== 0) {
     // highlighted.forEach((id) => {
@@ -58,6 +59,16 @@ export default function Canvas() {
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!canvasRef) {
       return;
+    }
+    if (
+      !(
+        activeTool === "pointer" ||
+        activeTool === "eraser" ||
+        activeTool === "hand"
+      ) &&
+      drawing[activeComp[activeComp.length - 1]]
+    ) {
+      toggleHighlight(activeComp[activeComp.length - 1]);
     }
 
     setIsToolActive(true);
@@ -140,7 +151,17 @@ export default function Canvas() {
       activeTool,
       general,
     });
-    if (!(activeTool === "pointer" || activeTool === "hand")) {
+    if (
+      !(
+        activeTool === "eraser" ||
+        activeTool === "hand" ||
+        activeTool === "pointer"
+      ) &&
+      drawing[activeComp[activeComp.length - 1]]
+    ) {
+      highlightComp(activeComp[activeComp.length - 1]);
+    }
+    if (drawing[drawingId.current]?.prop?.type !== "pointer") {
       drawingId.current++;
     }
     if (activeTool === "pointer") {
@@ -154,7 +175,7 @@ export default function Canvas() {
             e.clientY < loc[id].y + loc[id].height
           ) {
             if (!drawing[id].highlight) {
-              toggleHighlight(+id);
+              highlightComp(+id);
             }
           }
         }
@@ -176,7 +197,6 @@ export default function Canvas() {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onClickCapture={() => console.log("clk")}
       className="absolute inset-0 w-screen h-screen canvas bg"
     >
       <div

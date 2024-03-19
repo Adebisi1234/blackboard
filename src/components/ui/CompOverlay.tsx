@@ -1,30 +1,38 @@
-import { useCanvas } from "../../store/Store";
+import { useRef, useState } from "react";
+import {
+  useActiveTool,
+  useCanvas,
+  useDrawing,
+  useLocation,
+} from "../../store/Store";
+import { Drawings } from "../../types/general";
 
-type ArrowProp = {
-  startPos: { x: number; y: number };
-  endPos: { x: number; y: number };
-};
-type Others = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-type Prop<T = any> = {
-  type: T;
-  prop: T extends "arrow" ? ArrowProp : Others;
+type Prop = {
+  type: "arrow" | "others";
   id: number;
+  opacity: number;
 };
 
 export default function CompOverlay(prop: Prop) {
   const canvasPos = useCanvas((state) => state.canvasPos);
+  const { activeTool, setActiveTool } = useActiveTool();
+  const prev = useRef(activeTool);
+  const { drawing, updateDrawing } = useDrawing();
+  const location = useLocation((state) => state.location);
+  const [active, setActive] = useState(false);
   if (prop.type === "arrow") {
-    const { startPos, endPos } = (prop as Prop<"arrow">).prop;
+    const {
+      prop: { startPos, endPos, qCurve },
+    } = drawing[prop.id] as Drawings<"arrow">[0];
     return (
-      <svg>
+      <svg opacity={prop.opacity === 0 ? 0 : 1} fill="none">
         <g>
           <path
-            d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y} z`}
+            d={`M ${startPos.x} ${startPos.y} ${
+              !qCurve
+                ? `L ${endPos.x} ${endPos.y}`
+                : `L ${qCurve.x} ${qCurve.y} M ${qCurve.x} ${qCurve.y} L ${endPos.x} ${endPos.y}`
+            }`}
             strokeWidth={0.5}
             stroke="green"
           ></path>
@@ -35,12 +43,18 @@ export default function CompOverlay(prop: Prop) {
             stroke="blue"
             fill="white"
             data-comp="arrow"
+            onMouseDown={(e) => {
+              setActiveTool("pointer");
+            }}
+            onMouseUp={() => {
+              setActiveTool(prev.current);
+            }}
             data-comp-id={prop.id}
             data-pos="end"
           ></circle>
           <circle
-            cx={(endPos.x + startPos.x) / 2}
-            cy={(endPos.y + startPos.y) / 2}
+            cx={qCurve ? qCurve.x : (endPos.x + startPos.x) / 2}
+            cy={qCurve ? qCurve.y : (endPos.y + startPos.y) / 2}
             r={7}
             stroke="blue"
             fill="white"
@@ -55,6 +69,12 @@ export default function CompOverlay(prop: Prop) {
             stroke="blue"
             fill="white"
             data-comp="arrow"
+            onMouseDown={(e) => {
+              setActiveTool("pointer");
+            }}
+            onMouseUp={() => {
+              setActiveTool(prev.current);
+            }}
             data-comp-id={prop.id}
             data-pos="top"
           ></circle>
@@ -62,7 +82,7 @@ export default function CompOverlay(prop: Prop) {
       </svg>
     );
   }
-  let { x, y, width, height } = (prop as Prop<"others">).prop;
+  let { x, y, width, height } = location[prop.id];
   x = x - canvasPos.x;
   y = y - canvasPos.y;
   return (

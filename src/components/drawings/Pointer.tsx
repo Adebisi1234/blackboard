@@ -10,10 +10,7 @@ export default function Pointer({
   const { pos, width, height } = prop;
   const location = useLocation((state) => state.location);
   const { setHighlighted, highlighted } = useHighlighted();
-  useEffect(() => {
-    // setHighlighted(CompInRange(location, pos, width, height));
-    // console.log(CompInRange(location, pos, width, height));
-  }, [width, height, pos]);
+
   if (
     highlighted.toString() !==
     CompInRange(location, pos, width, height).toString()

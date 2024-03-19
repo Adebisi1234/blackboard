@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowHead } from "./ArrowHead";
 import { pythag } from "../../utils/math";
 import { type Drawings } from "../../types/general";
@@ -7,11 +7,11 @@ import CompOverlay from "../ui/CompOverlay";
 
 export default function Arrow(prop: Drawings<"arrow">[0]) {
   const { activeTool } = useActiveTool();
-  const { startPos, endPos } = prop.prop;
+  const { startPos, endPos, qCurve } = prop.prop;
 
   const headAngle = (() => {
-    const dx = endPos.x - startPos.x;
-    const dy = endPos.y - startPos.y;
+    const dx = endPos.x - (qCurve ? qCurve.x : startPos.x);
+    const dy = endPos.y - (qCurve ? qCurve.y : startPos.y);
     let theta = Math.atan2(dy, dx);
     theta *= 180 / Math.PI;
     if (theta < 0) theta += 360;
@@ -35,11 +35,13 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
   }, [endPos]);
   return (
     <>
-      <svg id={`${prop.id}`}>
+      <svg id={`${prop.id}`} fill="none">
         <g id={`${prop.id}`} opacity={prop.opacity}>
           <path
             id={`${prop.id}`}
-            d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
+            d={`M ${startPos.x} ${startPos.y} ${
+              !qCurve ? "L" : `Q ${qCurve.x} ${qCurve.y} `
+            } ${endPos.x} ${endPos.y}`}
             stroke={prop.color}
             strokeWidth={prop.strokeWidth}
             strokeDasharray={prop.dash}
@@ -74,8 +76,8 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
           )}
         </g>
       </svg>
-      {prop.highlight && (
-        <CompOverlay id={prop.id} type={"arrow"} prop={{ startPos, endPos }} />
+      {prop.highlight && prop.opacity !== 0 && (
+        <CompOverlay id={prop.id} opacity={prop.opacity} type={"arrow"} />
       )}
     </>
   );

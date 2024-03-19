@@ -92,17 +92,8 @@ export default React.forwardRef<HTMLDivElement, Drawings<"note">[0]>(
             </div>
           </div>
         </div>
-        {prop.highlight && (
-          <CompOverlay
-            id={prop.id}
-            type={"others"}
-            prop={{
-              x: containerRef.current?.getBoundingClientRect().x ?? 0,
-              y: containerRef.current?.getBoundingClientRect().y ?? 0,
-              width: containerRef.current?.getBoundingClientRect().width ?? 0,
-              height: containerRef.current?.getBoundingClientRect().height ?? 0,
-            }}
-          />
+        {prop.highlight && prop.opacity !== 0 && (
+          <CompOverlay id={prop.id} opacity={prop.opacity} type={"others"} />
         )}
       </>
     );

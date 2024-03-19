@@ -24,3 +24,6 @@ svg {
   overflow: visible;
   position: absolute;
 }
+circle {
+  cursor: pointer;
+}

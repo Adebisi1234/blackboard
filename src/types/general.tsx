@@ -35,7 +35,7 @@ export type General = {
   hovered: boolean;
 };
 
-export type Drawings<T = undefined> = ({
+export type Drawings<T extends ActiveTool | undefined = undefined> = ({
   id: number;
   prop: T extends "arrow"
     ? ArrowProp
@@ -49,7 +49,7 @@ export type Drawings<T = undefined> = ({
     ? PointerProp
     : T extends "text"
     ? TextProp
-    : T extends "shapes"
+    : T extends "shape"
     ? ShapesProp
     :
         | ArrowProp
@@ -135,7 +135,10 @@ export type ArrowProp = {
     x: number;
     y: number;
   };
-  angle: number;
+  qCurve?: {
+    x: number;
+    y: number;
+  };
   type: "arrow";
 };
 export type ImageProp = {

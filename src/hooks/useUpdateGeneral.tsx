@@ -7,11 +7,12 @@ export default function useUpdateGeneral() {
   const activeComp = useActive((state) => state.activeComp);
   useEffect(() => {
     if (!activeComp) return;
+    const { highlight, hovered, ...update } = general; //Don't reset the highlighted on update
     activeComp.forEach((id) => {
       if (!drawing[id]) return;
       updateDrawing(id, {
         ...drawing[id],
-        ...general,
+        ...update,
       });
     });
   }, [general]);
