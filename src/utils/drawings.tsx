@@ -350,7 +350,7 @@ export function drawOnCanvas(comp: Drawings[0]) {
   if (!comp) {
     return;
   }
-  switch (comp.prop.type) {
+  switch (comp?.prop?.type) {
     case "arrow": {
       return <Arrow key={comp.id} {...(comp as Drawings<"arrow">[0])} />;
     }

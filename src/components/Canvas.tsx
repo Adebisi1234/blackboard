@@ -19,6 +19,7 @@ import {
 import useAddImage from "../hooks/useAddImage";
 import useAddToActiveComp from "../hooks/useAddToActiveComp";
 import useUpdateGeneral from "../hooks/useUpdateGeneral";
+import adjustComp from "../utils/adjustComp";
 
 export default function Canvas() {
   const {
@@ -56,7 +57,9 @@ export default function Canvas() {
     setHighlighted([]);
   }
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseDown = (
+    e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
+  ) => {
     if (!canvasRef) {
       return;
     }
@@ -71,7 +74,13 @@ export default function Canvas() {
       toggleHighlight(activeComp[activeComp.length - 1]);
     }
 
+    // Adjusting Existing comp
+    if ((e.target as SVGCircleElement).classList.contains("adjust")) {
+      adjustComp({ e, activeTool, setActiveTool, drawing, updateDrawing });
+      return;
+    }
     setIsToolActive(true);
+    //TODO: Use temp storage to avoid issues
     addDrawing({
       e: {
         clientX: e.clientX - canvasRef.getBoundingClientRect().x,
@@ -85,6 +94,7 @@ export default function Canvas() {
       image,
     });
     setActiveComp(drawingId.current);
+
     if (activeTool === "eraser") {
       // First implementation
       const id = +(e.target as HTMLElement).id ?? -1;
@@ -92,8 +102,15 @@ export default function Canvas() {
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
+  ) => {
     if (!canvasRef) {
+      return;
+    }
+    // Adjusting Existing comp
+    if ((e.target as SVGCircleElement).classList.contains("adjust")) {
+      adjustComp({ e, activeTool, setActiveTool, drawing, updateDrawing });
       return;
     }
     if (!isToolActive) {
@@ -142,7 +159,14 @@ export default function Canvas() {
       setCanvasPos(canvasPos);
     }
   };
-  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseUp = (
+    e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
+  ) => {
+    // Adjusting Existing comp
+    if ((e.target as SVGCircleElement).classList.contains("adjust")) {
+      adjustComp({ e, activeTool, setActiveTool, drawing, updateDrawing });
+      return;
+    }
     cleanUpDrawing({
       e,
       drawingId,

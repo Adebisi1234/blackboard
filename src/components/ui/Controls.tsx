@@ -24,6 +24,7 @@ export default function Controls() {
           activeTool === "pointer" && "bg-[#4387f4]"
         }`}
         tool="pointer"
+        title="Tool - pointer"
         onClick={() => setActiveTool("pointer")}
       >
         <Pointer />
@@ -33,6 +34,7 @@ export default function Controls() {
           activeTool === "hand" && "bg-[#4387f4]"
         }`}
         tool="hand"
+        title="Tool - Grab"
         onClick={() => setActiveTool("hand")}
       >
         <Hand />
@@ -42,6 +44,7 @@ export default function Controls() {
           activeTool === "pencil" && "bg-[#4387f4]"
         }`}
         tool="pencil"
+        title="Tool - pencil"
         onClick={() => setActiveTool("pencil")}
       >
         <Pencil />
@@ -51,6 +54,7 @@ export default function Controls() {
           activeTool === "eraser" && "bg-[#4387f4]"
         }`}
         tool="eraser"
+        title="Tool - eraser"
         onClick={() => setActiveTool("eraser")}
       >
         <Eraser />
@@ -60,6 +64,7 @@ export default function Controls() {
           activeTool === "arrow" && "bg-[#4387f4]"
         }`}
         tool="arrow"
+        title="Tool - arrow"
         onClick={() => setActiveTool("arrow")}
       >
         <Arrow />
@@ -69,6 +74,7 @@ export default function Controls() {
           activeTool === "text" && "bg-[#4387f4]"
         }`}
         tool="text"
+        title="Tool - text"
         onClick={() => setActiveTool("text")}
       >
         <Text />
@@ -78,6 +84,7 @@ export default function Controls() {
           activeTool === "note" && "bg-[#4387f4]"
         }`}
         tool="note"
+        title="Tool - note"
         onClick={() => setActiveTool("note")}
       >
         <Note />
@@ -87,6 +94,7 @@ export default function Controls() {
           activeTool === "image" && "bg-[#4387f4]"
         }`}
         tool="pointer"
+        title="Tool - pointer"
         onClick={() => setActiveTool("pointer")}
       >
         <label htmlFor="image">
@@ -122,6 +130,7 @@ export default function Controls() {
           activeTool === "shape" && "bg-[#4387f4]"
         }`}
         tool="shape"
+        title="Tool - shape"
         onClick={() => setActiveTool("shape")}
       >
         <GeoRect />
