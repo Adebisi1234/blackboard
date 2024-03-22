@@ -58,7 +58,7 @@ export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
         </svg>
 
         {prop.highlight && prop.opacity !== 0 && (
-          <CompOverlay id={prop.id} opacity={prop.opacity} type={"others"} />
+          <CompOverlay id={prop.id} opacity={prop.opacity} type={"pencil"} />
         )}
       </>
     );

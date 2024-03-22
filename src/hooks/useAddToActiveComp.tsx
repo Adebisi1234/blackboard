@@ -8,6 +8,7 @@ export default function useAddToActiveComp() {
   useEffect(() => {
     if (highlighted.length === 0) {
       activeComp.forEach((id) => {
+        if (!drawing[id]) return;
         updateDrawing(id, { ...drawing[id], highlight: false });
       });
       setActiveComp([]);

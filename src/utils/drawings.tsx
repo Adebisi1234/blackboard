@@ -190,19 +190,12 @@ export function modifyDrawing({
   updateDrawing,
   general,
 }: ModifyDrawing) {
+  if (!drawing[drawingId.current]) return;
   switch (activeTool) {
     case "hand":
     case "eraser":
       break;
     case "pointer": {
-      if (
-        !drawing[drawingId.current] ||
-        drawing[drawingId.current].prop.type !== "pointer"
-      ) {
-        console.log(drawingId.current);
-        break;
-      }
-
       const edit = { ...drawing[drawingId.current] } as Drawings<"pointer">[0];
       if (e.clientX < edit.prop.startPos.x) {
         edit.prop.pos.x =
@@ -225,9 +218,6 @@ export function modifyDrawing({
     }
 
     case "pencil": {
-      if (!drawing[drawingId.current]) {
-        break;
-      }
       const edit = { ...drawing[drawingId.current] } as Drawings<"pencil">[0];
       edit.prop.path = [
         ...edit.prop.path,
@@ -241,9 +231,6 @@ export function modifyDrawing({
     }
 
     case "arrow": {
-      if (!drawing[drawingId.current]) {
-        break;
-      }
       const edit = { ...drawing[drawingId.current] } as Drawings<"arrow">[0];
       edit.prop.endPos = {
         x: e.clientX,
@@ -259,9 +246,6 @@ export function modifyDrawing({
       break;
     }
     case "text": {
-      if (!drawing[drawingId.current]) {
-        break;
-      }
       const edit = { ...drawing[drawingId.current] } as Drawings<"text">[0];
       edit.pos = {
         ...edit.pos,
@@ -272,9 +256,6 @@ export function modifyDrawing({
       break;
     }
     case "note": {
-      if (!drawing[drawingId.current]) {
-        break;
-      }
       const edit = { ...drawing[drawingId.current] } as Drawings<"note">[0];
       edit.pos = {
         ...edit.pos,
@@ -285,9 +266,6 @@ export function modifyDrawing({
       break;
     }
     case "image": {
-      if (!drawing[drawingId.current]) {
-        break;
-      }
       const edit = { ...drawing[drawingId.current] } as Drawings<"image">[0];
       edit.pos = {
         ...edit.pos,
@@ -338,15 +316,15 @@ export function cleanUpDrawing({
   drawing,
   clearPointer,
 }: ModifyDrawing) {
-  if (drawing[drawing.length - 1].prop?.type === "pointer") {
+  if (drawing[drawing.length - 1]?.prop?.type === "pointer") {
     clearPointer!(drawing.length - 1);
   }
 }
 export function drawOnCanvas(comp: Drawings[0]) {
-  if (!comp) {
+  if (!comp || !comp.prop) {
     return;
   }
-  switch (comp?.prop?.type) {
+  switch (comp.prop.type) {
     case "arrow": {
       return <Arrow key={comp.id} {...(comp as Drawings<"arrow">[0])} />;
     }

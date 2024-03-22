@@ -41,7 +41,7 @@ export default function Canvas() {
   const [isToolActive, setIsToolActive] = useState(false);
   const [adjustCompId, setAdjustCompId] = useState<{
     id: number;
-    type: "arrow" | "others";
+    type: "arrow" | "pencil" | "image" | "shape" | "text";
     pos: string;
   } | null>(null);
   const { canvasPos, canvasRef, setRef, setCanvasPos } = useCanvas();
@@ -51,7 +51,6 @@ export default function Canvas() {
   useAddImage(drawingId.current);
   useAddToActiveComp();
   useUpdateGeneral();
-
   if (activeTool !== "pointer" && highlighted.length !== 0) {
     // highlighted.forEach((id) => {
     //   updateDrawing(id, { ...drawing[id], highlight: false });
@@ -83,7 +82,10 @@ export default function Canvas() {
         id: +(e.target as SVGCircleElement).getAttribute("data-comp-id")!,
         type: (e.target as SVGCircleElement).getAttribute("data-comp")! as
           | "arrow"
-          | "others",
+          | "pencil"
+          | "image"
+          | "shape"
+          | "text",
         pos: (e.target as SVGCircleElement).getAttribute("data-pos")!,
       });
       prevTool.current = activeTool;
@@ -118,6 +120,7 @@ export default function Canvas() {
     if (!canvasRef) {
       return;
     }
+
     // Adjusting Existing comp
     if (adjustCompId) {
       adjustComp({
@@ -204,7 +207,10 @@ export default function Canvas() {
     ) {
       highlightComp(activeComp[activeComp.length - 1]);
     }
-    if (drawing[drawingId.current]?.prop?.type !== "pointer") {
+    if (
+      drawing[drawingId.current]?.prop?.type !== "pointer" &&
+      activeTool !== "hand"
+    ) {
       drawingId.current++;
     }
     if (activeTool === "pointer") {
@@ -219,6 +225,7 @@ export default function Canvas() {
           ) {
             if (!drawing[id].highlight) {
               highlightComp(+id);
+              setActiveComp(+id);
             }
           }
         }

@@ -2,7 +2,7 @@ import { useCanvas, useDrawing, useLocation } from "../../store/Store";
 import { Drawings } from "../../types/general";
 
 type Prop = {
-  type: "arrow" | "others";
+  type: "arrow" | "pencil" | "image" | "shape" | "text";
   id: number;
   opacity: number;
 };
@@ -71,6 +71,7 @@ export default function CompOverlay(prop: Prop) {
   let { x, y, width, height } = location[prop.id];
   x = x - canvasPos.x;
   y = y - canvasPos.y;
+
   return (
     <>
       {width > 0 && height > 0 && (
