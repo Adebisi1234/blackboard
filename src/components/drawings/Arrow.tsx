@@ -19,7 +19,6 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
   })();
   const setLocation = useLocation((state) => state.setLocation);
   const arrowRef = useRef<SVGPathElement>(null!);
-  const toggleHighlight = useDrawing((state) => state.toggleHighlight);
   useEffect(() => {
     if (!arrowRef.current) return;
     const { width, height, x, y } = arrowRef.current
@@ -47,9 +46,6 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
             strokeDasharray={prop.dash}
             className="z-20"
             ref={arrowRef}
-            onMouseDown={() => {
-              activeTool === "pointer" && toggleHighlight(prop.id);
-            }}
           ></path>
           {pythag({
             x1: startPos.x,

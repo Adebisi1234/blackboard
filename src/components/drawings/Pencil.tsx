@@ -13,7 +13,6 @@ export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
         return `${func} ${x * prop.scale} ${y * prop.scale}`;
       })
       .join(" ");
-    const toggleHighlight = useDrawing((state) => state.toggleHighlight);
     useEffect(() => {
       if (!pathRef.current) return;
       const { width, height, x, y } = pathRef.current
@@ -34,9 +33,6 @@ export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
             <path
               id={`${prop.id}`}
               ref={pathRef}
-              onClick={() => {
-                toggleHighlight(prop.id);
-              }}
               d={`${d} z`}
               stroke={prop.color}
               strokeWidth={prop.strokeWidth}

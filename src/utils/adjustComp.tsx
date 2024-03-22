@@ -1,92 +1,69 @@
-import { ActiveTool, Drawings } from "../types/general";
+import { Drawings } from "../types/general";
 
 type AdjustProp = {
   e: React.MouseEvent<SVGCircleElement | HTMLDivElement, MouseEvent>;
-  activeTool: ActiveTool;
   drawing: Drawings;
-  setActiveTool: (payload: ActiveTool) => void;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
+  id: number;
+  compType: "arrow" | "others";
+  pos: string;
 };
 
 export default function adjustComp({
   e,
-  activeTool,
-  setActiveTool,
   drawing,
   updateDrawing,
+  id,
+  pos,
+  compType,
 }: AdjustProp) {
-  if ((e.target as SVGCircleElement).getAttribute("data-comp") === "arrow")
+  if (compType === "arrow")
     return adjustArrow({
       e,
-      activeTool,
-      setActiveTool,
       drawing,
       updateDrawing,
+      id,
+      pos,
     });
-  else if (
-    (e.target as SVGCircleElement).getAttribute("data-comp") === "pencil"
-  )
-    return adjustPencil({
+  else if (compType === "others")
+    return adjustRect({
       e,
-      activeTool,
-      setActiveTool,
       drawing,
       updateDrawing,
+      id,
+      pos,
     });
-  else if ((e.target as SVGCircleElement).getAttribute("data-comp") === "image")
-    return adjustImage({
-      e,
-      activeTool,
-      setActiveTool,
-      drawing,
-      updateDrawing,
-    });
-  else;
+  else return;
 }
 
 function adjustArrow({
   e,
-  activeTool,
-  setActiveTool,
   drawing,
   updateDrawing,
-}: AdjustProp) {
-  if (e.type === "mousedown") {
-    console.log("mousedown");
-    if ((e.target as SVGCircleElement).getAttribute("data-pos") === "top") {
-    } else if (
-      (e.target as SVGCircleElement).getAttribute("data-pos") === "mid"
-    ) {
-    } else if (
-      (e.target as SVGCircleElement).getAttribute("data-pos") === "end"
-    ) {
-    }
-  } else if (e.type === "mousemove") {
-  } else if (e.type === "mouseup") {
+  id,
+  pos,
+}: Omit<AdjustProp, "compType">) {
+  if (pos === "top") {
+  } else if (pos === "mid") {
+    const edit = drawing[id] as Drawings<"arrow">[0];
+    edit.prop.qCurve = {
+      x: e.clientX,
+      y: e.clientY,
+    };
+    updateDrawing(id, edit);
+    return;
+  } else if (pos === "end") {
   }
   // Check which circle is active
 }
 
-function adjustPencil({
+function adjustRect({
   e,
-  activeTool,
-  setActiveTool,
   drawing,
   updateDrawing,
-}: AdjustProp) {
-  if (e.type === "mousedown") {
-  } else if (e.type === "mousemove") {
-  } else if (e.type === "mouseup") {
-  }
-}
-
-function adjustImage({
-  e,
-  activeTool,
-  setActiveTool,
-  drawing,
-  updateDrawing,
-}: AdjustProp) {
+  id,
+  pos,
+}: Omit<AdjustProp, "compType">) {
   if (e.type === "mousedown") {
   } else if (e.type === "mousemove") {
   } else if (e.type === "mouseup") {

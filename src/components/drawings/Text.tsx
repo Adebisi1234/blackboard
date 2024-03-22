@@ -21,7 +21,6 @@ export default React.forwardRef<HTMLDivElement, Drawings<"text">[0]>(
       []
     );
     const [edit, setEdit] = useState(true);
-    const toggleHighlight = useDrawing((state) => state.toggleHighlight);
     const setLocation = useLocation((state) => state.setLocation);
     if (edit) {
       textRef.current?.focus();
@@ -51,7 +50,6 @@ export default React.forwardRef<HTMLDivElement, Drawings<"text">[0]>(
             textRef.current.style.width = `${textRef.current?.scrollWidth}px`;
           }}
           onClick={() => {
-            toggleHighlight(prop.id);
             edit !== true && setEdit(true);
           }}
           onMouseLeave={() => {

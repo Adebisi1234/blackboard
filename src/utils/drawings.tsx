@@ -22,8 +22,6 @@ type ModifyDrawing = {
   setDrawing?: (payload: Drawings[0]) => void;
   updateDrawing?: (id: number, payload: Drawings[0]) => void;
   general: General;
-  image?: ImageType;
-  clearImage?: () => void;
   activeTool: ActiveTool;
   clearPointer?: (id: number) => void;
 };
@@ -34,8 +32,6 @@ export function addDrawing({
   activeTool,
   setDrawing,
   general,
-  image,
-  clearImage,
 }: ModifyDrawing) {
   switch (activeTool) {
     case "hand":

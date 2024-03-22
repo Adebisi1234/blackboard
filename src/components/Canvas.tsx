@@ -39,16 +39,18 @@ export default function Canvas() {
 
   const drawingId = useRef(0);
   const [isToolActive, setIsToolActive] = useState(false);
-  // const activeCompRef = useRef<HTMLElement | number[] | null>(null);
-  const { image } = useImage();
+  const [adjustCompId, setAdjustCompId] = useState<{
+    id: number;
+    type: "arrow" | "others";
+    pos: string;
+  } | null>(null);
   const { canvasPos, canvasRef, setRef, setCanvasPos } = useCanvas();
   const loc = useLocation((state) => state.location);
   const { setActiveComp, activeComp } = useActive();
-  useAddImage(image, drawingId.current);
+  const prevTool = useRef(activeTool);
+  useAddImage(drawingId.current);
   useAddToActiveComp();
-
   useUpdateGeneral();
-  console.log(drawing);
 
   if (activeTool !== "pointer" && highlighted.length !== 0) {
     // highlighted.forEach((id) => {
@@ -69,6 +71,7 @@ export default function Canvas() {
         activeTool === "eraser" ||
         activeTool === "hand"
       ) &&
+      !(e.target as SVGCircleElement).classList.contains("adjust") &&
       drawing[activeComp[activeComp.length - 1]]
     ) {
       toggleHighlight(activeComp[activeComp.length - 1]);
@@ -76,7 +79,15 @@ export default function Canvas() {
 
     // Adjusting Existing comp
     if ((e.target as SVGCircleElement).classList.contains("adjust")) {
-      adjustComp({ e, activeTool, setActiveTool, drawing, updateDrawing });
+      setAdjustCompId({
+        id: +(e.target as SVGCircleElement).getAttribute("data-comp-id")!,
+        type: (e.target as SVGCircleElement).getAttribute("data-comp")! as
+          | "arrow"
+          | "others",
+        pos: (e.target as SVGCircleElement).getAttribute("data-pos")!,
+      });
+      prevTool.current = activeTool;
+      setActiveTool("pointer");
       return;
     }
     setIsToolActive(true);
@@ -91,7 +102,6 @@ export default function Canvas() {
       general,
       setDrawing,
       drawingId,
-      image,
     });
     setActiveComp(drawingId.current);
 
@@ -109,8 +119,15 @@ export default function Canvas() {
       return;
     }
     // Adjusting Existing comp
-    if ((e.target as SVGCircleElement).classList.contains("adjust")) {
-      adjustComp({ e, activeTool, setActiveTool, drawing, updateDrawing });
+    if (adjustCompId) {
+      adjustComp({
+        e,
+        drawing,
+        updateDrawing,
+        id: adjustCompId.id,
+        compType: adjustCompId.type,
+        pos: adjustCompId.pos,
+      });
       return;
     }
     if (!isToolActive) {
@@ -163,8 +180,10 @@ export default function Canvas() {
     e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
   ) => {
     // Adjusting Existing comp
-    if ((e.target as SVGCircleElement).classList.contains("adjust")) {
-      adjustComp({ e, activeTool, setActiveTool, drawing, updateDrawing });
+    if (adjustCompId) {
+      toggleHighlight(adjustCompId.id);
+      setAdjustCompId(null);
+      setActiveTool(prevTool.current);
       return;
     }
     cleanUpDrawing({

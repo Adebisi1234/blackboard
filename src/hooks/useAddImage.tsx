@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 import { Drawings, ImageType } from "../types/general";
-import { useDrawing } from "../store/Store";
+import { useDrawing, useImage } from "../store/Store";
 
 export default function useAddImage(
-  image: ImageType | undefined,
   drawingId: number
 ) {
+  const { image } = useImage();
   const setDrawing = useDrawing((state) => state.setDrawing);
   useEffect(() => {
     if (!image) {
       return;
     }
     const newImageComp = {
-      id: image.id,
+      id: drawingId,
       prop: {
         type: "image",
         src: image.src,

@@ -8,7 +8,7 @@ export default React.forwardRef<HTMLDivElement, Drawings<"note">[0]>(
     const textRef = useRef<HTMLTextAreaElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const setLocation = useLocation((state) => state.setLocation);
-    const toggleHighlight = useDrawing((state) => state.toggleHighlight);
+
     const [edit, setEdit] = useState(true);
     if (edit) {
       textRef.current?.focus();
@@ -53,9 +53,6 @@ export default React.forwardRef<HTMLDivElement, Drawings<"note">[0]>(
             className={`border rounded-md flex items-center justify-center static w-full min-h-[200px] h-fit ${
               prop.hovered && "border-green-500"
             }`}
-            onMouseDown={() => {
-              toggleHighlight(prop.id);
-            }}
             id={`${prop.id}`}
             ref={containerRef}
           >

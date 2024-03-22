@@ -1,10 +1,4 @@
-import { useRef, useState } from "react";
-import {
-  useActiveTool,
-  useCanvas,
-  useDrawing,
-  useLocation,
-} from "../../store/Store";
+import { useCanvas, useDrawing, useLocation } from "../../store/Store";
 import { Drawings } from "../../types/general";
 
 type Prop = {
@@ -100,7 +94,7 @@ export default function CompOverlay(prop: Prop) {
               data-comp="others"
               data-comp-id={prop.id}
               className="adjust"
-              data-pos="t-left"
+              data-pos="tl"
             ></circle>
             <circle
               cx={x + width}
@@ -111,7 +105,7 @@ export default function CompOverlay(prop: Prop) {
               data-comp="others"
               data-comp-id={prop.id}
               className="adjust"
-              data-pos="t-right"
+              data-pos="tr"
             ></circle>
             <circle
               cx={x}
@@ -122,7 +116,7 @@ export default function CompOverlay(prop: Prop) {
               data-comp="others"
               data-comp-id={prop.id}
               className="adjust"
-              data-pos="b-left"
+              data-pos="bl"
             ></circle>
             <circle
               cx={x + width}
@@ -133,7 +127,7 @@ export default function CompOverlay(prop: Prop) {
               data-comp="others"
               data-comp-id={prop.id}
               className="adjust"
-              data-pos="b-right"
+              data-pos="br"
             ></circle>
           </g>
         </svg>
