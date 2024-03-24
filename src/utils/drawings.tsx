@@ -85,6 +85,7 @@ export function addDrawing({
     }
 
     case "pointer": {
+      console.log("pointer", drawingId.current);
       const newPointerComp = {
         id: drawingId.current,
         ...general,
@@ -98,8 +99,8 @@ export function addDrawing({
             x: e.clientX,
             y: e.clientY,
           },
-          width: 4,
-          height: 4,
+          width: 0,
+          height: 0,
         },
         pos: {
           x: e.clientX,
@@ -310,12 +311,9 @@ export function modifyDrawing({
 }
 
 export function cleanUpDrawing({
-  e,
-  drawingId,
-  activeTool,
   drawing,
   clearPointer,
-}: ModifyDrawing) {
+}: Pick<ModifyDrawing, "drawing" | "clearPointer">) {
   if (drawing[drawing.length - 1]?.prop?.type === "pointer") {
     clearPointer!(drawing.length - 1);
   }

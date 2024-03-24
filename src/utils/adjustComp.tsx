@@ -1,5 +1,4 @@
-import { Drawings } from "../types/general";
-import { getDiff } from "./math";
+import { Drawings, Location } from "../types/general";
 
 type AdjustProp = {
   e: React.MouseEvent<SVGCircleElement | HTMLDivElement, MouseEvent>;
@@ -8,6 +7,10 @@ type AdjustProp = {
   id: number;
   compType: "arrow" | "pencil" | "image" | "shape" | "text";
   pos: string;
+  location?: {
+    [key: number]: Location;
+  };
+  canvasPos: { x: number; y: number };
 };
 
 export default function adjustComp({
@@ -17,6 +20,8 @@ export default function adjustComp({
   id,
   pos,
   compType,
+  location,
+  canvasPos,
 }: AdjustProp) {
   if (compType === "arrow")
     return adjustArrow({
@@ -25,8 +30,18 @@ export default function adjustComp({
       updateDrawing,
       id,
       pos,
+      canvasPos,
     });
-  else if (compType)
+  else if (compType === "pencil") {
+    adjustPencil({
+      e,
+      drawing,
+      updateDrawing,
+      id,
+      pos,
+      canvasPos,
+    });
+  } else if (compType)
     return adjustRect({
       e,
       drawing,
@@ -34,6 +49,8 @@ export default function adjustComp({
       id,
       pos,
       compType,
+      location,
+      canvasPos,
     });
   else return;
 }
@@ -44,15 +61,24 @@ function adjustArrow({
   updateDrawing,
   id,
   pos,
-}: Omit<AdjustProp, "compType">) {
+  canvasPos,
+}: Omit<AdjustProp, "compType" | "location">) {
   const edit = { ...drawing[id] } as Drawings<"arrow">[0];
-  if (pos === "top") {
+  if (pos === "start") {
+    edit.prop.startPos = {
+      x: e.clientX - canvasPos.x,
+      y: e.clientY - canvasPos.y,
+    };
   } else if (pos === "mid") {
     edit.prop.qCurve = {
-      x: e.clientX,
-      y: e.clientY,
+      x: e.clientX - canvasPos.x,
+      y: e.clientY - canvasPos.y,
     };
   } else if (pos === "end") {
+    edit.prop.endPos = {
+      x: e.clientX - canvasPos.x,
+      y: e.clientY - canvasPos.y,
+    };
   }
   updateDrawing(id, edit);
 }
@@ -64,7 +90,113 @@ function adjustRect({
   id,
   pos,
   compType,
+  location,
+  canvasPos,
 }: AdjustProp) {
+  switch (compType) {
+    case "arrow":
+      break;
+    case "pencil":
+      break;
+
+    case "image":
+      return adjustImage({
+        e,
+        drawing,
+        updateDrawing,
+        id,
+        pos,
+        location,
+        canvasPos,
+      });
+    case "shape":
+      return adjustShape({
+        e,
+        drawing,
+        updateDrawing,
+        id,
+        pos,
+        location,
+        canvasPos,
+      });
+    case "text":
+      return adjustText({
+        e,
+        drawing,
+        updateDrawing,
+        id,
+        pos,
+        location,
+        canvasPos,
+      });
+    default:
+      console.log("error at adjusting comp:", {
+        e,
+        drawing,
+        updateDrawing,
+        id,
+        pos,
+        compType,
+      });
+  }
+}
+
+function adjustPencil({
+  e,
+  drawing,
+  updateDrawing,
+  id,
+  pos,
+  canvasPos,
+}: Omit<AdjustProp, "compType" | "location">) {
+  const edit = { ...drawing[id] } as Drawings<"pencil">[0];
+
+  if (pos === "start") {
+    edit.prop.path.unshift(
+      {
+        func: "M",
+        x: e.clientX - canvasPos.x,
+        y: e.clientY - canvasPos.y,
+      },
+      {
+        func: "L",
+        x: edit.prop.path[0].x,
+        y: edit.prop.path[0].y,
+      }
+    );
+  } else if (pos === "end") {
+    console.log("hi");
+    edit.prop.path.push(
+      {
+        func: "L",
+        x: e.clientX - canvasPos.x,
+        y: e.clientY - canvasPos.y,
+      },
+      {
+        func: "M",
+        x: e.clientX - canvasPos.x,
+        y: e.clientY - canvasPos.y,
+      }
+    );
+  }
+  updateDrawing(id, edit);
+}
+function adjustImage({
+  e,
+  drawing,
+  updateDrawing,
+  id,
+  pos,
+}: Omit<AdjustProp, "compType">) {
+  const edit = { ...drawing[id] } as Drawings<"image">[0];
+}
+function adjustShape({
+  e,
+  drawing,
+  updateDrawing,
+  id,
+  pos,
+}: Omit<AdjustProp, "compType">) {
   const edit = { ...drawing[id] } as Drawings<"shape">[0];
   // rect shape first
   if (pos === "tl") {
@@ -100,21 +232,14 @@ function adjustRect({
     edit.prop.width = Math.max(0, edit.prop.width + diff.x);
     edit.prop.height = Math.max(0, edit.prop.height + diff.y);
   }
-  /* 
-  if (e.clientX < edit.prop.startPos.x) {
-    edit.prop.pos.x =
-      edit.prop.startPos.x - getDiff(edit.prop.startPos.x, e.clientX);
-    edit.prop.width = getDiff(edit.prop.startPos.x, e.clientX);
-  } else {
-    edit.prop.width = e.clientX - edit.prop.pos.x;
-  }
-  if (e.clientY < edit.prop.startPos.y) {
-    edit.prop.pos.y =
-      edit.prop.startPos.y - getDiff(edit.prop.startPos.y, e.clientY);
-    edit.prop.height = getDiff(edit.prop.startPos.y, e.clientY);
-  } else {
-    edit.prop.height = e.clientY - edit.prop.pos.y;
-  }
-   */
   updateDrawing!(id, edit);
+}
+function adjustText({
+  e,
+  drawing,
+  updateDrawing,
+  id,
+  pos,
+}: Omit<AdjustProp, "compType">) {
+  const edit = { ...drawing[id] } as Drawings<"text">[0];
 }

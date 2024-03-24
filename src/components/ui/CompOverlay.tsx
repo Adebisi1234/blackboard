@@ -38,7 +38,7 @@ export default function CompOverlay(prop: Prop) {
                 data-comp="arrow"
                 data-comp-id={prop.id}
                 className="adjust"
-                data-pos="end"
+                data-pos="start"
               ></circle>
               <circle
                 cx={qCurve ? qCurve.x : (endPos.x + startPos.x) / 2}
@@ -60,7 +60,7 @@ export default function CompOverlay(prop: Prop) {
                 data-comp="arrow"
                 data-comp-id={prop.id}
                 className="adjust"
-                data-pos="top"
+                data-pos="end"
               ></circle>
             </g>
           </svg>
@@ -68,9 +68,45 @@ export default function CompOverlay(prop: Prop) {
       </>
     );
   }
-  let { x, y, width, height } = location[prop.id];
-  x = x - canvasPos.x;
-  y = y - canvasPos.y;
+  if (prop.type === "pencil") {
+    const path = [...(drawing[prop.id] as Drawings<"pencil">[0]).prop.path];
+    const { x: startX, y: startY } = path[0];
+    const { x: endX, y: endY } = path[path.length - 1];
+
+    return (
+      <>
+        {path.length > 5 && (
+          <svg className="z-40" opacity={prop.opacity === 0 ? 0 : 1}>
+            <g>
+              <circle
+                cx={startX}
+                cy={startY}
+                r={7}
+                stroke="blue"
+                fill="white"
+                data-comp={prop.type}
+                data-comp-id={prop.id}
+                className="adjust"
+                data-pos="start"
+              ></circle>
+              <circle
+                cx={endX}
+                cy={endY}
+                r={7}
+                stroke="blue"
+                fill="white"
+                data-comp={prop.type}
+                data-comp-id={prop.id}
+                className="adjust"
+                data-pos="end"
+              ></circle>
+            </g>
+          </svg>
+        )}
+      </>
+    );
+  }
+  const { x, y, width, height } = location[prop.id];
 
   return (
     <>
@@ -92,7 +128,7 @@ export default function CompOverlay(prop: Prop) {
               r={7}
               stroke="blue"
               fill="white"
-              data-comp="others"
+              data-comp={prop.type}
               data-comp-id={prop.id}
               className="adjust"
               data-pos="tl"
@@ -103,7 +139,7 @@ export default function CompOverlay(prop: Prop) {
               r={7}
               stroke="blue"
               fill="white"
-              data-comp="others"
+              data-comp={prop.type}
               data-comp-id={prop.id}
               className="adjust"
               data-pos="tr"
@@ -114,7 +150,7 @@ export default function CompOverlay(prop: Prop) {
               r={7}
               stroke="blue"
               fill="white"
-              data-comp="others"
+              data-comp={prop.type}
               data-comp-id={prop.id}
               className="adjust"
               data-pos="bl"
@@ -125,7 +161,7 @@ export default function CompOverlay(prop: Prop) {
               r={7}
               stroke="blue"
               fill="white"
-              data-comp="others"
+              data-comp={prop.type}
               data-comp-id={prop.id}
               className="adjust"
               data-pos="br"

@@ -61,9 +61,11 @@ export default function Canvas() {
   const handleMouseDown = (
     e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
   ) => {
+    console.log("d");
     if (!canvasRef) {
       return;
     }
+
     if (
       !(
         activeTool === "pointer" ||
@@ -130,11 +132,17 @@ export default function Canvas() {
         id: adjustCompId.id,
         compType: adjustCompId.type,
         pos: adjustCompId.pos,
+        location: loc,
+        canvasPos,
       });
       return;
     }
     if (!isToolActive) {
-      if (activeTool === "pointer") {
+      if (
+        activeTool === "pointer" ||
+        activeTool === "hand" ||
+        activeTool === "eraser"
+      ) {
         // First implementation
         for (const id in loc) {
           if (Object.prototype.hasOwnProperty.call(loc, id)) {
@@ -182,6 +190,7 @@ export default function Canvas() {
   const handleMouseUp = (
     e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
   ) => {
+    console.log("u");
     // Adjusting Existing comp
     if (adjustCompId) {
       toggleHighlight(adjustCompId.id);
@@ -189,14 +198,14 @@ export default function Canvas() {
       setActiveTool(prevTool.current);
       return;
     }
-    cleanUpDrawing({
-      e,
-      drawingId,
-      drawing,
-      clearPointer,
-      activeTool,
-      general,
-    });
+
+    // Removing pointer
+    if (drawing[drawing.length - 1].prop.type === "pointer") {
+      cleanUpDrawing({
+        drawing,
+        clearPointer,
+      });
+    }
     if (
       !(
         activeTool === "eraser" ||
@@ -207,12 +216,10 @@ export default function Canvas() {
     ) {
       highlightComp(activeComp[activeComp.length - 1]);
     }
-    if (
-      drawing[drawingId.current]?.prop?.type !== "pointer" &&
-      activeTool !== "hand"
-    ) {
-      drawingId.current++;
+    if (drawing[drawingId.current]?.prop.type !== "pointer") {
+      drawingId.current = drawing.length;
     }
+
     if (activeTool === "pointer") {
       // First implementation
       for (const id in loc) {
@@ -227,6 +234,8 @@ export default function Canvas() {
               highlightComp(+id);
               setActiveComp(+id);
             }
+          } else {
+            !activeComp.includes(+id) && toggleHighlight(+id);
           }
         }
       }
@@ -247,7 +256,8 @@ export default function Canvas() {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      className="absolute inset-0 w-screen h-screen canvas bg"
+      // TODO: HANDLEMOUSELEAVE
+      className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >
       <div
         className="absolute inset-0 w-screen h-screen canvas"

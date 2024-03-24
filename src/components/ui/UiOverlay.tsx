@@ -8,7 +8,7 @@ import Zoom from "./Zoom";
 
 export default function Overlay() {
   return (
-    <div className="flex flex-col justify-between w-full h-full">
+    <div className="flex flex-col justify-between w-full h-full z-[99]">
       <div className="flex items-start justify-between mt-1">
         <Pages />
         <div className="flex flex-col items-end mr-1">

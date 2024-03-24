@@ -1,11 +1,11 @@
 import { forwardRef, useEffect, useRef } from "react";
 import { type Drawings } from "../../types/general";
-import { useLocation } from "../../store/Store";
+import { useCanvas, useLocation } from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
 
 export default function Image(prop: Drawings<"image">[0]) {
   const { src, alt, width, height } = prop.prop;
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
   useEffect(() => {
     if (!imgRef.current) return;
@@ -25,6 +25,7 @@ export default function Image(prop: Drawings<"image">[0]) {
       className={`size-fit `}
       draggable={false}
       id={`${prop.id}`}
+      ref={imgRef}
       style={{
         left: prop.pos.x,
         top: prop.pos.y,
@@ -41,13 +42,9 @@ export default function Image(prop: Drawings<"image">[0]) {
         id={`${prop.id}`}
         className="object-contain size-full"
         draggable={false}
-        ref={imgRef}
       />
       {prop.highlight && prop.opacity !== 0 && (
-        <CompOverlay
-          id={prop.id}
-          type={"others"}
-        />
+        <CompOverlay id={prop.id} type={"image"} opacity={prop.opacity!} />
       )}
     </div>
   );

@@ -87,15 +87,20 @@ export const useDrawing = create<DrawingState>((set) => ({
     set(({ drawing }) => {
       const temp = [...drawing];
       temp.splice(id, 1);
-      console.log({ temp });
       return { drawing: temp };
     });
   },
   hideComp(id) {
-    set(({ drawing }) => {
-      const temp = [...drawing];
-      temp[id].opacity = 0;
-      return { drawing: temp };
+    set((state) => {
+      const temp = { ...state.drawing[id] };
+      temp.opacity = 0;
+      return {
+        drawing: [
+          ...state.drawing.slice(0, id),
+          temp,
+          ...state.drawing.slice(id + 1),
+        ],
+      };
     });
   },
   toggleHighlight(id) {

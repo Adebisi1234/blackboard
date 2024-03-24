@@ -44,7 +44,7 @@ export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
               strokeLinecap="round"
               strokeLinejoin="round"
             ></path>
-            {prop.hovered && activeTool === "pointer" && (
+            {prop.hovered && (
               <path
                 id={`${prop.id}`}
                 d={`${d} z`}

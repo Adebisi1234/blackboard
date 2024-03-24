@@ -1,12 +1,7 @@
-import { useEffect } from "react";
 import { Drawings, Location } from "../../types/general";
 import { useHighlighted, useLocation } from "../../store/Store";
 
-export default function Pointer({
-  highlight,
-  id,
-  prop,
-}: Drawings<"pointer">[0]) {
+export default function Pointer({ prop }: Drawings<"pointer">[0]) {
   const { pos, width, height } = prop;
   const location = useLocation((state) => state.location);
   const { setHighlighted, highlighted } = useHighlighted();

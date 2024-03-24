@@ -6,18 +6,20 @@ export default function useAddToActiveComp() {
   const { setActiveComp, activeComp } = useActive();
   const highlighted = useHighlighted((state) => state.highlighted);
   useEffect(() => {
-    if (highlighted.length === 0) {
+    if (highlighted.length === 0 && activeComp.length === 0) {
+      return;
+    } else if (highlighted.length === 0) {
       activeComp.forEach((id) => {
-        if (!drawing[id]) return;
+        if (!drawing[id] || !drawing[id].highlight) return;
         updateDrawing(id, { ...drawing[id], highlight: false });
       });
       setActiveComp([]);
-      return;
+    } else if (activeComp.toString() !== highlighted.toString()) {
+      highlighted.forEach((id) => {
+        if (!drawing[id] || drawing[id].highlight) return;
+        updateDrawing(id, { ...drawing[id], highlight: true });
+      });
+      setActiveComp([...highlighted]);
     }
-    highlighted.forEach((id) => {
-      if (!drawing[id]) return;
-      updateDrawing(id, { ...drawing[id], highlight: true });
-    });
-    setActiveComp([...highlighted]);
   }, [highlighted]);
 }

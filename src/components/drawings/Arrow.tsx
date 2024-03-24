@@ -62,9 +62,11 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
               color={prop.color}
             />
           )}
-          {prop.hovered && activeTool === "pointer" && (
+          {prop.hovered && (
             <path
-              d={`M ${startPos.x} ${startPos.y} L ${endPos.x} ${endPos.y}`}
+              d={`M ${startPos.x} ${startPos.y} ${
+                !qCurve ? "L" : `Q ${qCurve.x} ${qCurve.y} `
+              } ${endPos.x} ${endPos.y}`}
               stroke={"green"}
               strokeWidth={prop.strokeWidth / 2}
               className="z-20"
