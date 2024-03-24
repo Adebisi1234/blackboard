@@ -5,7 +5,7 @@ import CompOverlay from "../ui/CompOverlay";
 
 export default function Image(prop: Drawings<"image">[0]) {
   const { src, alt, width, height } = prop.prop;
-  const imgRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
   useEffect(() => {
     if (!imgRef.current) return;
@@ -25,23 +25,27 @@ export default function Image(prop: Drawings<"image">[0]) {
       className={`size-fit `}
       draggable={false}
       id={`${prop.id}`}
-      ref={imgRef}
       style={{
-        left: prop.pos.x,
-        top: prop.pos.y,
+        left: "50%",
+        top: "50%",
         opacity: prop.opacity,
-        maxWidth: innerWidth / 2,
-        maxHeight: innerHeight - 50,
         width,
         height,
       }}
     >
       <img
         src={src}
+        ref={imgRef}
         alt={alt}
         id={`${prop.id}`}
-        className="object-contain size-full"
+        className="object-contain -translate-x-1/2 -translate-y-1/2 size-full"
         draggable={false}
+        style={{
+          maxWidth: innerWidth / 2,
+          maxHeight: innerHeight - 400,
+          width,
+          height,
+        }}
       />
       {prop.highlight && prop.opacity !== 0 && (
         <CompOverlay id={prop.id} type={"image"} opacity={prop.opacity!} />

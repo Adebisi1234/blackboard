@@ -23,6 +23,7 @@ export default function Text(prop: Drawings<"text">[0]) {
   return (
     <div
       ref={containerRef}
+      id={`${prop.id}`}
       className={`z-50 ${prop.hovered && "border-green-500"}`}
       style={{
         left: `${prop.pos.x}px`,

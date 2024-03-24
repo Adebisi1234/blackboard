@@ -48,7 +48,7 @@ export default function Canvas() {
   const loc = useLocation((state) => state.location);
   const { setActiveComp, activeComp } = useActive();
   const prevTool = useRef(activeTool);
-  useAddImage(drawingId.current);
+  useAddImage(drawingId);
   useAddToActiveComp();
   useUpdateGeneral();
   if (activeTool !== "pointer" && highlighted.length !== 0) {

@@ -94,7 +94,7 @@ export default function Controls() {
           activeTool === "image" && "bg-[#4387f4]"
         }`}
         tool="pointer"
-        title="Tool - pointer"
+        title="Tool - image"
         onClick={() => setActiveTool("pointer")}
       >
         <label htmlFor="image">
@@ -104,7 +104,7 @@ export default function Controls() {
           type="file"
           name="file"
           id="image"
-          className="absolute size-full inset-0 z-1 invisible"
+          className="absolute inset-0 invisible size-full z-1"
           tabIndex={-1}
           multiple={false}
           accept=".jpg,.png"

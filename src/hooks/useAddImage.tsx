@@ -2,9 +2,7 @@ import { useEffect } from "react";
 import { Drawings, ImageType } from "../types/general";
 import { useDrawing, useImage } from "../store/Store";
 
-export default function useAddImage(
-  drawingId: number
-) {
+export default function useAddImage(drawingId: { current: number }) {
   const { image } = useImage();
   const setDrawing = useDrawing((state) => state.setDrawing);
   useEffect(() => {
@@ -12,7 +10,7 @@ export default function useAddImage(
       return;
     }
     const newImageComp = {
-      id: drawingId,
+      id: drawingId.current,
       prop: {
         type: "image",
         src: image.src,
@@ -26,6 +24,6 @@ export default function useAddImage(
       },
     } satisfies Drawings<"image">[0];
     setDrawing(newImageComp);
-    ++drawingId;
+    drawingId.current++;
   }, [image]);
 }
