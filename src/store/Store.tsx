@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
+import { produce } from "immer";
 import {
   ActiveTool,
   Drawings,
@@ -11,7 +13,14 @@ import {
 
 interface DrawingState {
   drawing: Drawings;
+  copiedComps: number[];
+  deletedComps: number[];
+  copyComp: (payload: number | number[]) => void;
+  pasteComp: () => void;
+  restoreComp: () => void;
+  // copiedComp: number[];
   setDrawing: (payload: Drawings[0]) => void;
+  init: (payload: Drawings) => void;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
   clearPointer: (id: number) => void;
   hideComp: (id: number) => void;
@@ -24,6 +33,7 @@ interface DrawingState {
 interface ImageState {
   image: ImageType | undefined;
   setImage: (payload: ImageState["image"]) => void;
+  clearImage: () => void;
 }
 
 interface GeneralState {
@@ -59,7 +69,7 @@ interface Canvas {
   setCanvasPos: (payload: { x: number; y: number }) => void;
 }
 
-export const useActive = create<ActiveCompState>((set) => ({
+export const useActive = create<ActiveCompState>()((set) => ({
   activeComp: [],
   setActiveComp(payload) {
     set(() => ({
@@ -68,72 +78,85 @@ export const useActive = create<ActiveCompState>((set) => ({
   },
 }));
 
-export const useDrawing = create<DrawingState>((set) => ({
-  drawing: [],
-  setDrawing: (payload: Drawings[0]) =>
-    set((state: DrawingState) => ({
-      drawing: [...state.drawing, payload],
-    })),
-  updateDrawing(id, payload) {
-    set((state) => ({
-      drawing: [
-        ...state.drawing.slice(0, id),
-        payload,
-        ...state.drawing.slice(id + 1),
-      ],
-    }));
-  },
-  clearPointer(id) {
-    set(({ drawing }) => {
-      const temp = [...drawing];
-      temp.splice(id, 1);
-      return { drawing: temp };
-    });
-  },
-  hideComp(id) {
-    set((state) => {
-      const temp = { ...state.drawing[id] };
-      temp.opacity = 0;
-      return {
-        drawing: [
-          ...state.drawing.slice(0, id),
-          temp,
-          ...state.drawing.slice(id + 1),
-        ],
-      };
-    });
-  },
-  toggleHighlight(id) {
-    set(({ drawing }) => {
-      const temp = [...drawing];
-      temp[id].highlight = false;
-      return { drawing: temp };
-    });
-  },
-  highlightComp(id) {
-    set(({ drawing }) => {
-      const temp = [...drawing];
-      temp[id].highlight = true;
-      return { drawing: temp };
-    });
-  },
-  hoverComp(id) {
-    set(({ drawing }) => {
-      const temp = [...drawing];
-      temp[id].hovered = true;
-      return { drawing: temp };
-    });
-  },
-  leaveComp(id) {
-    set(({ drawing }) => {
-      const temp = [...drawing];
-      temp[id].hovered = false;
-      return { drawing: temp };
-    });
-  },
-}));
+export const useDrawing = create<DrawingState>()(
+  immer((set) => ({
+    drawing: [],
+    copiedComps: [],
+    deletedComps: [],
+    init: (payload: Drawings) =>
+      set({
+        drawing: [...payload],
+      }),
+    setDrawing: (payload: Drawings[0]) =>
+      set((state: DrawingState) => {
+        state.drawing.push(payload);
+      }),
+    updateDrawing(id, payload) {
+      set((state) => {
+        state.drawing[id] = payload;
+      });
+    },
+    clearPointer(id) {
+      set(({ drawing }) => {
+        drawing.splice(id, 1);
+      });
+    },
+    hideComp(id) {
+      set((state) => {
+        state.drawing[id].opacity = 0;
+        if (state.drawing[id].prop.type !== "pointer") {
+          state.deletedComps.push(id);
+        }
+      });
+    },
+    toggleHighlight(id) {
+      set(({ drawing }) => {
+        drawing[id].highlight = false;
+      });
+    },
+    highlightComp(id) {
+      set(({ drawing }) => {
+        drawing[id].highlight = true;
+      });
+    },
+    hoverComp(id) {
+      set(({ drawing }) => {
+        drawing[id].hovered = true;
+      });
+    },
+    leaveComp(id) {
+      set(({ drawing }) => {
+        drawing[id].hovered = false;
+      });
+    },
+    copyComp(payload: number | number[]) {
+      set((state) => {
+        state.copiedComps =
+          typeof payload === "number" ? [payload] : [...payload];
+      });
+    },
+    pasteComp() {
+      set((state) => {
+        const update = state.copiedComps.map((comp) => {
+          const newComp = { ...state.drawing[comp] };
+          newComp.id = state.drawing.length;
+          newComp.copy = true;
+          return newComp;
+        });
+        state.drawing.push(...update);
+      });
+    },
+    restoreComp() {
+      set((state) => {
+        const update = state.deletedComps.pop();
+        if (!update) return state;
+        state.drawing[update].opacity = 1;
+      });
+    },
+  }))
+);
 
-export const useGeneral = create<GeneralState>((set) => ({
+export const useGeneral = create<GeneralState>()((set) => ({
   general: {
     color: "#ffffff",
     opacity: 1,
@@ -142,6 +165,7 @@ export const useGeneral = create<GeneralState>((set) => ({
     fill: 0,
     scale: 1,
     highlight: false,
+    copy: false,
     font: 24,
     hovered: false,
   },
@@ -155,7 +179,7 @@ export const useGeneral = create<GeneralState>((set) => ({
   },
 }));
 
-export const useHighlighted = create<HighlightedState>((set) => ({
+export const useHighlighted = create<HighlightedState>()((set) => ({
   highlighted: [],
   setHighlighted(payload: number[]) {
     set((state: HighlightedState) => {
@@ -165,45 +189,58 @@ export const useHighlighted = create<HighlightedState>((set) => ({
   },
 }));
 
-export const useLocation = create<LocationState>((set) => ({
-  location: {},
-  setLocation: (payload: Location) =>
-    set((state: LocationState) => ({
-      location: { ...state.location, [payload.id]: payload },
-    })),
-}));
+export const useLocation = create<LocationState>()(
+  immer((set) => ({
+    location: {},
+    setLocation: (payload: Location) =>
+      set((state: LocationState) => {
+        state.location[payload.id] = payload;
+      }),
+  }))
+);
 
-export const useActiveTool = create<ActiveToolState>((set) => ({
-  activeTool: "pencil",
-  setActiveTool: (payload) =>
-    set({
-      activeTool: payload,
-    }),
-}));
+export const useActiveTool = create<ActiveToolState>()(
+  immer((set) => ({
+    activeTool: "pencil",
+    setActiveTool: (payload) =>
+      set({
+        activeTool: payload,
+      }),
+  }))
+);
 
-export const useCanvas = create<Canvas>((set) => ({
-  canvasPos: {
-    x: 0,
-    y: 0,
-  },
-  canvasRef: undefined,
-  setRef(ref) {
-    set({
-      canvasRef: ref,
-    });
-  },
-  setCanvasPos(payload) {
-    set({
-      canvasPos: { ...payload },
-    });
-  },
-}));
+export const useCanvas = create<Canvas>()(
+  immer((set) => ({
+    canvasPos: {
+      x: 0,
+      y: 0,
+    },
+    canvasRef: undefined,
+    setRef(ref) {
+      set({
+        canvasRef: ref,
+      });
+    },
+    setCanvasPos(payload) {
+      set({
+        canvasPos: payload,
+      });
+    },
+  }))
+);
 
-export const useImage = create<ImageState>((set) => ({
-  image: undefined,
-  setImage(payload) {
-    set({
-      image: payload,
-    });
-  },
-}));
+export const useImage = create<ImageState>()(
+  immer((set) => ({
+    image: undefined,
+    setImage(payload) {
+      set({
+        image: payload,
+      });
+    },
+    clearImage() {
+      set({
+        image: undefined,
+      });
+    },
+  }))
+);

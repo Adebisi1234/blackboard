@@ -14,6 +14,7 @@ import {
 import { Ref } from "react";
 
 import { getDiff, getRelativeMin } from "./math";
+import { produce } from "immer";
 
 type ModifyDrawing = {
   e: { clientX: number; clientY: number };
@@ -85,7 +86,6 @@ export function addDrawing({
     }
 
     case "pointer": {
-      console.log("pointer", drawingId.current);
       const newPointerComp = {
         id: drawingId.current,
         ...general,
@@ -197,21 +197,25 @@ export function modifyDrawing({
     case "eraser":
       break;
     case "pointer": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"pointer">[0];
-      if (e.clientX < edit.prop.startPos.x) {
-        edit.prop.pos.x =
-          edit.prop.startPos.x - getDiff(edit.prop.startPos.x, e.clientX);
-        edit.prop.width = getDiff(edit.prop.startPos.x, e.clientX);
-      } else {
-        edit.prop.width = e.clientX - edit.prop.pos.x;
-      }
-      if (e.clientY < edit.prop.startPos.y) {
-        edit.prop.pos.y =
-          edit.prop.startPos.y - getDiff(edit.prop.startPos.y, e.clientY);
-        edit.prop.height = getDiff(edit.prop.startPos.y, e.clientY);
-      } else {
-        edit.prop.height = e.clientY - edit.prop.pos.y;
-      }
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"pointer">[0],
+        (draft) => {
+          if (e.clientX < draft.prop.startPos.x) {
+            draft.prop.pos.x =
+              draft.prop.startPos.x - getDiff(draft.prop.startPos.x, e.clientX);
+            draft.prop.width = getDiff(draft.prop.startPos.x, e.clientX);
+          } else {
+            draft.prop.width = e.clientX - draft.prop.pos.x;
+          }
+          if (e.clientY < draft.prop.startPos.y) {
+            draft.prop.pos.y =
+              draft.prop.startPos.y - getDiff(draft.prop.startPos.y, e.clientY);
+            draft.prop.height = getDiff(draft.prop.startPos.y, e.clientY);
+          } else {
+            draft.prop.height = e.clientY - draft.prop.pos.y;
+          }
+        }
+      );
       updateDrawing!(drawingId.current, edit);
 
       // The magic
@@ -219,12 +223,15 @@ export function modifyDrawing({
     }
 
     case "pencil": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"pencil">[0];
-      edit.prop.path = [
-        ...edit.prop.path,
-        { func: "L", x: e.clientX, y: e.clientY },
-        { func: "M", x: e.clientX, y: e.clientY },
-      ];
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"pencil">[0],
+        (draft) => {
+          draft.prop.path.push(
+            { func: "L", x: e.clientX, y: e.clientY },
+            { func: "M", x: e.clientX, y: e.clientY }
+          );
+        }
+      );
 
       updateDrawing!(drawingId.current, edit);
 
@@ -232,68 +239,88 @@ export function modifyDrawing({
     }
 
     case "arrow": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"arrow">[0];
-      edit.prop.endPos = {
-        x: e.clientX,
-        y: e.clientY,
-      };
-      edit.pos = {
-        x: getRelativeMin(edit.prop.startPos.x, edit.prop.endPos.x),
-        y: getRelativeMin(edit.prop.startPos.y, edit.prop.endPos.y),
-        width: getDiff(edit.prop.startPos.x, edit.prop.endPos.x),
-        height: getDiff(edit.prop.startPos.y, edit.prop.endPos.y),
-      };
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"arrow">[0],
+        (draft) => {
+          draft.prop.endPos = {
+            x: e.clientX,
+            y: e.clientY,
+          };
+          draft.pos = {
+            x: getRelativeMin(draft.prop.startPos.x, draft.prop.endPos.x),
+            y: getRelativeMin(draft.prop.startPos.y, draft.prop.endPos.y),
+            width: getDiff(draft.prop.startPos.x, draft.prop.endPos.x),
+            height: getDiff(draft.prop.startPos.y, draft.prop.endPos.y),
+          };
+        }
+      );
       updateDrawing!(drawingId.current, edit);
       break;
     }
     case "text": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"text">[0];
-      edit.pos = {
-        ...edit.pos,
-        x: e.clientX,
-        y: e.clientY,
-      };
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"text">[0],
+        (draft) => {
+          draft.pos = {
+            ...draft.pos,
+            x: e.clientX,
+            y: e.clientY,
+          };
+        }
+      );
       updateDrawing!(drawingId.current, edit);
       break;
     }
     case "note": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"note">[0];
-      edit.pos = {
-        ...edit.pos,
-        x: e.clientX,
-        y: e.clientY,
-      };
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"note">[0],
+        (draft) => {
+          draft.pos = {
+            ...draft.pos,
+            x: e.clientX,
+            y: e.clientY,
+          };
+        }
+      );
       updateDrawing!(drawingId.current, edit);
       break;
     }
     case "image": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"image">[0];
-      edit.pos = {
-        ...edit.pos,
-        x: e.clientX,
-        y: e.clientY,
-        //Width and Height
-      };
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"image">[0],
+        (draft) => {
+          draft.pos = {
+            ...draft.pos,
+            x: e.clientX,
+            y: e.clientY,
+            //Width and Height
+          };
+        }
+      );
       updateDrawing!(drawingId.current, edit);
 
       break;
     }
     case "shape": {
-      const edit = { ...drawing[drawingId.current] } as Drawings<"shape">[0];
-      if (e.clientX < edit.prop.startPos.x) {
-        edit.prop.pos.x =
-          edit.prop.startPos.x - getDiff(edit.prop.startPos.x, e.clientX);
-        edit.prop.width = getDiff(edit.prop.startPos.x, e.clientX);
-      } else {
-        edit.prop.width = e.clientX - edit.prop.pos.x;
-      }
-      if (e.clientY < edit.prop.startPos.y) {
-        edit.prop.pos.y =
-          edit.prop.startPos.y - getDiff(edit.prop.startPos.y, e.clientY);
-        edit.prop.height = getDiff(edit.prop.startPos.y, e.clientY);
-      } else {
-        edit.prop.height = e.clientY - edit.prop.pos.y;
-      }
+      const edit = produce(
+        drawing[drawingId.current] as Drawings<"shape">[0],
+        (draft) => {
+          if (e.clientX < draft.prop.startPos.x) {
+            draft.prop.pos.x =
+              draft.prop.startPos.x - getDiff(draft.prop.startPos.x, e.clientX);
+            draft.prop.width = getDiff(draft.prop.startPos.x, e.clientX);
+          } else {
+            draft.prop.width = e.clientX - draft.prop.pos.x;
+          }
+          if (e.clientY < draft.prop.startPos.y) {
+            draft.prop.pos.y =
+              draft.prop.startPos.y - getDiff(draft.prop.startPos.y, e.clientY);
+            draft.prop.height = getDiff(draft.prop.startPos.y, e.clientY);
+          } else {
+            draft.prop.height = e.clientY - draft.prop.pos.y;
+          }
+        }
+      );
       updateDrawing!(drawingId.current, edit);
       break;
     }

@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
+import {
+  useActiveTool,
+  useCanvas,
+  useDrawing,
+  useLocation,
+} from "../../store/Store";
 import { Drawings } from "../../types/general";
 import CompOverlay from "../ui/CompOverlay";
 
 export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
   function Pencil(prop, activeCompRef) {
     const { activeTool } = useActiveTool();
+    const canvasPos = useCanvas((s) => s.canvasPos);
     const setLocation = useLocation((state) => state.setLocation);
     const pathRef = useRef<SVGPathElement>(null);
     const d = prop.prop.path
@@ -25,10 +31,10 @@ export default React.forwardRef<SVGSVGElement, Drawings<"pencil">[0]>(
         height,
         id: prop.id,
       });
-    }, [prop.prop.path]);
+    }, [prop.prop.path, canvasPos]);
     return (
       <>
-        <svg id={`${prop.id}`} ref={activeCompRef}>
+        <svg id={`${prop.id}`} data-copy={`${prop.copy}`} ref={activeCompRef}>
           <g id={`${prop.id}`} opacity={prop.opacity}>
             <path
               id={`${prop.id}`}

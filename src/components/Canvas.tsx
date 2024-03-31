@@ -20,6 +20,7 @@ import useAddImage from "../hooks/useAddImage";
 import useAddToActiveComp from "../hooks/useAddToActiveComp";
 import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
+import useShortcuts from "../hooks/useShortcuts";
 
 export default function Canvas() {
   const {
@@ -51,20 +52,19 @@ export default function Canvas() {
   useAddImage(drawingId);
   useAddToActiveComp();
   useUpdateGeneral();
+  useShortcuts(drawingId);
   if (activeTool !== "pointer" && highlighted.length !== 0) {
-    // highlighted.forEach((id) => {
-    //   updateDrawing(id, { ...drawing[id], highlight: false });
-    // });
     setHighlighted([]);
   }
 
   const handleMouseDown = (
     e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
   ) => {
-    console.log("d");
     if (!canvasRef) {
       return;
     }
+
+    // Reset highlighted components on tool change
 
     if (
       !(
@@ -108,12 +108,6 @@ export default function Canvas() {
       drawingId,
     });
     setActiveComp(drawingId.current);
-
-    if (activeTool === "eraser") {
-      // First implementation
-      const id = +(e.target as HTMLElement).id ?? -1;
-      removeComp(id, hideComp);
-    }
   };
 
   const handleMouseMove = (
@@ -137,6 +131,8 @@ export default function Canvas() {
       });
       return;
     }
+
+    // Showcase hovered components
     if (!isToolActive) {
       if (
         activeTool === "pointer" ||
@@ -166,6 +162,18 @@ export default function Canvas() {
       return;
     }
 
+    if (activeTool === "hand") {
+      if (!canvasRef) {
+        return;
+      }
+
+      setCanvasPos({
+        x: canvasPos.x + e.movementX,
+        y: canvasPos.y + e.movementY,
+      });
+      canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
+      return;
+    }
     modifyDrawing({
       e: {
         clientX: e.clientX - canvasRef.getBoundingClientRect().x,
@@ -177,20 +185,11 @@ export default function Canvas() {
       updateDrawing,
       general,
     });
-    if (activeTool === "hand") {
-      if (!canvasRef) {
-        return;
-      }
-      canvasPos.x += e.movementX;
-      canvasPos.y += e.movementY;
-      canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
-      setCanvasPos(canvasPos);
-    }
+    return;
   };
   const handleMouseUp = (
     e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
   ) => {
-    console.log("u");
     // Adjusting Existing comp
     if (adjustCompId) {
       toggleHighlight(adjustCompId.id);
@@ -198,7 +197,6 @@ export default function Canvas() {
       setActiveTool(prevTool.current);
       return;
     }
-
     // Removing pointer
     if (drawing[drawing.length - 1].prop.type === "pointer") {
       cleanUpDrawing({
@@ -216,11 +214,12 @@ export default function Canvas() {
     ) {
       highlightComp(activeComp[activeComp.length - 1]);
     }
-    if (drawing[drawingId.current]?.prop.type !== "pointer") {
-      drawingId.current = drawing.length;
-    }
 
-    if (activeTool === "pointer") {
+    if (
+      activeTool === "pointer" ||
+      activeTool === "eraser" ||
+      activeTool === "hand"
+    ) {
       // First implementation
       for (const id in loc) {
         if (Object.prototype.hasOwnProperty.call(loc, id)) {
@@ -230,9 +229,13 @@ export default function Canvas() {
             e.clientY > loc[id].y &&
             e.clientY < loc[id].y + loc[id].height
           ) {
-            if (!drawing[id].highlight) {
-              highlightComp(+id);
-              setActiveComp(+id);
+            if (activeTool === "pointer" || activeTool === "hand") {
+              if (!drawing[id].highlight) {
+                highlightComp(+id);
+                setActiveComp(+id);
+              }
+            } else {
+              removeComp(+id, hideComp);
             }
           } else {
             !activeComp.includes(+id) && toggleHighlight(+id);
@@ -248,6 +251,10 @@ export default function Canvas() {
       setActiveTool("pointer");
     }
     setIsToolActive(false);
+    if (drawing[drawingId.current]?.prop.type !== "pointer") {
+      drawingId.current = drawing.length;
+    }
+    return;
   };
 
   const components = drawing.map(drawOnCanvas);
@@ -260,7 +267,7 @@ export default function Canvas() {
       className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >
       <div
-        className="absolute inset-0 w-screen h-screen canvas"
+        className="absolute inset-0 w-screen h-screen canvas touch-none"
         ref={(node) => {
           if (!node || canvasRef) return;
           setRef(node);

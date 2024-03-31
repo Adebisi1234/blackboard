@@ -1,3 +1,4 @@
+import { produce } from "immer";
 import { Drawings, Location } from "../types/general";
 
 type AdjustProp = {
@@ -63,23 +64,24 @@ function adjustArrow({
   pos,
   canvasPos,
 }: Omit<AdjustProp, "compType" | "location">) {
-  const edit = { ...drawing[id] } as Drawings<"arrow">[0];
-  if (pos === "start") {
-    edit.prop.startPos = {
-      x: e.clientX - canvasPos.x,
-      y: e.clientY - canvasPos.y,
-    };
-  } else if (pos === "mid") {
-    edit.prop.qCurve = {
-      x: e.clientX - canvasPos.x,
-      y: e.clientY - canvasPos.y,
-    };
-  } else if (pos === "end") {
-    edit.prop.endPos = {
-      x: e.clientX - canvasPos.x,
-      y: e.clientY - canvasPos.y,
-    };
-  }
+  const edit = produce(drawing[id] as Drawings<"arrow">[0], (draft) => {
+    if (pos === "start") {
+      draft.prop.startPos = {
+        x: e.clientX - canvasPos.x,
+        y: e.clientY - canvasPos.y,
+      };
+    } else if (pos === "mid") {
+      draft.prop.qCurve = {
+        x: e.clientX - canvasPos.x,
+        y: e.clientY - canvasPos.y,
+      };
+    } else if (pos === "end") {
+      draft.prop.endPos = {
+        x: e.clientX - canvasPos.x,
+        y: e.clientY - canvasPos.y,
+      };
+    }
+  });
   updateDrawing(id, edit);
 }
 
@@ -149,36 +151,36 @@ function adjustPencil({
   pos,
   canvasPos,
 }: Omit<AdjustProp, "compType" | "location">) {
-  const edit = { ...drawing[id] } as Drawings<"pencil">[0];
+  const edit = produce(drawing[id] as Drawings<"pencil">[0], (draft) => {
+    if (pos === "start") {
+      draft.prop.path.unshift(
+        {
+          func: "M",
+          x: e.clientX - canvasPos.x,
+          y: e.clientY - canvasPos.y,
+        },
+        {
+          func: "L",
+          x: draft.prop.path[0].x,
+          y: draft.prop.path[0].y,
+        }
+      );
+    } else if (pos === "end") {
+      draft.prop.path.push(
+        {
+          func: "L",
+          x: e.clientX - canvasPos.x,
+          y: e.clientY - canvasPos.y,
+        },
+        {
+          func: "M",
+          x: e.clientX - canvasPos.x,
+          y: e.clientY - canvasPos.y,
+        }
+      );
+    }
+  });
 
-  if (pos === "start") {
-    edit.prop.path.unshift(
-      {
-        func: "M",
-        x: e.clientX - canvasPos.x,
-        y: e.clientY - canvasPos.y,
-      },
-      {
-        func: "L",
-        x: edit.prop.path[0].x,
-        y: edit.prop.path[0].y,
-      }
-    );
-  } else if (pos === "end") {
-    console.log("hi");
-    edit.prop.path.push(
-      {
-        func: "L",
-        x: e.clientX - canvasPos.x,
-        y: e.clientY - canvasPos.y,
-      },
-      {
-        func: "M",
-        x: e.clientX - canvasPos.x,
-        y: e.clientY - canvasPos.y,
-      }
-    );
-  }
   updateDrawing(id, edit);
 }
 function adjustImage({
@@ -188,7 +190,42 @@ function adjustImage({
   id,
   pos,
 }: Omit<AdjustProp, "compType">) {
-  const edit = { ...drawing[id] } as Drawings<"image">[0];
+  const edit = produce(drawing[id] as Drawings<"image">[0], (draft) => {
+    if (pos === "tl") {
+      const diff = {
+        x: draft.prop.x - e.clientX,
+        y: draft.prop.y - e.clientY,
+      };
+      draft.prop.x = e.clientX;
+      draft.prop.y = e.clientY;
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    } else if (pos === "tr") {
+      const diff = {
+        x: e.clientX - (draft.prop.x + draft.prop.width),
+        y: draft.prop.y - e.clientY,
+      };
+      draft.prop.y = e.clientY;
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    } else if (pos === "bl") {
+      const diff = {
+        x: draft.prop.x - e.clientX,
+        y: e.clientY - (draft.prop.y + draft.prop.height),
+      };
+      draft.prop.x = e.clientX;
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    } else if (pos === "br") {
+      const diff = {
+        x: e.clientX - (draft.prop.x + draft.prop.width),
+        y: e.clientY - (draft.prop.y + draft.prop.height),
+      };
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    }
+  });
+  updateDrawing!(id, edit);
 }
 function adjustShape({
   e,
@@ -197,41 +234,42 @@ function adjustShape({
   id,
   pos,
 }: Omit<AdjustProp, "compType">) {
-  const edit = { ...drawing[id] } as Drawings<"shape">[0];
+  const edit = produce(drawing[id] as Drawings<"shape">[0], (draft) => {
+    if (pos === "tl") {
+      const diff = {
+        x: draft.prop.pos.x - e.clientX,
+        y: draft.prop.pos.y - e.clientY,
+      };
+      draft.prop.pos.x = e.clientX;
+      draft.prop.pos.y = e.clientY;
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    } else if (pos === "tr") {
+      const diff = {
+        x: e.clientX - (draft.prop.pos.x + draft.prop.width),
+        y: draft.prop.pos.y - e.clientY,
+      };
+      draft.prop.pos.y = e.clientY;
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    } else if (pos === "bl") {
+      const diff = {
+        x: draft.prop.pos.x - e.clientX,
+        y: e.clientY - (draft.prop.pos.y + draft.prop.height),
+      };
+      draft.prop.pos.x = e.clientX;
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    } else if (pos === "br") {
+      const diff = {
+        x: e.clientX - (draft.prop.pos.x + draft.prop.width),
+        y: e.clientY - (draft.prop.pos.y + draft.prop.height),
+      };
+      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    }
+  });
   // rect shape first
-  if (pos === "tl") {
-    const diff = {
-      x: edit.prop.pos.x - e.clientX,
-      y: edit.prop.pos.y - e.clientY,
-    };
-    edit.prop.pos.x = e.clientX;
-    edit.prop.pos.y = e.clientY;
-    edit.prop.width = Math.max(0, edit.prop.width + diff.x);
-    edit.prop.height = Math.max(0, edit.prop.height + diff.y);
-  } else if (pos === "tr") {
-    const diff = {
-      x: e.clientX - (edit.prop.pos.x + edit.prop.width),
-      y: edit.prop.pos.y - e.clientY,
-    };
-    edit.prop.pos.y = e.clientY;
-    edit.prop.width = Math.max(0, edit.prop.width + diff.x);
-    edit.prop.height = Math.max(0, edit.prop.height + diff.y);
-  } else if (pos === "bl") {
-    const diff = {
-      x: edit.prop.pos.x - e.clientX,
-      y: e.clientY - (edit.prop.pos.y + edit.prop.height),
-    };
-    edit.prop.pos.x = e.clientX;
-    edit.prop.width = Math.max(0, edit.prop.width + diff.x);
-    edit.prop.height = Math.max(0, edit.prop.height + diff.y);
-  } else if (pos === "br") {
-    const diff = {
-      x: e.clientX - (edit.prop.pos.x + edit.prop.width),
-      y: e.clientY - (edit.prop.pos.y + edit.prop.height),
-    };
-    edit.prop.width = Math.max(0, edit.prop.width + diff.x);
-    edit.prop.height = Math.max(0, edit.prop.height + diff.y);
-  }
   updateDrawing!(id, edit);
 }
 function adjustText({
@@ -241,5 +279,5 @@ function adjustText({
   id,
   pos,
 }: Omit<AdjustProp, "compType">) {
-  const edit = { ...drawing[id] } as Drawings<"text">[0];
+  const edit = produce(drawing[id] as Drawings<"text">[0], (draft) => {});
 }

@@ -2,12 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowHead } from "./ArrowHead";
 import { pythag } from "../../utils/math";
 import { type Drawings } from "../../types/general";
-import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
+import {
+  useActiveTool,
+  useCanvas,
+  useDrawing,
+  useLocation,
+} from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
+import { produce } from "immer";
 
 export default function Arrow(prop: Drawings<"arrow">[0]) {
   const { activeTool } = useActiveTool();
   const { startPos, endPos, qCurve } = prop.prop;
+  const [moveComp, setMoveComp] = useState(false);
+  const updateDrawing = useDrawing((state) => state.updateDrawing);
+  const canvasPos = useCanvas((s) => s.canvasPos);
 
   const headAngle = (() => {
     const dx = endPos.x - (qCurve ? qCurve.x : startPos.x);
@@ -31,11 +40,38 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
       width,
       height,
     });
-  }, [endPos]);
+  }, [endPos, canvasPos, startPos]);
   return (
     <>
-      <svg id={`${prop.id}`} fill="none">
-        <g id={`${prop.id}`} opacity={prop.opacity}>
+      <svg id={`${prop.id}`} data-copy={`${prop.copy}`} fill="none">
+        <g
+          id={`${prop.id}`}
+          opacity={prop.opacity}
+          // onMouseDown={(ev) => {
+          //   ev.stopPropagation();
+          //   activeTool === "hand" && setMoveComp(true);
+          // }}
+          // onMouseMove={(ev) => {
+          //   ev.stopPropagation();
+          //   if (!moveComp) return;
+          //   console.log("moving");
+          //   const edit = produce(prop, (draft) => {
+          //     draft.prop.startPos.x += ev.movementX;
+          //     draft.prop.endPos.x += ev.movementX;
+
+          //     draft.prop.startPos.y += ev.movementY;
+          //     draft.prop.endPos.y += ev.movementY;
+          //     if (draft.prop.qCurve) {
+          //       draft.prop.qCurve.x += ev.movementX;
+          //       draft.prop.qCurve.y += ev.movementY;
+          //     }
+          //   });
+          //   updateDrawing(prop.id, edit);
+          // }}
+          // onMouseUp={(ev) => {
+          //   setMoveComp(false);
+          // }}
+        >
           <path
             id={`${prop.id}`}
             d={`M ${startPos.x} ${startPos.y} ${

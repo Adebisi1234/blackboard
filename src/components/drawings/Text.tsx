@@ -41,7 +41,7 @@ export default function Text(prop: Drawings<"text">[0]) {
         ref={textRef}
         width={4}
         height={prop.font}
-        className="bg-transparent"
+        className="bg-transparent outline-none size-fit"
         onChange={(e) =>
           (e.currentTarget.style.width = `${e.currentTarget.scrollWidth}px`)
         }

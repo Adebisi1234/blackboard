@@ -7,7 +7,6 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
   const rectRef = useRef<SVGRectElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
   useEffect(() => {
-
     if (!rectRef.current) return;
     const { width, height, x, y } = rectRef.current
       ?.getBoundingClientRect()
@@ -22,7 +21,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
   }, [prop.prop.width, prop.prop.height, prop.prop.pos]);
   return (
     <>
-      <svg id={`${prop.id}`}>
+      <svg id={`${prop.id}`} data-copy={`${prop.copy}`}>
         <rect
           ref={rectRef}
           id={`${prop.id}`}

@@ -32,7 +32,7 @@ export default function CompOverlay(prop: Prop) {
               <circle
                 cx={startPos.x}
                 cy={startPos.y}
-                r={7}
+                r={6}
                 stroke="blue"
                 fill="white"
                 data-comp="arrow"
@@ -43,7 +43,7 @@ export default function CompOverlay(prop: Prop) {
               <circle
                 cx={qCurve ? qCurve.x : (endPos.x + startPos.x) / 2}
                 cy={qCurve ? qCurve.y : (endPos.y + startPos.y) / 2}
-                r={7}
+                r={6}
                 stroke="blue"
                 fill="white"
                 data-comp="arrow"
@@ -54,7 +54,7 @@ export default function CompOverlay(prop: Prop) {
               <circle
                 cx={endPos.x}
                 cy={endPos.y}
-                r={7}
+                r={6}
                 stroke="blue"
                 fill="white"
                 data-comp="arrow"
@@ -81,7 +81,7 @@ export default function CompOverlay(prop: Prop) {
               <circle
                 cx={startX}
                 cy={startY}
-                r={7}
+                r={6}
                 stroke="blue"
                 fill="white"
                 data-comp={prop.type}
@@ -92,7 +92,7 @@ export default function CompOverlay(prop: Prop) {
               <circle
                 cx={endX}
                 cy={endY}
-                r={7}
+                r={6}
                 stroke="blue"
                 fill="white"
                 data-comp={prop.type}
@@ -106,6 +106,8 @@ export default function CompOverlay(prop: Prop) {
       </>
     );
   }
+
+  // Square
   const { x, y, width, height } = location[prop.id];
 
   return (
@@ -125,7 +127,7 @@ export default function CompOverlay(prop: Prop) {
             <circle
               cx={x}
               cy={y}
-              r={7}
+              r={6}
               stroke="blue"
               fill="white"
               data-comp={prop.type}
@@ -136,7 +138,7 @@ export default function CompOverlay(prop: Prop) {
             <circle
               cx={x + width}
               cy={y}
-              r={7}
+              r={6}
               stroke="blue"
               fill="white"
               data-comp={prop.type}
@@ -147,7 +149,7 @@ export default function CompOverlay(prop: Prop) {
             <circle
               cx={x}
               cy={y + height}
-              r={7}
+              r={6}
               stroke="blue"
               fill="white"
               data-comp={prop.type}
@@ -158,7 +160,7 @@ export default function CompOverlay(prop: Prop) {
             <circle
               cx={x + width}
               cy={y + height}
-              r={7}
+              r={6}
               stroke="blue"
               fill="white"
               data-comp={prop.type}

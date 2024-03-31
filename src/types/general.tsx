@@ -32,6 +32,7 @@ export type General = {
   scale: number;
   font: 18 | 24 | 36 | 44;
   highlight: boolean;
+  copy: boolean;
   hovered: boolean;
 };
 
@@ -147,6 +148,8 @@ export type ImageProp = {
   alt: string;
   width: number;
   height: number;
+  x: number;
+  y: number;
 };
 
 export type ImageType = {

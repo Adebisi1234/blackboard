@@ -95,20 +95,23 @@ export default function Controls() {
         }`}
         tool="pointer"
         title="Tool - image"
-        onClick={() => setActiveTool("pointer")}
       >
-        <label htmlFor="image">
+        <label
+          htmlFor="image"
+          className="size-full flex justify-center items-center cursor-pointer"
+        >
           <ImageIcon />
         </label>
         <input
           type="file"
           name="file"
           id="image"
-          className="absolute inset-0 invisible size-full z-1"
+          className="absolute inset-0 invisible size-full z-10 "
           tabIndex={-1}
           multiple={false}
           accept=".jpg,.png"
           onChange={(e) => {
+            setActiveTool("pointer");
             if (!e.target.files || !e.target.files[0]) return;
             const img = document.createElement("img");
             const imageSrc = e.target.files[0];

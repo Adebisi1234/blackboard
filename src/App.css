@@ -27,3 +27,7 @@ svg {
 circle {
   cursor: pointer;
 }
+
+[data-copy="true"] {
+  transform: translate(-20px, -20px);
+}

@@ -40,9 +40,6 @@ export default function Note(prop: Drawings<"note">[0]) {
           fontSize: prop.font,
         }}
         id={`${prop.id}`}
-        onMouseDown={(e) => {
-          console.log("wtf");
-        }}
         onDoubleClick={() => {
           edit !== true && setEdit(true);
         }}
