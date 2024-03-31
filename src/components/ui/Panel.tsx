@@ -226,7 +226,10 @@ export default function Panel() {
           <Icon className="rounded-full bg-[#e03131]"></Icon>
         </Button>
       </div>
-      <Button className="w-full slider !justify-start px-2">
+      <Button
+        className="w-full slider !justify-start px-2"
+        title="Visibility Slider"
+      >
         <input
           type="range"
           min={0}
