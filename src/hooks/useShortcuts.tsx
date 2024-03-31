@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useActive, useDrawing } from "../store/Store";
 
-export default function useShortcuts(drawingId: { current: number }) {
-  const { drawing, hideComp, copyComp, pasteComp } = useDrawing();
+export default function useShortcuts() {
+  const { hideComp, copyComp, pasteComp } = useDrawing();
   const { activeComp, setActiveComp } = useActive();
   const [copied, setCopied] = useState<number[]>([]);
   const handleKeyDown = useCallback(
@@ -18,7 +18,6 @@ export default function useShortcuts(drawingId: { current: number }) {
       // paste
       if (ev.ctrlKey && ev.key.toLowerCase() === "v") {
         pasteComp();
-        drawingId.current += copied.length;
         return;
       }
       // Delete
@@ -42,4 +41,5 @@ export default function useShortcuts(drawingId: { current: number }) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeComp]);
+  return handleKeyDown; //For the pages component
 }

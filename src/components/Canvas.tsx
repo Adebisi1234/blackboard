@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   addDrawing,
   cleanUpDrawing,
@@ -52,7 +52,13 @@ export default function Canvas() {
   useAddImage(drawingId);
   useAddToActiveComp();
   useUpdateGeneral();
-  useShortcuts(drawingId);
+  useShortcuts();
+
+  drawingId.current = useMemo(
+    () => (!isToolActive ? drawing.length : drawingId.current),
+    [drawing]
+  );
+
   if (activeTool !== "pointer" && highlighted.length !== 0) {
     setHighlighted([]);
   }
@@ -131,6 +137,8 @@ export default function Canvas() {
       });
       return;
     }
+
+    // Move components too flicker to do so themselves: pencil, arrow
 
     // Showcase hovered components
     if (!isToolActive) {
@@ -251,9 +259,6 @@ export default function Canvas() {
       setActiveTool("pointer");
     }
     setIsToolActive(false);
-    if (drawing[drawingId.current]?.prop.type !== "pointer") {
-      drawingId.current = drawing.length;
-    }
     return;
   };
 

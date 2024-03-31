@@ -54,8 +54,8 @@ export function addDrawing({
         },
         id: drawingId.current,
         pos: {
-          x: e.clientX,
-          y: e.clientY,
+          x: 0,
+          y: 0,
         },
       } satisfies Drawings<"arrow">[0];
       setDrawing!(newArrowComp);
@@ -77,8 +77,8 @@ export function addDrawing({
           ],
         },
         pos: {
-          x: e.clientX,
-          y: e.clientY,
+          x: 0,
+          y: 0,
         },
       } satisfies Drawings<"pencil">[0];
       setDrawing!(newPencilComp);
@@ -163,8 +163,8 @@ export function addDrawing({
           height: 0,
         },
         pos: {
-          x: e.clientX,
-          y: e.clientY,
+          x: 0,
+          y: 0,
         },
       } satisfies Drawings<"shape">[0];
       setDrawing!(newShapeComp);

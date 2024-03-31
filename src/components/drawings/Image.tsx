@@ -14,7 +14,7 @@ export default function Image(prop: Drawings<"image">[0]) {
   const imgRef = useRef<HTMLImageElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
   const [moveComp, setMoveComp] = useState(false);
-  const activeTool = useActiveTool((state) => state.activeTool);
+  const { activeTool, setActiveTool } = useActiveTool();
   const updateDrawing = useDrawing((state) => state.updateDrawing);
   const canvasPos = useCanvas((s) => s.canvasPos);
   useEffect(() => {
@@ -44,10 +44,14 @@ export default function Image(prop: Drawings<"image">[0]) {
           ev.stopPropagation();
           activeTool === "hand" && setMoveComp(true);
         }}
+        onDoubleClick={() => {
+          setActiveTool("hand");
+          setMoveComp(true);
+        }}
         onMouseMove={(ev) => {
           ev.stopPropagation();
           if (!moveComp) return;
-          console.log("moving");
+
           const edit = produce(prop, (draft) => {
             draft.prop.x += ev.movementX;
             draft.prop.y += ev.movementY;

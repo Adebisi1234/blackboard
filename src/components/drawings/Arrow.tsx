@@ -54,7 +54,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
           // onMouseMove={(ev) => {
           //   ev.stopPropagation();
           //   if (!moveComp) return;
-          //   console.log("moving");
+          //
           //   const edit = produce(prop, (draft) => {
           //     draft.prop.startPos.x += ev.movementX;
           //     draft.prop.endPos.x += ev.movementX;

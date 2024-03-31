@@ -1,16 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Drawings } from "../../types/general";
 import CompOverlay from "../ui/CompOverlay";
-import { useLocation } from "../../store/Store";
+import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
+import { produce } from "immer";
 
 export default function Shapes(prop: Drawings<"shape">[0]) {
   const rectRef = useRef<SVGRectElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
+  const [moveComp, setMoveComp] = useState(false);
+  const { activeTool, setActiveTool } = useActiveTool();
+  const updateDrawing = useDrawing((s) => s.updateDrawing);
   useEffect(() => {
     if (!rectRef.current) return;
-    const { width, height, x, y } = rectRef.current
-      ?.getBoundingClientRect()
-      .toJSON();
+    const { x, y } = prop.prop.pos;
+    const { width, height } = prop.prop;
+
     setLocation({
       x,
       y,
@@ -24,6 +28,27 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
       <svg id={`${prop.id}`} data-copy={`${prop.copy}`}>
         <rect
           ref={rectRef}
+          onMouseDown={(ev) => {
+            ev.stopPropagation();
+            activeTool === "hand" && setMoveComp(true);
+          }}
+          onMouseMove={(ev) => {
+            ev.stopPropagation();
+            if (!moveComp) return;
+
+            const edit = produce(prop, (draft) => {
+              draft.prop.pos.x += ev.movementX;
+              draft.prop.pos.y += ev.movementY;
+            });
+            updateDrawing(prop.id, edit);
+          }}
+          onMouseUp={(ev) => {
+            setMoveComp(false);
+          }}
+          onDoubleClick={() => {
+            setActiveTool("hand");
+            setMoveComp(true);
+          }}
           id={`${prop.id}`}
           rx={15}
           x={prop.prop.pos.x}
