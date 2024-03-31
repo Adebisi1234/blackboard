@@ -51,15 +51,17 @@ export default function Image(prop: Drawings<"image">[0]) {
         onMouseMove={(ev) => {
           ev.stopPropagation();
           if (!moveComp) return;
-
           const edit = produce(prop, (draft) => {
             draft.prop.x += ev.movementX;
             draft.prop.y += ev.movementY;
           });
           updateDrawing(prop.id, edit);
         }}
-        onMouseUp={(ev) => {
-          setMoveComp(false);
+        onMouseUp={() => {
+          moveComp && setMoveComp(false);
+        }}
+        onMouseLeave={() => {
+          moveComp && setMoveComp(false);
         }}
       >
         <img

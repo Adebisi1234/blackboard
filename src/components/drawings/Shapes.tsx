@@ -42,8 +42,11 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
             });
             updateDrawing(prop.id, edit);
           }}
-          onMouseUp={(ev) => {
-            setMoveComp(false);
+          onMouseUp={() => {
+            moveComp && setMoveComp(false);
+          }}
+          onMouseLeave={() => {
+            moveComp && setMoveComp(false);
           }}
           onDoubleClick={() => {
             setActiveTool("hand");
