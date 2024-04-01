@@ -246,12 +246,6 @@ export function modifyDrawing({
             x: e.clientX,
             y: e.clientY,
           };
-          draft.pos = {
-            x: getRelativeMin(draft.prop.startPos.x, draft.prop.endPos.x),
-            y: getRelativeMin(draft.prop.startPos.y, draft.prop.endPos.y),
-            width: getDiff(draft.prop.startPos.x, draft.prop.endPos.x),
-            height: getDiff(draft.prop.startPos.y, draft.prop.endPos.y),
-          };
         }
       );
       updateDrawing!(drawingId.current, edit);

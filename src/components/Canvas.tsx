@@ -21,6 +21,7 @@ import useAddToActiveComp from "../hooks/useAddToActiveComp";
 import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
+import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
 
 export default function Canvas() {
   const {
@@ -53,6 +54,8 @@ export default function Canvas() {
   useAddToActiveComp();
   useUpdateGeneral();
   useShortcuts();
+  const movePencilOrArrow = useMovePencilAndArrowComp();
+  const [moveCompId, setMoveCompId] = useState<number | null>(null);
 
   drawingId.current = useMemo(
     () => (!isToolActive ? drawing.length : drawingId.current),
@@ -101,6 +104,25 @@ export default function Canvas() {
       return;
     }
     setIsToolActive(true);
+    if (activeTool === "hand") {
+      for (const id in loc) {
+        if (Object.prototype.hasOwnProperty.call(loc, id)) {
+          if (
+            e.clientX > loc[id].x &&
+            e.clientX < loc[id].x + loc[id].width &&
+            e.clientY > loc[id].y &&
+            e.clientY < loc[id].y + loc[id].height &&
+            (drawing[id].prop.type === "pencil" ||
+              drawing[id].prop.type === "arrow")
+          ) {
+            console.log("mover", id);
+            setMoveCompId(+id);
+            setActiveComp(+id);
+            return;
+          }
+        }
+      }
+    }
     //TODO: Use temp storage to avoid issues
     addDrawing({
       e: {
@@ -172,6 +194,11 @@ export default function Canvas() {
 
     if (activeTool === "hand") {
       if (!canvasRef) {
+        return;
+      }
+      if (typeof moveCompId === "number") {
+        console.log("move");
+        movePencilOrArrow(moveCompId, e);
         return;
       }
 
@@ -259,6 +286,7 @@ export default function Canvas() {
       setActiveTool("pointer");
     }
     setIsToolActive(false);
+    setMoveCompId(null);
     return;
   };
 

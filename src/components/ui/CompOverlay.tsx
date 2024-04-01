@@ -1,4 +1,4 @@
-import { useCanvas, useDrawing, useLocation } from "../../store/Store";
+import { useDrawing, useLocation } from "../../store/Store";
 import { Drawings } from "../../types/general";
 
 type Prop = {
@@ -8,7 +8,6 @@ type Prop = {
 };
 
 export default function CompOverlay(prop: Prop) {
-  const canvasPos = useCanvas((state) => state.canvasPos);
   const { drawing } = useDrawing();
   const location = useLocation((state) => state.location);
   if (prop.type === "arrow") {
