@@ -293,9 +293,9 @@ export default function Canvas() {
   const components = drawing.map(drawOnCanvas);
   return (
     <div
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onPointerDown={handleMouseDown}
+      onPointerMove={handleMouseMove}
+      onPointerUp={handleMouseUp}
       // TODO: HANDLEMOUSELEAVE
       className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >

@@ -33,7 +33,7 @@ export default function Text(prop: Drawings<"text">[0]) {
         opacity: prop.opacity,
         fontSize: prop.font,
       }}
-      onMouseDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
     >
       <input
         name={`${prop.id}`}
@@ -45,7 +45,7 @@ export default function Text(prop: Drawings<"text">[0]) {
         onChange={(e) =>
           (e.currentTarget.style.width = `${e.currentTarget.scrollWidth}px`)
         }
-        onMouseLeave={(e) => {
+        onPointerLeave={(e) => {
           if (!textRef.current) return;
           let edit = {
             ...drawing[prop.id],

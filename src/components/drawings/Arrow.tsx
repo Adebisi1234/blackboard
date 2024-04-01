@@ -47,11 +47,11 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
         <g
           id={`${prop.id}`}
           opacity={prop.opacity}
-          // onMouseDown={(ev) => {
+          // onPointerDown={(ev) => {
           //   ev.stopPropagation();
           //   activeTool === "hand" && setMoveComp(true);
           // }}
-          // onMouseMove={(ev) => {
+          // onPointerMove={(ev) => {
           //   ev.stopPropagation();
           //   if (!moveComp) return;
           //
@@ -68,7 +68,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
           //   });
           //   updateDrawing(prop.id, edit);
           // }}
-          // onMouseUp={(ev) => {
+          // onPointerUp={(ev) => {
           //   setMoveComp(false);
           // }}
         >

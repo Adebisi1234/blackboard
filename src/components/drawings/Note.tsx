@@ -43,7 +43,7 @@ export default function Note(prop: Drawings<"note">[0]) {
         onDoubleClick={() => {
           edit !== true && setEdit(true);
         }}
-        onMouseLeave={() => {
+        onPointerLeave={() => {
           setEdit(false);
         }}
       >

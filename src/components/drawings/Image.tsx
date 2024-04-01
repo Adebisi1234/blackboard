@@ -40,7 +40,7 @@ export default function Image(prop: Drawings<"image">[0]) {
           height,
           opacity: prop.opacity,
         }}
-        onMouseDown={(ev) => {
+        onPointerDown={(ev) => {
           ev.stopPropagation();
           activeTool === "hand" && setMoveComp(true);
         }}
@@ -48,7 +48,7 @@ export default function Image(prop: Drawings<"image">[0]) {
           setActiveTool("hand");
           setMoveComp(true);
         }}
-        onMouseMove={(ev) => {
+        onPointerMove={(ev) => {
           ev.stopPropagation();
           if (!moveComp) return;
           const edit = produce(prop, (draft) => {
@@ -57,10 +57,10 @@ export default function Image(prop: Drawings<"image">[0]) {
           });
           updateDrawing(prop.id, edit);
         }}
-        onMouseUp={() => {
+        onPointerUp={() => {
           moveComp && setMoveComp(false);
         }}
-        onMouseLeave={() => {
+        onPointerLeave={() => {
           moveComp && setMoveComp(false);
         }}
       >

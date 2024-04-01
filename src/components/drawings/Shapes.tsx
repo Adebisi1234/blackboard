@@ -28,11 +28,11 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
       <svg id={`${prop.id}`} data-copy={`${prop.copy}`}>
         <rect
           ref={rectRef}
-          onMouseDown={(ev) => {
+          onPointerDown={(ev) => {
             ev.stopPropagation();
             activeTool === "hand" && setMoveComp(true);
           }}
-          onMouseMove={(ev) => {
+          onPointerMove={(ev) => {
             ev.stopPropagation();
             if (!moveComp) return;
 
@@ -42,10 +42,10 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
             });
             updateDrawing(prop.id, edit);
           }}
-          onMouseUp={() => {
+          onPointerUp={() => {
             moveComp && setMoveComp(false);
           }}
-          onMouseLeave={() => {
+          onPointerLeave={() => {
             moveComp && setMoveComp(false);
           }}
           onDoubleClick={() => {
