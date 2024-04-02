@@ -25,7 +25,7 @@ import {
 export default function Controls() {
   const setImage = useImage((state) => state.setImage);
   const { activeTool, setActiveTool } = useActiveTool();
-  const { dialog, setDialog } = useOpenDialog();
+  const { dialog, setDialog, reset } = useOpenDialog();
   const windowWidth = useWindowSize();
   return (
     <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-[90%]">
@@ -162,7 +162,9 @@ export default function Controls() {
       {windowWidth < 768 && ( //Magic number
         <Button
           className={`rounded-lg  hover:bg-[#2e3034]`}
-          onClick={() => setDialog("panel")}
+          onClick={() => {
+            dialog !== "panel" ? setDialog("panel") : reset();
+          }}
         >
           {/* <ChevronUp /> */}
           <Icon className="bg-white rounded-full"></Icon>
