@@ -31,3 +31,12 @@ circle {
 [data-copy="true"] {
   transform: translate(-20px, -20px);
 }
+
+dialog {
+  bottom: 100%;
+  width: fit-content;
+  height: fit-content;
+  padding: 0;
+  color: white;
+  background-color: transparent;
+}

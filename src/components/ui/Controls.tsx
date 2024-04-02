@@ -7,6 +7,8 @@ import {
 } from "../../store/Store";
 import { Drawings } from "../../types/general";
 import Button from "./Button";
+import Icon from "./Icon";
+import Panel from "./Panel";
 import {
   Arrow,
   ChevronUp,
@@ -163,12 +165,16 @@ export default function Controls() {
           onClick={() => setDialog("panel")}
         >
           {/* <ChevronUp /> */}
-          <p>Panel</p>
+          <Icon className="bg-white rounded-full"></Icon>
         </Button>
       )}
 
       <dialog open={dialog === "controls"}></dialog>
-      {windowWidth < 768 && <dialog open={dialog === "panel"}></dialog>}
+      {windowWidth < 768 && (
+        <dialog open={dialog === "panel"} className="mr-0">
+          <Panel />
+        </dialog>
+      )}
     </div>
   );
 }
