@@ -1,4 +1,7 @@
-export interface Prop extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+import { cn } from "../../utils/cn";
+
+export interface ButtonProp
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: JSX.Element | JSX.Element[];
   className?: string;
   id?: string;
@@ -7,11 +10,14 @@ export interface Prop extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   tool?: string;
 }
 
-export default function Button(prop: Prop) {
+export default function Button(prop: ButtonProp) {
   prop = {
     ...prop,
     draggable: "false",
-    className: `size-10 shrink-0 flex justify-center items-center cursor-pointer text-xs gap-0 relative hover:bg-[#333438] ${prop.className}`,
+    className: cn(
+      `size-10 shrink-0 flex justify-center items-center cursor-pointer text-xs gap-0 relative hover:bg-[#333438]`,
+      prop.className
+    ),
   };
 
   return (

@@ -1,12 +1,15 @@
+import useWindowSize from "../../hooks/useWindowSize";
 import Button from "./Button";
 import Controls from "./Controls";
 import Help from "./Help";
 import Icon from "./Icon";
 import Pages from "./Pages";
 import Panel from "./Panel";
+import Share from "./Share";
 import Zoom from "./Zoom";
 
 export default function Overlay() {
+  const windowWidth = useWindowSize();
   return (
     <div className="flex flex-col justify-between w-full h-full z-[99]">
       <div className="flex items-start justify-between mt-1">
@@ -16,11 +19,9 @@ export default function Overlay() {
             <Button>
               <Icon className="bg-pink-700 rounded-full"></Icon>
             </Button>
-            <Button className=" !size-fit bg-blue-600 px-4 py-2 rounded-lg ">
-              <span>Share</span>
-            </Button>
+            <Share />
           </div>
-          <Panel />
+          {windowWidth > 768 && <Panel />}
         </div>
       </div>
       <div className="relative flex items-center justify-between h-10">

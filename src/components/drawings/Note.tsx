@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Drawings } from "../../types/general";
-import { useDrawing, useLocation } from "../../store/Store";
+import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
+import { produce } from "immer";
 
 export default function Note(prop: Drawings<"note">[0]) {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
-
+  const { activeTool, setActiveTool } = useActiveTool();
   const [edit, setEdit] = useState(true);
+  const [moveComp, setMoveComp] = useState(false);
   if (edit) {
     textRef.current?.focus();
   }
@@ -21,11 +23,15 @@ export default function Note(prop: Drawings<"note">[0]) {
     setLocation({
       width,
       height,
-      x,
-      y,
+      x: (prop.pos.x ?? x) - width / 2,
+      y: (prop.pos.y ?? y) - height / 2,
       id: prop.id,
     });
-  }, [containerRef.current?.offsetWidth, containerRef.current?.offsetHeight]);
+  }, [
+    containerRef.current?.offsetWidth,
+    containerRef.current?.offsetHeight,
+    prop.pos,
+  ]);
   return (
     <>
       <div
@@ -39,12 +45,31 @@ export default function Note(prop: Drawings<"note">[0]) {
           opacity: prop.opacity,
           fontSize: prop.font,
         }}
+        onPointerDown={(ev) => {
+          ev.stopPropagation();
+          activeTool === "hand" && setMoveComp(true);
+        }}
+        onPointerMove={(ev) => {
+          ev.stopPropagation();
+          if (!moveComp) return;
+
+          const edit = produce(prop, (draft) => {
+            draft.pos.x = (draft.pos.x ?? 0) + ev.movementX;
+            draft.pos.y = (draft.pos.y ?? 0) + ev.movementY;
+          });
+          updateDrawing(prop.id, edit);
+        }}
+        onPointerUp={() => {
+          moveComp && setMoveComp(false);
+        }}
+        onPointerLeave={() => {
+          moveComp && setMoveComp(false);
+          setEdit(false);
+        }}
         id={`${prop.id}`}
         onDoubleClick={() => {
           edit !== true && setEdit(true);
-        }}
-        onPointerLeave={() => {
-          setEdit(false);
+          textRef.current?.focus();
         }}
       >
         <div

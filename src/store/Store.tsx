@@ -36,6 +36,14 @@ interface ImageState {
   clearImage: () => void;
 }
 
+interface OpenDialog {
+  dialog: "help" | "controls" | "panel" | "menu" | "share" | "pages" | null;
+  setDialog: (
+    name: "help" | "controls" | "panel" | "menu" | "share" | "pages"
+  ) => void;
+  reset: () => void;
+}
+
 interface GeneralState {
   general: General;
   setGeneral: (payload: Partial<General>) => void;
@@ -244,3 +252,17 @@ export const useImage = create<ImageState>()(
     },
   }))
 );
+
+export const useOpenDialog = create<OpenDialog>()((set) => ({
+  dialog: null,
+  setDialog(name) {
+    set({
+      dialog: name,
+    });
+  },
+  reset() {
+    set({
+      dialog: null,
+    });
+  },
+}));
