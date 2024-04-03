@@ -1,17 +1,20 @@
 import { useOpenDialog } from "../../store/Store";
 import Button from "./Button";
+import ShareDialog from "./dialog/ShareDialog";
 
 export default function Share() {
-  const { dialog, setDialog } = useOpenDialog();
+  const { dialog, setDialog, reset } = useOpenDialog();
   return (
-    <>
+    <div className="relative">
       <Button
         className=" !size-fit bg-blue-600 px-4 py-2 rounded-lg"
-        onClick={() => setDialog("share")}
+        onClick={() => (dialog !== "share" ? setDialog("share") : reset())}
       >
         <span>Share</span>
       </Button>
-      <dialog open={dialog === "share"}></dialog>
-    </>
+      <dialog open={dialog === "share"} className="top-full z-10 mr-0">
+        <ShareDialog />
+      </dialog>
+    </div>
   );
 }

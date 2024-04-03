@@ -14,9 +14,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
     .join(" ");
   useEffect(() => {
     if (!pathRef.current) return;
-    const { width, height, x, y } = pathRef.current
-      ?.getBoundingClientRect()
-      .toJSON();
+    const { width, height, x, y } = pathRef.current?.getBoundingClientRect();
     setLocation({
       x,
       y,
@@ -24,7 +22,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
       height,
       id: prop.id,
     });
-  }, [prop.prop.path, canvasPos]);
+  }, [prop.prop.path, canvasPos, prop.pos.x, prop.pos.y]);
   return (
     <>
       <svg

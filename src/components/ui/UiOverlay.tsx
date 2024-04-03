@@ -21,7 +21,7 @@ export default function Overlay() {
             </Button>
             <Share />
           </div>
-          {windowWidth > 768 && <Panel />}
+          {windowWidth >= 768 && <Panel />}
         </div>
       </div>
       <div className="relative flex items-center justify-between h-10">

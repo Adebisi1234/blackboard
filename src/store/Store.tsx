@@ -37,9 +37,17 @@ interface ImageState {
 }
 
 interface OpenDialog {
-  dialog: "help" | "controls" | "panel" | "menu" | "share" | "pages" | null;
+  dialog:
+    | "help"
+    | "controls"
+    | "panel"
+    | "menu"
+    | "share"
+    | "pages"
+    | "zoom"
+    | null;
   setDialog: (
-    name: "help" | "controls" | "panel" | "menu" | "share" | "pages"
+    name: "help" | "controls" | "panel" | "menu" | "share" | "pages" | "zoom"
   ) => void;
   reset: () => void;
 }

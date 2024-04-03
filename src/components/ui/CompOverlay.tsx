@@ -68,7 +68,10 @@ export default function CompOverlay(prop: Prop) {
     );
   }
   if (prop.type === "pencil") {
-    const path = [...(drawing[prop.id] as Drawings<"pencil">[0]).prop.path];
+    const pencil = drawing[prop.id] as Drawings<"pencil">[0];
+    const path = pencil.prop.path;
+    const pos = pencil.pos;
+
     const { x: startX, y: startY } = path[0];
     const { x: endX, y: endY } = path[path.length - 1];
 
@@ -78,8 +81,8 @@ export default function CompOverlay(prop: Prop) {
           <svg className="z-40" opacity={prop.opacity === 0 ? 0 : 1}>
             <g>
               <circle
-                cx={startX}
-                cy={startY}
+                cx={startX + (pos.x ?? 0)}
+                cy={startY + (pos.y ?? 0)}
                 r={6}
                 stroke="blue"
                 fill="white"
@@ -89,8 +92,8 @@ export default function CompOverlay(prop: Prop) {
                 data-pos="start"
               ></circle>
               <circle
-                cx={endX}
-                cy={endY}
+                cx={endX + (pos.x ?? 0)}
+                cy={endY + (pos.y ?? 0)}
                 r={6}
                 stroke="blue"
                 fill="white"

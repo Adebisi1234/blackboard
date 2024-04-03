@@ -7,6 +7,8 @@ import {
 } from "../../store/Store";
 import { Drawings } from "../../types/general";
 import Button from "./Button";
+import ExtraControlsDialog from "./dialog/ExtraControlsDialog";
+import ExtraControls from "./ExtraControls";
 import Icon from "./Icon";
 import Panel from "./Panel";
 import {
@@ -21,14 +23,19 @@ import {
   Pointer,
   Text,
 } from "./Svg";
+import UndoRedoTrash from "./UndoRedoTrash";
 
 export default function Controls() {
-  const setImage = useImage((state) => state.setImage);
   const { activeTool, setActiveTool } = useActiveTool();
   const { dialog, setDialog, reset } = useOpenDialog();
   const windowWidth = useWindowSize();
   return (
     <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-[90%]">
+      {windowWidth < 768 && (
+        <div className="absolute bottom-full left-0 rounded-lg bg-[#1f1e21]">
+          <UndoRedoTrash />
+        </div>
+      )}
       <Button
         className={`rounded-lg  hover:bg-[#2e3034] ${
           activeTool === "pointer" && "bg-[#4387f4]"
@@ -89,91 +96,34 @@ export default function Controls() {
       >
         <Text />
       </Button>
-      {windowWidth > 768 && (
+      {windowWidth >= 768 && <ExtraControls />}
+      {windowWidth < 768 && (
         <>
-          {/* Magic number*/}
           <Button
-            className={`rounded-lg  hover:bg-[#2e3034] ${
-              activeTool === "note" && "bg-[#4387f4]"
-            }`}
-            tool="note"
-            title="Tool - note"
-            onClick={() => setActiveTool("note")}
+            className={`rounded-lg  hover:bg-[#2e3034]`}
+            onClick={() =>
+              dialog !== "controls" ? setDialog("controls") : reset()
+            }
           >
-            <Note />
+            <ChevronUp />
           </Button>
+          <dialog open={dialog === "controls"} className="bottom-full mr-0">
+            <ExtraControlsDialog />
+          </dialog>
           <Button
-            className={`rounded-lg  relative hover:bg-[#2e3034] ${
-              activeTool === "image" && "bg-[#4387f4]"
-            }`}
-            tool="pointer"
-            title="Tool - image"
+            className={`rounded-lg  hover:bg-[#2e3034]`}
+            onClick={() => {
+              dialog !== "panel" ? setDialog("panel") : reset();
+            }}
           >
-            <label
-              htmlFor="image"
-              className="size-full flex justify-center items-center cursor-pointer"
-            >
-              <ImageIcon />
-            </label>
-            <input
-              type="file"
-              name="file"
-              id="image"
-              className="absolute inset-0 invisible size-full z-10 "
-              tabIndex={-1}
-              multiple={false}
-              accept=".jpg,.png"
-              onChange={(e) => {
-                setActiveTool("pointer");
-                if (!e.target.files || !e.target.files[0]) return;
-                const img = document.createElement("img");
-                const imageSrc = e.target.files[0];
-                img.src = URL.createObjectURL(imageSrc);
-                img.addEventListener("load", () => {
-                  setImage({
-                    id: imageSrc.lastModified,
-                    src: img.src,
-                    alt: "Image uploaded by user",
-                    width: img.naturalWidth,
-                    height: img.naturalHeight,
-                  });
-                });
-              }}
-            />
-          </Button>
-          <Button
-            className={`rounded-lg  hover:bg-[#2e3034] ${
-              activeTool === "shape" && "bg-[#4387f4]"
-            }`}
-            tool="shape"
-            title="Tool - shape"
-            onClick={() => setActiveTool("shape")}
-          >
-            <GeoRect />
+            <Icon className="bg-white rounded-full"></Icon>
           </Button>
         </>
       )}
-      <Button
-        className={`rounded-lg  hover:bg-[#2e3034]`}
-        onClick={() => setDialog("controls")}
-      >
-        <ChevronUp />
-      </Button>
-      {windowWidth < 768 && ( //Magic number
-        <Button
-          className={`rounded-lg  hover:bg-[#2e3034]`}
-          onClick={() => {
-            dialog !== "panel" ? setDialog("panel") : reset();
-          }}
-        >
-          {/* <ChevronUp /> */}
-          <Icon className="bg-white rounded-full"></Icon>
-        </Button>
-      )}
 
-      <dialog open={dialog === "controls"}></dialog>
+      {/* <dialog open={dialog === "controls"}></dialog> */}
       {windowWidth < 768 && (
-        <dialog open={dialog === "panel"} className="mr-0">
+        <dialog open={dialog === "panel"} className="mr-0 bottom-full">
           <Panel />
         </dialog>
       )}

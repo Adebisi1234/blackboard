@@ -1,16 +1,7 @@
+import type { ContainerProp } from "../../types/general";
 import { cn } from "../../utils/cn";
 
-export interface ButtonProp
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: JSX.Element | JSX.Element[];
-  className?: string;
-  id?: string;
-  title?: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  tool?: string;
-}
-
-export default function Button(prop: ButtonProp) {
+export default function Button(prop: ContainerProp) {
   prop = {
     ...prop,
     draggable: "false",

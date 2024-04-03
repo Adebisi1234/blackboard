@@ -1,7 +1,22 @@
+/* @import "https://fonts.googleapis.com/css2?family=Inter:wght@500;600;800&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Plus+Jakarta+Sans:wght@600;800&display=swap"; */
 * {
   -webkit-user-drag: none;
 }
 
+:root {
+  font-family: Inter, -apple-system, "system-ui", Segoe UI, Noto Sans, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-weight: 500;
+  line-height: 1.6;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+p {
+  line-height: 1.6;
+  font-size: 13px;
+}
 #root {
   width: 100svw;
   height: 100svh;
@@ -33,7 +48,6 @@ circle {
 }
 
 dialog {
-  bottom: 100%;
   width: fit-content;
   height: fit-content;
   padding: 0;

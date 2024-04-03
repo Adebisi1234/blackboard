@@ -23,6 +23,16 @@ type Color =
   | "#ff8787"
   | "#e03131";
 
+export interface ContainerProp<T = undefined>
+  extends React.ButtonHTMLAttributes<T | HTMLButtonElement> {
+  children: JSX.Element | JSX.Element[];
+  className?: string;
+  id?: string;
+  title?: string;
+  onClick?: React.MouseEventHandler<T | HTMLButtonElement>;
+  tool?: string;
+}
+
 export type General = {
   color: Color;
   opacity: number;
