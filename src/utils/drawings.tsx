@@ -390,6 +390,12 @@ export function cloneComp(comp: Drawings[0]) {
     case "arrow":
       clone.prop.startPos.x += 20;
       clone.prop.startPos.y += 20;
+      clone.prop.endPos.x += 20;
+      clone.prop.endPos.y += 20;
+      if (clone.prop.qCurve) {
+        clone.prop.qCurve.x += 20;
+        clone.prop.qCurve.y += 20;
+      }
       break;
     case "text":
     case "note":

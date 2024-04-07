@@ -9,6 +9,7 @@ import {
   ImageType,
 } from "../types/general";
 import { cloneComp } from "../utils/drawings";
+import { produce } from "immer";
 
 //TODO= IMPLEMENT IMMER
 
@@ -184,18 +185,26 @@ export const useDrawing = create<DrawingState>()(
       },
       copyComp(payload: number | number[]) {
         set((state) => {
+          if (!payload || (typeof payload === "object" && payload.length === 0))
+            return state;
           state.copiedComps[get().page] =
             typeof payload === "number" ? [payload] : [...payload];
         });
       },
       pasteComp() {
         set((state) => {
-          const update = state.copiedComps[get().page].map((comp) => {
-            const newComp = cloneComp(state.drawing[get().page][comp]);
-            newComp.id = state.drawing[get().page].length;
+          const update = state.copiedComps[get().page].map((comp, i) => {
+            const newComp = produce(
+              state.drawing[get().page][comp],
+              (draft) => {
+                cloneComp(draft);
+              }
+            );
+            newComp.id = state.drawing[get().page].length + i;
             newComp.copy = true;
             return newComp;
           });
+          state.copiedComps[get().page] = update.map(({ id }) => id);
           state.drawing[get().page].push(...update);
         });
       },
