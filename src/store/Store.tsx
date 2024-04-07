@@ -16,16 +16,16 @@ import { produce } from "immer";
 interface DrawingState {
   drawing: { [key: number]: Drawings };
   page: number;
+  copiedComps: { [key: number]: number[] };
+  deletedComps: { [key: number]: number[] };
   setPage: (payload: number) => void;
   deletePage: (payload: number) => void;
   getNumOfPages: () => number;
   getDrawing: (payload?: number) => Drawings;
-  copiedComps: { [key: number]: number[] };
-  deletedComps: { [key: number]: number[] };
   copyComp: (payload: number | number[]) => void;
   pasteComp: () => void;
   restoreComp: () => void;
-  // copiedComp: number[];
+  undo: () => void;
   setDrawing: (payload: Drawings[0]) => void;
   init: (payload: { [key: number]: Drawings }) => void;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
@@ -157,6 +157,16 @@ export const useDrawing = create<DrawingState>()(
       },
       hideComp(id) {
         set((state) => {
+          if (!id) return state;
+          state.drawing[get().page][id].opacity = 0;
+          if (state.drawing[get().page][id].prop.type !== "pointer") {
+            state.deletedComps[get().page].push(id);
+          }
+        });
+      },
+      undo() {
+        set((state) => {
+          const id = state.drawing[get().page].length - 1;
           state.drawing[get().page][id].opacity = 0;
           if (state.drawing[get().page][id].prop.type !== "pointer") {
             state.deletedComps[get().page].push(id);
@@ -232,6 +242,10 @@ export const useDrawing = create<DrawingState>()(
     })),
     {
       name: "blackboard:drawings",
+      partialize: (state) => ({
+        drawing: state.drawing,
+        page: state.page,
+      }),
       // onRehydrateStorage: (state) => {
       //   console.log("hydration starts");
 

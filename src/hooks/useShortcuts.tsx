@@ -2,17 +2,17 @@ import { useCallback, useEffect, useState } from "react";
 import { useActive, useDrawing } from "../store/Store";
 
 export default function useShortcuts() {
-  const { hideComp, copyComp, pasteComp } = useDrawing();
+  const { hideComp, copyComp, pasteComp, restoreComp, undo, getDrawing } =
+    useDrawing();
+  const drawing = getDrawing();
   const { activeComp, setActiveComp } = useActive();
   const [copied, setCopied] = useState<number>(0);
   const handleKeyDown = useCallback(
     (ev: KeyboardEvent) => {
-      // console.log(ev.key, ev.ctrlKey);
-
       // Copy
       if (ev.ctrlKey && ev.key.toLowerCase() === "c") {
-        setCopied(activeComp.length);
         copyComp(activeComp);
+        setCopied(activeComp.length);
         return;
       }
       // paste
@@ -21,13 +21,24 @@ export default function useShortcuts() {
         // Set the new components as active
         if (typeof copied === "number") {
           let newActiveComp = [];
-          for (let i = 0; i <= copied; i++) {
+          for (let i = drawing.length; i <= drawing.length + copied; i++) {
             newActiveComp.push(i);
           }
           setActiveComp(newActiveComp);
         }
         return;
       }
+      // undo
+      if (ev.ctrlKey && ev.key.toLowerCase() === "z") {
+        undo();
+        return;
+      }
+      // Redo
+      if (ev.ctrlKey && ev.key.toLowerCase() === "y") {
+        restoreComp();
+        return;
+      }
+
       // Delete
       if (ev.key === "Delete") {
         activeComp.forEach((id) => {
@@ -40,7 +51,7 @@ export default function useShortcuts() {
       // Undo
       // Redo
     },
-    [activeComp, hideComp, pasteComp, copyComp]
+    [activeComp, hideComp, pasteComp, copyComp, restoreComp, undo]
   );
 
   useEffect(() => {
