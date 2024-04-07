@@ -22,10 +22,10 @@ import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Canvas() {
   const {
-    drawing,
     updateDrawing,
     setDrawing,
     clearPointer,
@@ -35,10 +35,11 @@ export default function Canvas() {
     leaveComp,
     highlightComp,
   } = useDrawing();
+  const drawing = useDrawing((state) => state.getDrawing());
+
   const { highlighted, setHighlighted } = useHighlighted();
   const { activeTool, setActiveTool } = useActiveTool();
   const { general } = useGeneral();
-
   const drawingId = useRef(0);
   const [isToolActive, setIsToolActive] = useState(false);
   const [adjustCompId, setAdjustCompId] = useState<{

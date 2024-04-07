@@ -38,13 +38,13 @@ p {
 svg {
   overflow: visible;
   position: absolute;
+  pointer-events: none;
+}
+svg * {
+  pointer-events: auto;
 }
 circle {
   cursor: pointer;
-}
-
-[data-copy="true"] {
-  transform: translate(-20px, -20px);
 }
 
 dialog {
