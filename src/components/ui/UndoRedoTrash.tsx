@@ -1,5 +1,5 @@
 import Button from "./Button";
-import { DotVertical, Duplicate, Redo, Trash, Undo } from "./Svg";
+import { Duplicate, Redo, Reset, Trash, Undo } from "./Svg";
 import { useActive, useDrawing } from "../../store/Store";
 import { useState } from "react";
 
@@ -59,7 +59,7 @@ export default function UndoRedoTrash() {
           clearAll();
         }}
       >
-        <DotVertical />
+        <Reset />
       </Button>
     </div>
   );
