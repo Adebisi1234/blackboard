@@ -11,7 +11,7 @@ export default function Minimap() {
   const totalWidth = innerWidth + Math.abs(x);
   const totalHeight = innerHeight + Math.abs(y);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useDrawing((state) => state.drawing);
+  const drawing = useDrawing((state) => state.getDrawing());
   const Loc = useLocation((state) => state.location);
   const renderArr = useRef<Drawings>([]);
   const ctx = canvasRef.current?.getContext("2d");

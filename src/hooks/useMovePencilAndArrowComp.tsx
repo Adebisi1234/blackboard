@@ -2,7 +2,8 @@ import { produce } from "immer";
 import { useDrawing } from "../store/Store";
 
 export default function useMovePencilAndArrowComp() {
-  const { updateDrawing, drawing } = useDrawing();
+  const { updateDrawing, getDrawing } = useDrawing();
+  const drawing = getDrawing();
 
   const movePencilOrArrow = (
     id: number,

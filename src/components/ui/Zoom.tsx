@@ -39,7 +39,7 @@ export default function Zoom() {
               id="minimap"
               className={`${!miniActive && "invisible size-0"}`}
             >
-              {/* <Minimap /> */}
+              <Minimap />
             </div>
           </div>
           {windowWidth >= 768 && (

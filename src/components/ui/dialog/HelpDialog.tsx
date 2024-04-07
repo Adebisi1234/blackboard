@@ -1,3 +1,10 @@
+import Links from "../Links";
+import DialogContainer from "./DialogContainer";
+
 export default function HelpDialog() {
-  return <div>HelpDialog</div>;
+  return (
+    <DialogContainer className="w-fit">
+      <Links />
+    </DialogContainer>
+  );
 }

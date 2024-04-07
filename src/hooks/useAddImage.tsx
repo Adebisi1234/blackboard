@@ -10,6 +10,7 @@ export default function useAddImage(drawingId: { current: number }) {
     if (!image) {
       return;
     }
+    // Don't ask me how I did it, I just did it, it was hard :)
     const newImageComp = {
       id: drawingId.current,
       ...general,
@@ -17,28 +18,42 @@ export default function useAddImage(drawingId: { current: number }) {
         type: "image",
         src: image.src,
         alt: "Image uploaded by user",
-        width:
+        width: Math.min(
           (image.width / image.height) *
-          Math.min(image.height, innerHeight - 400),
-        height: Math.min(image.height, innerHeight - 400),
+            Math.min(image.height, innerHeight - 400),
+          innerWidth
+        ),
+        height: Math.min(Math.min(image.height, innerHeight - 400), innerWidth),
         x:
           innerWidth / 2 -
-          ((image.width / image.height) *
-            Math.min(image.height, innerHeight - 400)) /
+          Math.min(
+            (image.width / image.height) *
+              Math.min(image.height, innerHeight - 400),
+            innerWidth
+          ) /
             2,
-        y: innerHeight / 2 - Math.min(image.height, innerHeight - 400) / 2,
+        y:
+          innerHeight / 2 -
+          Math.min(Math.min(image.height, innerHeight - 400), innerWidth) / 2,
       },
       pos: {
         x:
           innerWidth / 2 -
-          ((image.width / image.height) *
-            Math.min(image.height, innerHeight - 400)) /
+          Math.min(
+            (image.width / image.height) *
+              Math.min(image.height, innerHeight - 400),
+            innerWidth
+          ) /
             2,
-        y: innerHeight / 2 - Math.min(image.height, innerHeight - 400) / 2,
-        width:
+        y:
+          innerHeight / 2 -
+          Math.min(Math.min(image.height, innerHeight - 400), innerWidth) / 2,
+        width: Math.min(
           (image.width / image.height) *
-          Math.min(image.height, innerHeight - 400),
-        height: Math.min(image.height, innerHeight - 400),
+            Math.min(image.height, innerHeight - 400),
+          innerWidth
+        ),
+        height: Math.min(Math.min(image.height, innerHeight - 400), innerWidth),
       },
     } satisfies Drawings<"image">[0];
     setDrawing(newImageComp);

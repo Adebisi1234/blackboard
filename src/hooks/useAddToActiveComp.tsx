@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { useActive, useDrawing, useHighlighted } from "../store/Store";
 
 export default function useAddToActiveComp() {
-  const { updateDrawing, drawing } = useDrawing();
+  const { updateDrawing, getDrawing } = useDrawing();
+  const drawing = getDrawing();
   const { setActiveComp, activeComp } = useActive();
   const highlighted = useHighlighted((state) => state.highlighted);
   useEffect(() => {

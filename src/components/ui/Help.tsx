@@ -15,7 +15,7 @@ export default function Help() {
           onClick={() => (dialog !== "help" ? setDialog("help") : reset())}
         >
           <QuestionMark />
-          <dialog open={dialog === "help"}>
+          <dialog open={dialog === "help"} className="bottom-full -left-full">
             <HelpDialog />
           </dialog>
         </Button>
