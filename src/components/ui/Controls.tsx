@@ -164,7 +164,7 @@ export default function Controls() {
       {windowWidth < 768 && (
         <>
           <Button
-            className={`rounded-lg  hover:bg-[#2e3034]`}
+            className={`rounded-lg border-2 border-[#131315]  hover:bg-[#2e3034]`}
             onClick={() =>
               dialog !== "controls" ? setDialog("controls") : reset()
             }
@@ -175,7 +175,7 @@ export default function Controls() {
             <ExtraControlsDialog />
           </dialog>
           <Button
-            className={`rounded-lg  hover:bg-[#2e3034]`}
+            className={`rounded-lg  hover:bg-[#2e3034] border border-[#131315]`}
             onClick={() => {
               dialog !== "panel" ? setDialog("panel") : reset();
             }}

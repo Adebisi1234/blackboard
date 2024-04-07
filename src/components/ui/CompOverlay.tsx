@@ -8,7 +8,7 @@ type Prop = {
 };
 
 export default function CompOverlay(prop: Prop) {
-  const { drawing } = useDrawing();
+  const drawing = useDrawing((state) => state.getDrawing());
   const location = useLocation((state) => state.location);
   if (prop.type === "arrow") {
     const {
