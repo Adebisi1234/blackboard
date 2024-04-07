@@ -3,12 +3,14 @@ import { Drawings } from "../../types/general";
 import CompOverlay from "../ui/CompOverlay";
 import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
 import { produce } from "immer";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Shapes(prop: Drawings<"shape">[0]) {
   const rectRef = useRef<SVGRectElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
   const [moveComp, setMoveComp] = useState(false);
   const { activeTool, setActiveTool } = useActiveTool();
+  const windowWidth = useWindowSize();
   const updateDrawing = useDrawing((s) => s.updateDrawing);
   useEffect(() => {
     if (!rectRef.current) return;
@@ -22,10 +24,10 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
       height,
       id: prop.id,
     });
-  }, [prop.prop.width, prop.prop.height, prop.prop.pos]);
+  }, [prop.prop.width, prop.prop.height, prop.prop.pos, windowWidth]);
   return (
     <>
-      <svg id={`${prop.id}`} data-copy={`${prop.copy}`}>
+      <svg id={`${prop.id}`}>
         <rect
           ref={rectRef}
           onPointerDown={(ev) => {

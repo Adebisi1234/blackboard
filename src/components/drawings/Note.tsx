@@ -3,6 +3,7 @@ import { Drawings } from "../../types/general";
 import { useActiveTool, useDrawing, useLocation } from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
 import { produce } from "immer";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Note(prop: Drawings<"note">[0]) {
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -11,10 +12,12 @@ export default function Note(prop: Drawings<"note">[0]) {
   const { activeTool, setActiveTool } = useActiveTool();
   const [edit, setEdit] = useState(true);
   const [moveComp, setMoveComp] = useState(false);
+  const windowWidth = useWindowSize();
   if (edit) {
     textRef.current?.focus();
   }
-  const { drawing, updateDrawing } = useDrawing();
+  const { getDrawing, updateDrawing } = useDrawing();
+  const drawing = getDrawing();
   useEffect(() => {
     if (!containerRef.current) return;
     const { width, height, x, y } = containerRef.current
@@ -31,6 +34,7 @@ export default function Note(prop: Drawings<"note">[0]) {
     containerRef.current?.offsetWidth,
     containerRef.current?.offsetHeight,
     prop.pos,
+    windowWidth,
   ]);
   return (
     <>

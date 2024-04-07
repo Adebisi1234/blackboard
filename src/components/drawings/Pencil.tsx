@@ -2,11 +2,13 @@ import { useEffect, useRef } from "react";
 import { useCanvas, useLocation } from "../../store/Store";
 import { Drawings } from "../../types/general";
 import CompOverlay from "../ui/CompOverlay";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Pencil(prop: Drawings<"pencil">[0]) {
   const canvasPos = useCanvas((s) => s.canvasPos);
   const setLocation = useLocation((state) => state.setLocation);
   const pathRef = useRef<SVGPathElement>(null);
+  const windowWidth = useWindowSize();
   const d = prop.prop.path
     .map(({ func, x, y }) => {
       return `${func} ${x * prop.scale} ${y * prop.scale}`;
@@ -22,12 +24,11 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
       height,
       id: prop.id,
     });
-  }, [prop.prop.path, canvasPos, prop.pos.x, prop.pos.y]);
+  }, [prop.prop.path, canvasPos, prop.pos.x, prop.pos.y, windowWidth]);
   return (
     <>
       <svg
         id={`${prop.id}`}
-        data-copy={`${prop.copy}`}
         style={{ transform: `translate(${prop.pos.x}px, ${prop.pos.y}px)` }}
       >
         <g id={`${prop.id}`} opacity={prop.opacity}>

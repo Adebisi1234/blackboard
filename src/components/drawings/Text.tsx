@@ -2,12 +2,15 @@ import { useEffect, useRef } from "react";
 import { Drawings } from "../../types/general";
 import { useDrawing, useLocation } from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Text(prop: Drawings<"text">[0]) {
   const textRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
-  const { drawing, updateDrawing } = useDrawing();
+  const { getDrawing, updateDrawing } = useDrawing();
+  const windowWidth = useWindowSize();
+  const drawing = getDrawing();
   useEffect(() => {
     const { width, height, x, y } = containerRef.current
       ?.getBoundingClientRect()
@@ -19,7 +22,11 @@ export default function Text(prop: Drawings<"text">[0]) {
       y,
       id: prop.id,
     });
-  }, [containerRef.current?.offsetWidth, containerRef.current?.offsetHeight]);
+  }, [
+    containerRef.current?.offsetWidth,
+    containerRef.current?.offsetHeight,
+    windowWidth,
+  ]);
   return (
     <div
       ref={containerRef}

@@ -10,13 +10,12 @@ import {
 } from "../../store/Store";
 import CompOverlay from "../ui/CompOverlay";
 import { produce } from "immer";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Arrow(prop: Drawings<"arrow">[0]) {
-  const { activeTool } = useActiveTool();
   const { startPos, endPos, qCurve } = prop.prop;
-  const [moveComp, setMoveComp] = useState(false);
-  const updateDrawing = useDrawing((state) => state.updateDrawing);
   const canvasPos = useCanvas((s) => s.canvasPos);
+  const windowWidth = useWindowSize();
 
   const headAngle = (() => {
     const dx = endPos.x - (qCurve ? qCurve.x : startPos.x);
@@ -40,10 +39,10 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
       width,
       height,
     });
-  }, [endPos, canvasPos, startPos]);
+  }, [endPos, canvasPos, startPos, windowWidth]);
   return (
     <>
-      <svg id={`${prop.id}`} data-copy={`${prop.copy}`} fill="none">
+      <svg id={`${prop.id}`} fill="none">
         <g
           id={`${prop.id}`}
           opacity={prop.opacity}
