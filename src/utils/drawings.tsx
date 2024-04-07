@@ -5,15 +5,14 @@ import Note from "../components/drawings/Note";
 import Pencil from "../components/drawings/Pencil";
 import Pointer from "../components/drawings/Pointer";
 import Shapes from "../components/drawings/Shapes";
-import {
+import type {
   General,
-  type ImageType,
-  type Drawings,
+  Drawings,
   ActiveTool,
+  ImageType,
 } from "../types/general";
-import { Ref } from "react";
 
-import { getDiff, getRelativeMin } from "./math";
+import { getDiff } from "./math";
 import { produce } from "immer";
 
 type ModifyDrawing = {
@@ -379,4 +378,58 @@ export function drawOnCanvas(comp: Drawings[0]) {
 export function removeComp(id: number, hideComp: (id: number) => void) {
   if (id === -1) return;
   hideComp(id);
+}
+
+export function cloneComp(comp: Drawings[0]) {
+  const clone = { ...comp };
+  switch (clone.prop.type) {
+    case "image":
+      clone.prop.x += 20;
+      clone.prop.y += 20;
+      break;
+    case "arrow":
+      clone.prop.startPos.x += 20;
+      clone.prop.startPos.y += 20;
+      break;
+    case "text":
+    case "note":
+      clone.pos.x ? (clone.pos.x += 20) : (clone.pos.x = 20);
+      clone.pos.y ? (clone.pos.y += 20) : (clone.pos.y = 20);
+      break;
+    case "pencil":
+      clone.prop.path = clone.prop.path.map((prop) => {
+        prop.x += 20;
+        prop.y += 20;
+        return prop;
+      });
+      break;
+
+    case "shape":
+      clone.prop.pos.x += 20;
+      clone.prop.pos.y += 20;
+  }
+  return clone;
+}
+
+export function generateImage(
+  file: File,
+  setImage: (payload: ImageType) => void
+) {
+  const img = document.createElement("img");
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  img.src = URL.createObjectURL(file);
+  img.addEventListener("load", () => {
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    ctx?.drawImage(img, 0, 0);
+    const src = canvas.toDataURL();
+    setImage({
+      id: file.lastModified,
+      src: src,
+      alt: "Image uploaded by user",
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    });
+  });
 }

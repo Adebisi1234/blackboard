@@ -1,6 +1,6 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { produce } from "immer";
 import {
   ActiveTool,
   Drawings,
@@ -8,19 +8,25 @@ import {
   General,
   ImageType,
 } from "../types/general";
+import { cloneComp } from "../utils/drawings";
 
 //TODO= IMPLEMENT IMMER
 
 interface DrawingState {
-  drawing: Drawings;
-  copiedComps: number[];
-  deletedComps: number[];
+  drawing: { [key: number]: Drawings };
+  page: number;
+  setPage: (payload: number) => void;
+  deletePage: (payload: number) => void;
+  getNumOfPages: () => number;
+  getDrawing: (payload?: number) => Drawings;
+  copiedComps: { [key: number]: number[] };
+  deletedComps: { [key: number]: number[] };
   copyComp: (payload: number | number[]) => void;
   pasteComp: () => void;
   restoreComp: () => void;
   // copiedComp: number[];
   setDrawing: (payload: Drawings[0]) => void;
-  init: (payload: Drawings) => void;
+  init: (payload: { [key: number]: Drawings }) => void;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
   clearPointer: (id: number) => void;
   hideComp: (id: number) => void;
@@ -28,6 +34,7 @@ interface DrawingState {
   highlightComp: (id: number) => void;
   hoverComp: (id: number) => void;
   leaveComp: (id: number) => void;
+  clearAll: () => void;
 }
 
 interface ImageState {
@@ -95,81 +102,141 @@ export const useActive = create<ActiveCompState>()((set) => ({
 }));
 
 export const useDrawing = create<DrawingState>()(
-  immer((set) => ({
-    drawing: [],
-    copiedComps: [],
-    deletedComps: [],
-    init: (payload: Drawings) =>
-      set({
-        drawing: [...payload],
-      }),
-    setDrawing: (payload: Drawings[0]) =>
-      set((state: DrawingState) => {
-        state.drawing.push(payload);
-      }),
-    updateDrawing(id, payload) {
-      set((state) => {
-        state.drawing[id] = payload;
-      });
-    },
-    clearPointer(id) {
-      set(({ drawing }) => {
-        drawing.splice(id, 1);
-      });
-    },
-    hideComp(id) {
-      set((state) => {
-        state.drawing[id].opacity = 0;
-        if (state.drawing[id].prop.type !== "pointer") {
-          state.deletedComps.push(id);
-        }
-      });
-    },
-    toggleHighlight(id) {
-      set(({ drawing }) => {
-        drawing[id].highlight = false;
-      });
-    },
-    highlightComp(id) {
-      set(({ drawing }) => {
-        drawing[id].highlight = true;
-      });
-    },
-    hoverComp(id) {
-      set(({ drawing }) => {
-        drawing[id].hovered = true;
-      });
-    },
-    leaveComp(id) {
-      set(({ drawing }) => {
-        drawing[id].hovered = false;
-      });
-    },
-    copyComp(payload: number | number[]) {
-      set((state) => {
-        state.copiedComps =
-          typeof payload === "number" ? [payload] : [...payload];
-      });
-    },
-    pasteComp() {
-      set((state) => {
-        const update = state.copiedComps.map((comp) => {
-          const newComp = { ...state.drawing[comp] };
-          newComp.id = state.drawing.length;
-          newComp.copy = true;
-          return newComp;
+  persist(
+    immer((set, get) => ({
+      drawing: {
+        0: [],
+      },
+      page: 0,
+      copiedComps: {
+        0: [],
+      },
+      deletedComps: {
+        0: [],
+      },
+      deletePage(payload) {
+        set(({ drawing, page }) => {
+          delete drawing[payload];
+          page = 0;
         });
-        state.drawing.push(...update);
-      });
-    },
-    restoreComp() {
-      set((state) => {
-        const update = state.deletedComps.pop();
-        if (!update) return state;
-        state.drawing[update].opacity = 1;
-      });
-    },
-  }))
+      },
+      setPage(payload) {
+        set(({ drawing }) => {
+          // console.log(payload);
+          return {
+            page: payload,
+            drawing: { ...drawing, [payload]: drawing[payload] ?? [] },
+          };
+        });
+      },
+      getNumOfPages() {
+        return Object.keys(get().drawing).length;
+      },
+      getDrawing() {
+        // console.log(get().page);
+        return get().drawing[get().page];
+      },
+      init: (payload: { [key: number]: Drawings }) =>
+        set({
+          drawing: { ...payload },
+        }),
+      setDrawing: (payload: Drawings[0]) =>
+        set((state: DrawingState) => {
+          state.drawing[get().page].push(payload);
+        }),
+      updateDrawing(id, payload) {
+        set((state) => {
+          state.drawing[get().page][id] = payload;
+        });
+      },
+      clearPointer(id) {
+        set(({ drawing }) => {
+          drawing[get().page].splice(id, 1);
+        });
+      },
+      hideComp(id) {
+        set((state) => {
+          state.drawing[get().page][id].opacity = 0;
+          if (state.drawing[get().page][id].prop.type !== "pointer") {
+            state.deletedComps[get().page].push(id);
+          }
+        });
+      },
+      toggleHighlight(id) {
+        set(({ drawing }) => {
+          drawing[get().page][id].highlight = false;
+        });
+      },
+      highlightComp(id) {
+        set(({ drawing }) => {
+          drawing[get().page][id].highlight = true;
+        });
+      },
+      hoverComp(id) {
+        set(({ drawing }) => {
+          drawing[get().page][id].hovered = true;
+        });
+      },
+      leaveComp(id) {
+        set(({ drawing }) => {
+          drawing[get().page][id].hovered = false;
+        });
+      },
+      copyComp(payload: number | number[]) {
+        set((state) => {
+          state.copiedComps[get().page] =
+            typeof payload === "number" ? [payload] : [...payload];
+        });
+      },
+      pasteComp() {
+        set((state) => {
+          const update = state.copiedComps[get().page].map((comp) => {
+            const newComp = cloneComp(state.drawing[get().page][comp]);
+            newComp.id = state.drawing[get().page].length;
+            newComp.copy = true;
+            return newComp;
+          });
+          state.drawing[get().page].push(...update);
+        });
+      },
+      restoreComp() {
+        set((state) => {
+          const update = state.deletedComps[get().page].pop();
+          if (!update) return state;
+          state.drawing[get().page][update].opacity = 1;
+        });
+      },
+      clearAll() {
+        set({
+          drawing: {
+            0: [],
+          },
+          page: 0,
+          copiedComps: {
+            0: [],
+          },
+          deletedComps: {
+            0: [],
+          },
+        });
+      },
+    })),
+    {
+      name: "blackboard:drawings",
+      // onRehydrateStorage: (state) => {
+      //   console.log("hydration starts");
+
+      //   // optional
+      //   return (state, error) => {
+      //     if (error) {
+      //       console.log("an error happened during hydration", error);
+      //     } else {
+      //       console.log("hydration finished");
+      //     }
+      //   };
+      // },
+    }
+  )
 );
 
 export const useGeneral = create<GeneralState>()((set) => ({
