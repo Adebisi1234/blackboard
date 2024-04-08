@@ -11,7 +11,7 @@ export default function UndoRedoTrash() {
     useDrawing();
   const drawing = getDrawing();
   return (
-    <div className="flex items-center gap-1 relative">
+    <div className="relative flex items-center gap-1">
       <Button
         className={`${drawing.length === 0 ? "opacity-50" : ""}`}
         onPointerDown={() => undo()}

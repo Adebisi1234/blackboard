@@ -234,7 +234,7 @@ export default function Canvas() {
       return;
     }
     // Removing pointer
-    if (drawing[drawing.length - 1].prop.type === "pointer") {
+    if (drawing[drawing.length - 1]?.prop.type === "pointer") {
       cleanUpDrawing({
         drawing,
         clearPointer,
@@ -297,7 +297,15 @@ export default function Canvas() {
       onPointerDown={handleMouseDown}
       onPointerMove={handleMouseMove}
       onPointerUp={handleMouseUp}
-      // TODO: HANDLEMOUSELEAVE
+      onPointerLeave={() => {
+        // Removing pointer
+        if (drawing[drawing.length - 1]?.prop.type === "pointer") {
+          cleanUpDrawing({
+            drawing,
+            clearPointer,
+          });
+        }
+      }}
       className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >
       <div
