@@ -39,7 +39,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
       width,
       height,
     });
-  }, [endPos, canvasPos, startPos, windowWidth]);
+  }, [endPos, canvasPos, startPos, windowWidth, qCurve]);
   return (
     <>
       <svg id={`${prop.id}`} fill="none">

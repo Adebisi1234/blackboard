@@ -162,6 +162,9 @@ export const useDrawing = create<DrawingState>()(
           if (state.drawing[get().page][id].prop.type !== "pointer") {
             state.deletedComps[get().page].push(id);
           }
+          useLocation.setState((state) => {
+            delete state.location[id];
+          });
         });
       },
       undo() {

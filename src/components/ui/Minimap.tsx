@@ -1,133 +1,195 @@
-import { useRef } from "react";
-import { Drawings } from "../../types/general";
+import { useCallback, useEffect, useRef } from "react";
 import { useCanvas, useDrawing, useLocation } from "../../store/Store";
+import useWindowSize from "../../hooks/useWindowSize";
+import { Drawings, Location } from "../../types/general";
 
 export default function Minimap() {
-  const minWidth = innerWidth,
-    minHeight = innerHeight;
-  const { x, y } = useCanvas((state) => state.canvasPos);
-  const minX = 0 - x;
-  const minY = 0 - y;
-  const totalWidth = innerWidth + Math.abs(x);
-  const totalHeight = innerHeight + Math.abs(y);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useDrawing((state) => state.getDrawing());
-  const Loc = useLocation((state) => state.location);
-  const renderArr = useRef<Drawings>([]);
-  const ctx = canvasRef.current?.getContext("2d");
-  const animate = () => {
-    renderArr.current = [];
-    for (const id in Loc) {
-      if (Object.prototype.hasOwnProperty.call(Loc, id)) {
-        renderArr.current.push(drawing[id]);
-      }
-    }
+  const drawing = useDrawing((s) => s.getDrawing());
+  const loc = useLocation((s) => s.location);
+  const canvasPos = useCanvas((s) => s.canvasPos);
+  const windowWidth = useWindowSize();
+  const changes = useRef<{
+    lx: number;
+    rx: number;
+    ty: number;
+    by: number;
+    x: number;
+    y: number;
+  }>({
+    lx: canvasPos.x < 0 ? Math.abs(canvasPos.x) : 0,
+    rx: canvasPos.x > 0 ? Math.abs(canvasPos.x) : 0,
+    ty: canvasPos.y < 0 ? Math.abs(canvasPos.y) : 0,
+    by: canvasPos.y > 0 ? Math.abs(canvasPos.y) : 0,
+    x: canvasPos.x,
+    y: canvasPos.y,
+  });
 
-    render({
-      ctx,
-      drawings: renderArr.current,
-      minX,
-      minY,
-      minHeight,
-      minWidth,
-      totalHeight,
-      totalWidth,
-    });
-  };
-  setTimeout(
-    () =>
-      render({
-        ctx: (
-          document.getElementById("miniCanvas") as HTMLCanvasElement
-        ).getContext("2d"),
-        drawings: renderArr.current,
-        minX,
-        minY,
-        minHeight,
-        minWidth,
-        totalHeight,
-        totalWidth,
-      }),
-    0
-  ); // Render after ctx is ready
-  requestAnimationFrame(animate);
-
-  return (
-    <canvas width={200} height={150} ref={canvasRef} id="miniCanvas"></canvas>
-  );
-}
-type RenderProp = {
-  ctx: CanvasRenderingContext2D | null | undefined;
-  drawings: Drawings;
-  minX: number;
-  minY: number;
-  minWidth: number;
-  minHeight: number;
-  totalWidth: number;
-  totalHeight: number;
-};
-function render({
-  ctx,
-  drawings,
-  minX,
-  minY,
-  minWidth,
-  minHeight,
-  totalWidth,
-  totalHeight,
-}: RenderProp) {
-  if (!ctx) {
-    return;
+  if (canvasPos.x !== changes.current.x) {
+    changes.current.lx =
+      canvasPos.x < changes.current.lx
+        ? Math.abs(canvasPos.x)
+        : changes.current.lx;
+    changes.current.rx =
+      canvasPos.x > changes.current.rx
+        ? Math.abs(canvasPos.x)
+        : changes.current.rx;
+    changes.current.x = canvasPos.x;
+  }
+  if (canvasPos.y !== changes.current.y) {
+    changes.current.ty =
+      canvasPos.y < changes.current.ty
+        ? Math.abs(canvasPos.y)
+        : changes.current.ty;
+    changes.current.by =
+      canvasPos.y > changes.current.by
+        ? Math.abs(canvasPos.y)
+        : changes.current.by;
+    changes.current.y = canvasPos.y;
   }
 
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.fillStyle = "#333438";
+  // BASE SIZE IS THE SCREEN AND IT'S THE CANVAS SIZE THAT'LL ADJUST TO COMPLEMENT THE CHANGE IN CANVASPOS
+  // const base = {
+  //   width: innerWidth + Math.abs(x);
+  // }
+  // const minWidth = innerWidth,
+  //   minHeight = innerHeight;
+  // const { x, y } = useCanvas((state) => state.canvasPos);
+  // const minX = 0 - x;
+  // const minY = 0 - y;
+  // const totalWidth = innerWidth + Math.abs(x);
+  // const totalHeight = innerHeight + Math.abs(y);
+  const minimapSize = {
+    width: 200,
+    height: 150,
+  };
+  const canvasRatio = {
+    x:
+      minimapSize.width /
+      (windowWidth + changes.current.lx + changes.current.rx),
+    y:
+      minimapSize.height /
+      (innerHeight + changes.current.ty + changes.current.by),
+  };
 
-  ctx.fillRect(minX, minY, minWidth, minHeight);
-  drawings.forEach((drawing) => {
-    switch (drawing.prop.type) {
-      case "arrow": {
-        // generate the code that creates a representation of the arrow in the canvas
-        const x1 = (drawing.prop.startPos.x / totalWidth) * 200;
-        const y1 = (drawing.prop.startPos.y / totalHeight) * 150;
-        const x2 = (drawing.prop.endPos.x / totalWidth) * 200;
-        const y2 = (drawing.prop.endPos.y / totalHeight) * 150;
-        ctx.strokeStyle = "rgb(255,255,255)";
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.moveTo(0, 0);
-        ctx.stroke();
-        break;
-      }
-      case "image": {
-        // Create a representation of the image in the canvas
+  const renderedCanvasSize = {
+    width: canvasRatio.x * windowWidth,
+    height: canvasRatio.y * innerHeight,
+  };
 
-        break;
-      }
-      case "note": {
-        break;
-      }
-      case "pencil": {
-        break;
-      }
-      case "pointer": {
-        break;
-      }
-      case "text": {
-        break;
-      }
-      case "shape": {
-        break;
+  const renderedCanvasPos = {
+    x: canvasRatio.x * canvasPos.x,
+    y: canvasRatio.y * canvasPos.y,
+  };
+
+  const minimapRef = useRef<HTMLCanvasElement>(null);
+  const ctx = minimapRef.current?.getContext("2d");
+
+  const renderMovingCanvas = useCallback(() => {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, minimapSize.width, minimapSize.height);
+    ctx.strokeStyle = "red";
+    ctx.fillStyle = "#333438";
+    ctx.roundRect(0, 0, minimapSize.width, minimapSize.height, 15);
+    ctx.fillRect(
+      renderedCanvasPos.x,
+      renderedCanvasPos.y,
+      renderedCanvasSize.width,
+      renderedCanvasSize.height
+    );
+    ctx.stroke();
+  }, [minimapSize, renderedCanvasPos, renderedCanvasPos, ctx]);
+
+  useEffect(() => {
+    renderMovingCanvas();
+  }, [canvasPos]); // Moving minimap
+
+  useEffect(() => {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, minimapSize.width, minimapSize.height);
+    for (const id in loc) {
+      if (Object.prototype.hasOwnProperty.call(loc, id)) {
+        renderComp({ comp: drawing[id], loc: loc[id], ctx, canvasRatio });
       }
     }
-  });
+  }, [loc]); //Drawing components
+
+  return (
+    <canvas width={200} height={150} ref={minimapRef} id="miniCanvas"></canvas>
+  );
 }
 
-/* 
+function renderComp({
+  comp,
+  loc,
+  ctx,
+  canvasRatio,
+}: {
+  comp: Drawings[0];
+  loc: Location;
+  ctx: CanvasRenderingContext2D;
+  canvasRatio: { x: number; y: number };
+}) {
+  switch (comp.prop.type) {
+    case "image":
+    case "note":
+    case "pencil":
+    case "text": {
+      let { x, y, width, height } = loc;
 
-The absolute bg is the whole width
-Then The Highlighted is the context showing
+      x *= canvasRatio.x;
+      width *= canvasRatio.x;
+      y *= canvasRatio.x;
+      height *= canvasRatio.x;
+      // Generate random color
+      ctx.fillStyle = "blue";
+      ctx.fillRect(x, y, width, height);
+      ctx.stroke();
+      break;
+    }
+    case "arrow":
+      let { startPos, endPos, qCurve } = comp.prop; // Immutable :(
+      startPos = {
+        x: startPos.x * canvasRatio.x,
+        y: startPos.y * canvasRatio.y,
+      };
+      endPos = {
+        x: endPos.x * canvasRatio.x,
+        y: endPos.y * canvasRatio.y,
+      };
 
+      // Generate random color
+      ctx.fillStyle = "blue";
+      ctx.beginPath();
+      ctx.moveTo(startPos.x, startPos.y);
+      if (qCurve) {
+        qCurve = {
+          x: qCurve.x * canvasRatio.x,
+          y: qCurve.y * canvasRatio.y,
+        };
+        ctx.quadraticCurveTo(qCurve.x, qCurve.y, endPos.x, endPos.y);
+        ctx.moveTo(0, 0);
+        ctx.closePath();
+        ctx.stroke();
+        return;
+      }
+      ctx.lineTo(endPos.x, endPos.y);
+      ctx.moveTo(0, 0);
+      ctx.closePath();
+      ctx.stroke();
+      break;
+    case "pointer":
+    case "shape": {
+      let { x, y, width, height } = loc;
 
-*/
+      x *= canvasRatio.x;
+      width *= canvasRatio.x;
+      y *= canvasRatio.x;
+      height *= canvasRatio.x;
+      // Generate random color
+      ctx.strokeStyle = "blue";
+      ctx.strokeRect(x, y, width, height);
+      ctx.stroke();
+      break;
+    }
+  }
+}

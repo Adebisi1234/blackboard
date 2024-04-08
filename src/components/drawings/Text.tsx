@@ -26,6 +26,7 @@ export default function Text(prop: Drawings<"text">[0]) {
     containerRef.current?.offsetWidth,
     containerRef.current?.offsetHeight,
     windowWidth,
+    prop.pos,
   ]);
   return (
     <div
