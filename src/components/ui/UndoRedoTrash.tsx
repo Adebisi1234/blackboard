@@ -15,10 +15,14 @@ export default function UndoRedoTrash() {
       <Button
         className={`${drawing.length === 0 ? "opacity-50" : ""}`}
         onPointerDown={() => undo()}
+        title="Remove last component(s)"
       >
         <Undo />
       </Button>
-      <Button onPointerDown={() => restoreComp()}>
+      <Button
+        onPointerDown={() => restoreComp()}
+        title="Restore removed component(s)"
+      >
         <Redo />
       </Button>
       <Button
@@ -29,10 +33,12 @@ export default function UndoRedoTrash() {
           });
           setActiveComp([]);
         }}
+        title="Remove selected component(s)"
       >
         <Trash />
       </Button>
       <Button
+        title="copy selected component(s)"
         className={`${activeComp.length === 0 ? "opacity-50" : ""}`}
         onPointerDown={() => {
           // Copy then paste, I hope this works
@@ -53,7 +59,7 @@ export default function UndoRedoTrash() {
       </Button>
       <Button
         className="bg-red-500"
-        title="Reset Drawings"
+        title="Reset Everything"
         onPointerDown={() => {
           useDrawing.persist.clearStorage();
           clearAll();

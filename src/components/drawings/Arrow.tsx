@@ -43,34 +43,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
   return (
     <>
       <svg id={`${prop.id}`} fill="none">
-        <g
-          id={`${prop.id}`}
-          opacity={prop.opacity}
-          // onPointerDown={(ev) => {
-          //   ev.stopPropagation();
-          //   activeTool === "hand" && setMoveComp(true);
-          // }}
-          // onPointerMove={(ev) => {
-          //   ev.stopPropagation();
-          //   if (!moveComp) return;
-          //
-          //   const edit = produce(prop, (draft) => {
-          //     draft.prop.startPos.x += ev.movementX;
-          //     draft.prop.endPos.x += ev.movementX;
-
-          //     draft.prop.startPos.y += ev.movementY;
-          //     draft.prop.endPos.y += ev.movementY;
-          //     if (draft.prop.qCurve) {
-          //       draft.prop.qCurve.x += ev.movementX;
-          //       draft.prop.qCurve.y += ev.movementY;
-          //     }
-          //   });
-          //   updateDrawing(prop.id, edit);
-          // }}
-          // onPointerUp={(ev) => {
-          //   setMoveComp(false);
-          // }}
-        >
+        <g id={`${prop.id}`} opacity={prop.opacity}>
           <path
             id={`${prop.id}`}
             d={`M ${startPos.x} ${startPos.y} ${
@@ -79,7 +52,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
             stroke={prop.color}
             strokeWidth={prop.strokeWidth}
             strokeDasharray={prop.dash}
-            className="z-20"
+            className={`z-${prop.id}`}
             ref={arrowRef}
           ></path>
           {pythag({
@@ -104,7 +77,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
               } ${endPos.x} ${endPos.y}`}
               stroke={"green"}
               strokeWidth={prop.strokeWidth / 2}
-              className="z-20"
+              className={`z-${prop.id}`}
             ></path>
           )}
         </g>

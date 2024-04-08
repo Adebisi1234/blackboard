@@ -29,7 +29,9 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
     <>
       <svg
         id={`${prop.id}`}
-        style={{ transform: `translate(${prop.pos.x}px, ${prop.pos.y}px)` }}
+        style={{
+          transform: `translate(${prop.pos.x}px, ${prop.pos.y}px)`,
+        }}
       >
         <g id={`${prop.id}`} opacity={prop.opacity}>
           <path
@@ -42,7 +44,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
             fillOpacity={prop.fill}
             fillRule="evenodd"
             fill={prop.color}
-            className="z-20"
+            className={`z-${prop.id}`}
             strokeLinecap="round"
             strokeLinejoin="round"
           ></path>
@@ -53,7 +55,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
               stroke={"green"}
               strokeWidth={prop.strokeWidth / 2}
               fill="none"
-              className="z-20"
+              className={`z-${prop.id}`}
             ></path>
           )}
         </g>

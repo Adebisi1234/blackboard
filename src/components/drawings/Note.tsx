@@ -39,7 +39,7 @@ export default function Note(prop: Drawings<"note">[0]) {
   return (
     <>
       <div
-        className={`-translate-x-1/2 -translate-y-1/2 min-h-[200px] w-[200px] max-w-[200px] rounded-lg h-fit relative flex justify-center items-center z-10 p-1`}
+        className={`z-${prop.id} -translate-x-1/2 -translate-y-1/2 min-h-[200px] w-[200px] max-w-[200px] rounded-lg h-fit relative flex justify-center items-center  p-1`}
         style={{
           left: `${prop.pos.x}px`,
           top: `${prop.pos.y}px`,

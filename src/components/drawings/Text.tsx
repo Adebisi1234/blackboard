@@ -32,7 +32,7 @@ export default function Text(prop: Drawings<"text">[0]) {
     <div
       ref={containerRef}
       id={`${prop.id}`}
-      className={`z-50 ${prop.hovered && "border-green-500"}`}
+      className={`z-${prop.id} ${prop.hovered && "border-green-500"}`}
       style={{
         left: `${prop.pos.x}px`,
         top: `${prop.pos.y}px`,

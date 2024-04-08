@@ -173,6 +173,7 @@ export const useDrawing = create<DrawingState>()(
           state.drawing[get().page][id].opacity = 0;
           if (state.drawing[get().page][id].prop.type !== "pointer") {
             state.deletedComps[get().page].push(id);
+            console.log(state.deletedComps[get().page]);
           }
         });
       },
@@ -224,11 +225,15 @@ export const useDrawing = create<DrawingState>()(
       restoreComp() {
         set((state) => {
           const update = state.deletedComps[get().page].pop();
+          console.log(update);
           if (!update) return state;
           state.drawing[get().page][update].opacity = 1;
         });
       },
       clearAll() {
+        useLocation.setState((state) => {
+          state.location = {};
+        });
         set({
           drawing: {
             0: [],
@@ -299,13 +304,18 @@ export const useHighlighted = create<HighlightedState>()((set) => ({
 }));
 
 export const useLocation = create<LocationState>()(
-  immer((set) => ({
-    location: {},
-    setLocation: (payload: Location) =>
-      set((state: LocationState) => {
-        state.location[payload.id] = payload;
-      }),
-  }))
+  persist(
+    immer((set) => ({
+      location: {},
+      setLocation: (payload: Location) =>
+        set((state: LocationState) => {
+          state.location[payload.id] = payload;
+        }),
+    })),
+    {
+      name: "blackboard:location",
+    }
+  )
 );
 
 export const useActiveTool = create<ActiveToolState>()(

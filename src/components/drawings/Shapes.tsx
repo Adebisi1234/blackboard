@@ -30,6 +30,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
       <svg id={`${prop.id}`}>
         <rect
           ref={rectRef}
+          className={`z-${prop.id}`}
           onPointerDown={(ev) => {
             ev.stopPropagation();
             activeTool === "hand" && setMoveComp(true);
@@ -81,6 +82,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
             opacity={prop.opacity}
             strokeDasharray={prop.dash}
             strokeWidth={1.5}
+            className={`z-${prop.id}`}
           ></rect>
         )}
       </svg>

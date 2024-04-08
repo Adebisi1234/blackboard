@@ -71,7 +71,7 @@ export default function Image(prop: Drawings<"image">[0]) {
           ref={imgRef}
           alt={alt}
           id={`${prop.id}`}
-          className="object-contain "
+          className={`object-contain z-${prop.id}`}
           draggable={false}
           style={{
             width,

@@ -70,7 +70,7 @@ export type Drawings<T extends ActiveTool | undefined = undefined> = ({
         | PointerProp
         | TextProp
         | ShapesProp;
-  pos: Partial<Location>;
+  pos: Pick<Location, "x" | "y">;
 } & (T extends "image" | undefined ? Partial<General> : General))[];
 
 export type Location = {
