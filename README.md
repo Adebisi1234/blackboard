@@ -1,4 +1,4 @@
-# React + SVGs + Awesomeness 
+# Maths + SVGs + Awesomeness 
 
 ## Main Branch
 
