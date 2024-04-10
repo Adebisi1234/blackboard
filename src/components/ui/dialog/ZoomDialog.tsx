@@ -9,23 +9,23 @@ export default function ZoomDialog() {
     >
       <DialogItem>
         <span>Zoom in</span>
-        <span>Ctrl =</span>
+        <kbd>Ctrl =</kbd>
       </DialogItem>
       <DialogItem>
         <span>Zoom out</span>
-        <span>Ctrl -</span>
+        <kbd>Ctrl -</kbd>
       </DialogItem>
       <DialogItem>
         <span>Zoom to 100%</span>
-        <span> Shift 0</span>
+        <kbd> Shift 0</kbd>
       </DialogItem>
       <DialogItem>
         <span>Zoom to fit</span>
-        <span>Shift 1</span>
+        <kbd>Shift 1</kbd>
       </DialogItem>
       <DialogItem>
         <span>Zoom to selection</span>
-        <span>Shift 2</span>
+        <kbd>Shift 2</kbd>
       </DialogItem>
     </DialogContainer>
   );

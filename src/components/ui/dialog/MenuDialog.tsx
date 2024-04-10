@@ -6,6 +6,8 @@ import DialogContainer from "./DialogContainer";
 import DialogItem from "./DialogItem";
 import { CaretRight } from "../Svg";
 import ZoomDialog from "./ZoomDialog";
+import EditPopup from "./EditPopup";
+import ExportPopup from "./ExportPopup";
 
 export default function MenuDialog() {
   const setImage = useImage((state) => state.setImage);
@@ -14,12 +16,14 @@ export default function MenuDialog() {
     "file" | "edit" | "view" | "export" | null
   >(null);
   return (
-    <DialogContainer className="w-[150px] gap-4">
+    <DialogContainer
+      className="w-[150px] gap-4"
+      onPointerLeave={() => setPopup(null)}
+    >
       <DialogItem
         className="relative"
         onPointerOver={() => setPopup("file")}
         onPointerDown={() => setPopup("file")}
-        onPointerLeave={() => setPopup(null)}
       >
         <p>File</p>
         <CaretRight />
@@ -28,12 +32,11 @@ export default function MenuDialog() {
         className="relative"
         onPointerOver={() => setPopup("edit")}
         onPointerDown={() => setPopup("edit")}
-        onPointerLeave={() => setPopup(null)}
       >
         <p>Edit</p>
         {popup === "edit" ? (
           <div className="absolute left-full w-fit h-fit top-1">
-            <ZoomDialog />
+            <EditPopup />
           </div>
         ) : (
           <></>
@@ -44,18 +47,30 @@ export default function MenuDialog() {
         className="relative"
         onPointerOver={() => setPopup("view")}
         onPointerDown={() => setPopup("view")}
-        onPointerLeave={() => setPopup(null)}
       >
         <p>View</p>
+        {popup === "view" ? (
+          <div className="absolute left-full w-fit h-fit top-1">
+            <ZoomDialog />
+          </div>
+        ) : (
+          <></>
+        )}
         <CaretRight />
       </DialogItem>
       <DialogItem
         className="relative"
         onPointerOver={() => setPopup("export")}
         onPointerDown={() => setPopup("export")}
-        onPointerLeave={() => setPopup(null)}
       >
         <p>Export</p>
+        {popup === "export" ? (
+          <div className="absolute left-full w-fit h-fit top-1">
+            <ExportPopup />
+          </div>
+        ) : (
+          <></>
+        )}
         <CaretRight />
       </DialogItem>
       <DialogItem>

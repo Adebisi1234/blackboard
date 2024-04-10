@@ -144,7 +144,7 @@ function renderComp({
         y: endPos.y * mapRatio.y,
       };
 
-      ctx.fillStyle = colors.arrow;
+      ctx.strokeStyle = colors.arrow;
       ctx.beginPath();
       ctx.moveTo(startPos.x, startPos.y);
       if (qCurve) {

@@ -59,6 +59,7 @@ dialog {
   background-color: transparent;
 }
 
-span {
-  font-size: 12px;
+span,
+kbd {
+  font-size: 12px !important;
 }

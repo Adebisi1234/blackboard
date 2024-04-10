@@ -59,10 +59,7 @@ export default function Zoom() {
             )}
           </div>
           {windowWidth >= 768 && windowWidth <= 1000 && (
-            <dialog
-              open={dialog === "zoom"}
-              className="m-1 ml-0 text-sm font-light bottom-full"
-            >
+            <dialog open={dialog === "zoom"} className="m-1 ml-0  bottom-full">
               <ZoomDialog />
             </dialog>
           )}
