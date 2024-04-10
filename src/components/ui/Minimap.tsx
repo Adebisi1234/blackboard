@@ -6,6 +6,12 @@ import { Drawings, Location } from "../../types/general";
 export default function Minimap() {
   const drawing = useDrawing((s) => s.getDrawing());
   const loc = useLocation((s) => s.location);
+  const colors = useRef({
+    box: getRandomColor(),
+    pencil: getRandomColor(),
+    arrow: getRandomColor(),
+    shape: getRandomColor(),
+  });
   const canvasPos = useCanvas((s) => s.canvasPos);
   const windowWidth = useWindowSize();
   const change = useRef({
@@ -65,6 +71,7 @@ export default function Minimap() {
           ctx,
           mapRatio,
           screenPos,
+          colors: colors.current,
         });
       }
     }
@@ -81,14 +88,21 @@ function renderComp({
   ctx,
   mapRatio,
   screenPos,
+  colors,
 }: {
   comp: Drawings[0];
   loc: Location;
   ctx: CanvasRenderingContext2D;
   mapRatio: { x: number; y: number };
   screenPos: { x: number; y: number };
+  colors: {
+    box: string;
+    pencil: string;
+    arrow: string;
+    shape: string;
+  };
 }) {
-  switch (comp.prop.type) {
+  switch (comp?.prop.type) {
     case "image":
     case "note":
     case "text": {
@@ -100,8 +114,7 @@ function renderComp({
       y *= mapRatio.x;
       y -= screenPos.y;
       height *= mapRatio.x;
-      // Generate random color
-      ctx.fillStyle = "blue";
+      ctx.fillStyle = colors.box;
       ctx.fillRect(x, y, width, height);
       ctx.stroke();
       break;
@@ -114,8 +127,7 @@ function renderComp({
       y *= mapRatio.x;
       y += screenPos.y;
       height *= mapRatio.x;
-      // Generate random color
-      ctx.fillStyle = "blue";
+      ctx.fillStyle = colors.pencil;
       ctx.fillRect(x, y, width, height);
       ctx.stroke();
 
@@ -132,8 +144,7 @@ function renderComp({
         y: endPos.y * mapRatio.y,
       };
 
-      // Generate random color
-      ctx.fillStyle = "blue";
+      ctx.fillStyle = colors.arrow;
       ctx.beginPath();
       ctx.moveTo(startPos.x, startPos.y);
       if (qCurve) {
@@ -159,11 +170,19 @@ function renderComp({
       width *= mapRatio.x;
       y *= mapRatio.x;
       height *= mapRatio.x;
-      // Generate random color
-      ctx.strokeStyle = "blue";
+      ctx.strokeStyle = colors.shape;
       ctx.strokeRect(x, y, width, height);
       ctx.stroke();
       break;
     }
   }
+}
+
+function getRandomColor() {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
