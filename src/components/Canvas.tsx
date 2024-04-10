@@ -22,7 +22,6 @@ import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
-import { useShallow } from "zustand/react/shallow";
 
 export default function Canvas() {
   const {

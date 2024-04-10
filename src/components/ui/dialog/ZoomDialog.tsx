@@ -3,7 +3,10 @@ import DialogItem from "./DialogItem";
 
 export default function ZoomDialog() {
   return (
-    <DialogContainer className="w-48">
+    <DialogContainer
+      className="w-48 cursor-not-allowed"
+      title="Not implemented yet"
+    >
       <DialogItem>
         <span>Zoom in</span>
         <span>Ctrl =</span>

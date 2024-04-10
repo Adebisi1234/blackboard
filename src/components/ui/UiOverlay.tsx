@@ -16,9 +16,10 @@ export default function Overlay() {
         <Pages />
         <div className="flex flex-col items-end mr-1">
           <div className="flex gap-2 items-center">
-            <Button>
+            {/* <Button>
               <Icon className="bg-pink-700 rounded-full"></Icon>
-            </Button>
+            </Button> */
+            /** Show active users in multi-users mode */}
             <Share />
           </div>
           {windowWidth >= 768 && <Panel />}

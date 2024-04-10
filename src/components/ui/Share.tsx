@@ -4,6 +4,7 @@ import ShareDialog from "./dialog/ShareDialog";
 
 export default function Share() {
   const { dialog, setDialog, reset } = useOpenDialog();
+
   return (
     <div className="relative">
       <Button

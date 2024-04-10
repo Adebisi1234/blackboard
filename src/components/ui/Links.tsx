@@ -4,19 +4,37 @@ export default function Links() {
   return (
     <>
       <DialogItem>
-        <a href="https://www.Github.com/Adebisi1234/" target="_blank">
-          Github
-        </a>
+        <p className="w-full">
+          <a
+            href="https://www.Github.com/Adebisi1234/"
+            target="_blank"
+            className="w-full inline-block"
+          >
+            Github
+          </a>
+        </p>
       </DialogItem>
       <DialogItem>
-        <a href="https://www.Twitter.com/AdebisiTobil" target="_blank">
-          Twitter
-        </a>
+        <p className="w-full">
+          <a
+            href="https://www.Twitter.com/AdebisiTobil"
+            target="_blank"
+            className="w-full inline-block"
+          >
+            Twitter
+          </a>
+        </p>
       </DialogItem>
       <DialogItem>
-        <a href="mailto:oluwatobilobaadebisi@gmail.com" target="_blank">
-          Email
-        </a>
+        <p className="w-full">
+          <a
+            href="mailto:oluwatobilobaadebisi@gmail.com"
+            target="_blank"
+            className="w-full inline-block"
+          >
+            Email
+          </a>
+        </p>
       </DialogItem>
     </>
   );

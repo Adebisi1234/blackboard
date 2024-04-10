@@ -39,7 +39,7 @@ export type General = {
   strokeWidth: number;
   fill: 0 | 0.5 | 1 | "pattern";
   dash: "draw" | 0 | 10 | 2;
-  scale: number;
+  scale: 0.25 | 0.5 | 1 | 1.5 | 2.0;
   font: 18 | 24 | 36 | 44;
   highlight: boolean;
   copy: boolean;

@@ -1,26 +1,35 @@
 import { useDrawing } from "../../../store/Store";
+import { Minus, Plus } from "../Svg";
 import DialogContainer from "./DialogContainer";
 import DialogItem from "./DialogItem";
 
 export default function PageDialog() {
-  const { setPage, getNumOfPages, page, deletePage } = useDrawing();
-  const num = getNumOfPages();
+  const { setPage, getPages, page, deletePage } = useDrawing();
+  const num = getPages();
 
   const pages: JSX.Element[] = [];
-  for (let i = 1; i < num + 1; i++) {
+  for (let i = 0; i < num.length; i++) {
     pages[i] = (
-      <DialogItem key={`page:${i}`}>
-        <div
-          className="flex gap-3 ml-1 w-full text-left"
-          onClick={() => {
-            page !== i - 1 && setPage(i - 1);
-          }}
-        >
-          <p>{page === i - 1 ? "•" : ""}</p>
-          <p className="w-full">Page {i}</p>
+      <DialogItem key={`page:${num[i]}`}>
+        <div className="flex gap-3 ml-1 w-full text-left">
+          <p>{page === num[i] ? "•" : ""}</p>
+          <p
+            className="w-full"
+            onClick={() => {
+              page !== num[i] && setPage(num[i]);
+            }}
+          >
+            Page {num[i]}
+          </p>
         </div>
-        {i !== 1 ? (
-          <p onClick={() => i !== 1 && deletePage(i - 1)}>X</p>
+        {num.length !== 1 ? (
+          <div
+            onClick={() => {
+              num.length !== 1 && deletePage(num[i]);
+            }}
+          >
+            <Minus />
+          </div>
         ) : (
           <p></p>
         )}
@@ -31,8 +40,8 @@ export default function PageDialog() {
     <DialogContainer>
       <DialogItem>
         <p>Pages</p>
-        <span className="text-xl" onClick={() => setPage(num)}>
-          +
+        <span onClick={() => setPage(num[num.length - 1] + 1)}>
+          <Plus />
         </span>
       </DialogItem>
       <hr />
