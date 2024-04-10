@@ -20,7 +20,7 @@ interface DrawingState {
   deletedComps: { [key: number]: number[] };
   setPage: (payload: number) => void;
   deletePage: (payload: number) => void;
-  getNumOfPages: () => number;
+  getPages: () => number[];
   getDrawing: (payload?: number) => Drawings;
   copyComp: (payload: number | number[]) => void;
   pasteComp: () => void;
@@ -106,36 +106,37 @@ export const useDrawing = create<DrawingState>()(
   persist(
     immer((set, get) => ({
       drawing: {
-        0: [],
+        1: [],
       },
-      page: 0,
+      page: 1,
       copiedComps: {
-        0: [],
+        1: [],
       },
       deletedComps: {
-        0: [],
+        1: [],
       },
       deletePage(payload) {
-        set(({ drawing, page }) => {
-          delete drawing[payload];
-          page = 0;
+        set((state) => {
+          if (get().getPages().length > 1) {
+            //Double guard
+            delete state.drawing[payload];
+            state.page = get().getPages()[0];
+          }
         });
       },
       setPage(payload) {
         set(({ drawing }) => {
-          // console.log(payload);
           return {
-            page: payload,
             drawing: { ...drawing, [payload]: drawing[payload] ?? [] },
+            page: payload,
           };
         });
       },
-      getNumOfPages() {
-        return Object.keys(get().drawing).length;
+      getPages() {
+        return Object.keys(get().drawing).map((id) => Number(id)); //It's a number
       },
       getDrawing() {
-        // console.log(get().page);
-        return get().drawing[get().page];
+        return get().drawing[get().page] ?? []; //Incase deletePage fails which I pray it doesn't
       },
       init: (payload: { [key: number]: Drawings }) =>
         set({
@@ -236,14 +237,14 @@ export const useDrawing = create<DrawingState>()(
         });
         set({
           drawing: {
-            0: [],
+            1: [],
           },
-          page: 0,
+          page: 1,
           copiedComps: {
-            0: [],
+            1: [],
           },
           deletedComps: {
-            0: [],
+            1: [],
           },
         });
       },
