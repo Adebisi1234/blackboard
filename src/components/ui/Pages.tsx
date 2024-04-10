@@ -1,5 +1,5 @@
 import useWindowSize from "../../hooks/useWindowSize";
-import { useOpenDialog } from "../../store/Store";
+import { useDrawing, useOpenDialog } from "../../store/Store";
 import BackToContent from "./BackToContent";
 import Button from "./Button";
 import MenuDialog from "./dialog/MenuDialog";
@@ -18,6 +18,7 @@ import UndoRedoTrash from "./UndoRedoTrash";
 export default function Pages() {
   const windowWidth = useWindowSize();
   const { dialog, setDialog, reset } = useOpenDialog();
+  const page = useDrawing((s) => s.getPages()[0]);
   return (
     <div className="flex items-center gap-1 bg-[#1f1e21] relative" id="pages">
       <Button onClick={() => (dialog !== "menu" ? setDialog("menu") : reset())}>
@@ -31,7 +32,7 @@ export default function Pages() {
           className="flex items-center justify-center h-full gap-4 p-1 "
           onClick={() => (dialog !== "pages" ? setDialog("pages") : reset())}
         >
-          <p className="pr-4 text-left w-fit">Page 1</p>
+          <p className="pr-4 text-left w-fit">Page {page}</p>
 
           <ChevronDown />
         </div>
