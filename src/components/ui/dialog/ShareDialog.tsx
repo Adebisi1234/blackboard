@@ -15,7 +15,10 @@ export default function ShareDialog() {
       <DialogItem
         onClick={async () => {
           if (!canvasRef) return;
-          const dataUrl = await toPng(canvasRef, { cacheBust: true });
+          const dataUrl = await toPng(canvasRef, {
+            cacheBust: true,
+            backgroundColor: "#131315",
+          });
           const link = document.createElement("a");
           link.download = "drawings.png";
           link.href = dataUrl;

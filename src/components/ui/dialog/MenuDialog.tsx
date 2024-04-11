@@ -8,17 +8,20 @@ import { CaretRight } from "../Svg";
 import ZoomDialog from "./ZoomDialog";
 import EditPopup from "./EditPopup";
 import ExportPopup from "./ExportPopup";
-
+import FilePopup from "./FilePopup";
+import useWindowSize from "../../../hooks/useWindowSize";
 export default function MenuDialog() {
   const setImage = useImage((state) => state.setImage);
   const setActiveTool = useActiveTool((state) => state.setActiveTool);
   const [popup, setPopup] = useState<
     "file" | "edit" | "view" | "export" | null
   >(null);
+  const windowWidth = useWindowSize();
+
   return (
     <DialogContainer
       className="w-[150px] gap-4"
-      onPointerLeave={() => setPopup(null)}
+      onPointerOut={() => windowWidth > 1000 && setPopup(null)} //large screen only
     >
       <DialogItem
         className="relative"
@@ -26,6 +29,13 @@ export default function MenuDialog() {
         onPointerDown={() => setPopup("file")}
       >
         <p>File</p>
+        {popup === "file" ? (
+          <div className="absolute left-full w-fit h-fit top-1">
+            <FilePopup />
+          </div>
+        ) : (
+          <></>
+        )}
         <CaretRight />
       </DialogItem>
       <DialogItem

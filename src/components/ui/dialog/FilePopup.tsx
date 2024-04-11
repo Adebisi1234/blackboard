@@ -1,3 +1,9 @@
+import ShareDialog from "./ShareDialog";
+
 export default function FilePopup() {
-  return <div>new, share project</div>;
+  return (
+    <>
+      <ShareDialog />
+    </>
+  );
 }
