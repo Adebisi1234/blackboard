@@ -48,12 +48,6 @@ export default function useAddImage(drawingId: { current: number }) {
         y:
           innerHeight / 2 -
           Math.min(Math.min(image.height, innerHeight - 400), innerWidth) / 2,
-        width: Math.min(
-          (image.width / image.height) *
-            Math.min(image.height, innerHeight - 400),
-          innerWidth
-        ),
-        height: Math.min(Math.min(image.height, innerHeight - 400), innerWidth),
       },
     } satisfies Drawings<"image">[0];
     setDrawing(newImageComp);

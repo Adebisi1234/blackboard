@@ -144,21 +144,30 @@ export const useDrawing = create<DrawingState>()(
         }),
       setDrawing: (payload: Drawings[0]) =>
         set((state: DrawingState) => {
-          state.drawing[get().page].push(payload);
+          if (state.drawing[get().page]) {
+            state.drawing[get().page].push(payload);
+          } else {
+            state.drawing[get().page] = [payload];
+          }
         }),
       updateDrawing(id, payload) {
         set((state) => {
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
           state.drawing[get().page][id] = payload;
         });
       },
       clearPointer(id) {
-        set(({ drawing }) => {
-          drawing[get().page].splice(id, 1);
+        set((state) => {
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
+          state.drawing[get().page].splice(id, 1);
         });
       },
       hideComp(id) {
         set((state) => {
-          if (!id) return state;
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
           state.drawing[get().page][id].opacity = 0;
           if (state.drawing[get().page][id].prop.type !== "pointer") {
             state.deletedComps[get().page].push(id);
@@ -172,30 +181,37 @@ export const useDrawing = create<DrawingState>()(
         set((state) => {
           const id = state.drawing[get().page].length - 1;
           state.drawing[get().page][id].opacity = 0;
-          if (state.drawing[get().page][id].prop.type !== "pointer") {
+          if (state.drawing[get().page][id]?.prop.type !== "pointer") {
             state.deletedComps[get().page].push(id);
-            console.log(state.deletedComps[get().page]);
           }
         });
       },
       toggleHighlight(id) {
-        set(({ drawing }) => {
-          drawing[get().page][id].highlight = false;
+        set((state) => {
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
+          state.drawing[get().page][id].highlight = false;
         });
       },
       highlightComp(id) {
-        set(({ drawing }) => {
-          drawing[get().page][id].highlight = true;
+        set((state) => {
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
+          state.drawing[get().page][id].highlight = true;
         });
       },
       hoverComp(id) {
-        set(({ drawing }) => {
-          drawing[get().page][id].hovered = true;
+        set((state) => {
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
+          state.drawing[get().page][id].hovered = true;
         });
       },
       leaveComp(id) {
-        set(({ drawing }) => {
-          drawing[get().page][id].hovered = false;
+        set((state) => {
+          if (typeof id !== "number" || !state.drawing[get().page][id])
+            return state;
+          state.drawing[get().page][id].hovered = false;
         });
       },
       copyComp(payload: number | number[]) {

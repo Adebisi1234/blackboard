@@ -21,7 +21,6 @@ export default function Image(prop: Drawings<"image">[0]) {
   const canvasPos = useCanvas((s) => s.canvasPos);
   useEffect(() => {
     if (!imgRef.current) return;
-    const { x, y } = imgRef.current?.getBoundingClientRect();
     setLocation({
       x,
       y,
@@ -29,7 +28,7 @@ export default function Image(prop: Drawings<"image">[0]) {
       height,
       id: prop.id,
     });
-  }, [width, height, prop.prop, canvasPos, windowWidth]);
+  }, [width, height, prop.prop, canvasPos, windowWidth, imgRef]);
   return (
     <>
       <div
