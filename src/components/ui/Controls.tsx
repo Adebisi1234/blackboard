@@ -31,7 +31,7 @@ export default function Controls() {
   const windowWidth = useWindowSize();
   const setImage = useImage((state) => state.setImage);
   return (
-    <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-[90%]">
+    <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-fit">
       {windowWidth < 768 && (
         <div className="absolute bottom-full left-0 rounded-lg bg-[#1f1e21]">
           <UndoRedoTrash />
@@ -119,7 +119,7 @@ export default function Controls() {
           >
             <label
               htmlFor="image"
-              className="size-full flex justify-center items-center cursor-pointer"
+              className="flex items-center justify-center cursor-pointer size-full"
             >
               <ImageIcon />
             </label>
@@ -127,7 +127,7 @@ export default function Controls() {
               type="file"
               name="file"
               id="image"
-              className="absolute inset-0 invisible size-full z-10 "
+              className="absolute inset-0 z-10 invisible size-full "
               tabIndex={-1}
               multiple={false}
               accept=".jpg,.png"
@@ -171,7 +171,7 @@ export default function Controls() {
           >
             <ChevronUp />
           </Button>
-          <dialog open={dialog === "controls"} className="bottom-full mr-0">
+          <dialog open={dialog === "controls"} className="mr-0 bottom-full">
             <ExtraControlsDialog />
           </dialog>
           <Button

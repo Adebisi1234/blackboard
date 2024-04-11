@@ -1,0 +1,16 @@
+// How expensive is UUID
+
+UUID for session
+UUID for each drawers
+
+Send the entire drawing state around
+Have a state called userLock with the uuid of the drawer
+
+client: So on message do a check on the current drawing state and incoming
+(old, incoming) => if incoming[id].userLock !== myUUId, add to new Drawing
+else if incoming[id].userLock === myUUID add my old to the new Drawing
+
+Then send
+
+
+server: Don't send to the sender and yourself

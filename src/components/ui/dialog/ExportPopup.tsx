@@ -59,7 +59,7 @@ export default function ExportPopup() {
       <DialogItem className="gap-2">
         <div
           className={`checkBox size-4 border bg-transparent ${
-            transparent ? "bg-green-500" : ""
+            transparent ? "!bg-green-500" : ""
           }`}
           onClick={() => setTransparent(!transparent)}
         ></div>

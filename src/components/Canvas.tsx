@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   addDrawing,
   cleanUpDrawing,
@@ -13,7 +13,6 @@ import {
   useDrawing,
   useGeneral,
   useHighlighted,
-  useImage,
   useLocation,
 } from "../store/Store";
 import useAddImage from "../hooks/useAddImage";
@@ -22,9 +21,9 @@ import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
-
 export default function Canvas() {
   const {
+    init,
     updateDrawing,
     setDrawing,
     clearPointer,
@@ -33,9 +32,11 @@ export default function Canvas() {
     hoverComp,
     leaveComp,
     highlightComp,
+    readOnly,
+    ws,
   } = useDrawing();
-  const drawing = useDrawing((state) => state.getDrawing());
 
+  const drawing = useDrawing((state) => state.getDrawing());
   const { highlighted, setHighlighted } = useHighlighted();
   const { activeTool, setActiveTool } = useActiveTool();
   const { general } = useGeneral();
@@ -56,6 +57,18 @@ export default function Canvas() {
   useShortcuts();
   const movePencilOrArrow = useMovePencilAndArrowComp();
   const [moveCompId, setMoveCompId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (location.search) {
+      console.log(ws, "wtf");
+      ws?.addEventListener("open", () => {
+        console.log("ws connected");
+      });
+      ws?.addEventListener("message", (ev) => {
+        init(JSON.parse(ev.data));
+      });
+    }
+  }, [location.search, ws]);
 
   drawingId.current = useMemo(
     () => (!isToolActive ? drawing.length : drawingId.current),
@@ -320,7 +333,9 @@ export default function Canvas() {
       className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >
       <div
-        className="absolute inset-0 w-screen h-screen canvas touch-none"
+        className={`absolute inset-0 w-screen h-screen canvas touch-none ${
+          readOnly && "pointer-events-none"
+        }`}
         ref={(node) => {
           if (!node || canvasRef) return;
           setRef(node);

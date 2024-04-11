@@ -61,6 +61,17 @@ export default function EditPopup() {
       <DialogItem
         className="justify-between items-end"
         onPointerDown={() => {
+          // Copy then paste, I hope this works
+          copyComp([...activeComp], "cut");
+          setCopied(activeComp.length);
+        }}
+      >
+        <p>Cut</p>
+        <kbd>Ctrl x</kbd>
+      </DialogItem>
+      <DialogItem
+        className="justify-between items-end"
+        onPointerDown={() => {
           pasteComp();
           // Set the new components as active
           if (typeof copied === "number") {

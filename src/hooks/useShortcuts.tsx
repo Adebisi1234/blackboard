@@ -15,6 +15,11 @@ export default function useShortcuts() {
         setCopied(activeComp.length);
         return;
       }
+      if (ev.ctrlKey && ev.key.toLowerCase() === "x") {
+        copyComp(activeComp, "cut");
+        setCopied(activeComp.length);
+        return;
+      }
       // paste
       if (ev.ctrlKey && ev.key.toLowerCase() === "v") {
         pasteComp();

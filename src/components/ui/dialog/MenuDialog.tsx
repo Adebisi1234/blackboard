@@ -30,7 +30,7 @@ export default function MenuDialog() {
       >
         <p>File</p>
         {popup === "file" ? (
-          <div className="absolute left-full w-fit h-fit top-1">
+          <div className="absolute cursor-pointer left-full w-fit h-fit top-1">
             <FilePopup />
           </div>
         ) : (
@@ -45,7 +45,7 @@ export default function MenuDialog() {
       >
         <p>Edit</p>
         {popup === "edit" ? (
-          <div className="absolute left-full w-fit h-fit top-1">
+          <div className="absolute cursor-pointer left-full w-fit h-fit top-1">
             <EditPopup />
           </div>
         ) : (
@@ -60,7 +60,7 @@ export default function MenuDialog() {
       >
         <p>View</p>
         {popup === "view" ? (
-          <div className="absolute left-full w-fit h-fit top-1">
+          <div className="absolute cursor-pointer left-full w-fit h-fit top-1">
             <ZoomDialog />
           </div>
         ) : (
@@ -75,7 +75,7 @@ export default function MenuDialog() {
       >
         <p>Export</p>
         {popup === "export" ? (
-          <div className="absolute left-full w-fit h-fit top-1">
+          <div className="absolute cursor-pointer left-full w-fit h-fit top-1">
             <ExportPopup />
           </div>
         ) : (
@@ -91,7 +91,7 @@ export default function MenuDialog() {
           type="file"
           name="file"
           id="image"
-          className="absolute inset-0 invisible size-full z-10 "
+          className="absolute inset-0 z-10 invisible size-full "
           tabIndex={-1}
           multiple={false}
           accept=".jpg,.png"
