@@ -78,7 +78,10 @@ export default function CompOverlay(prop: Prop) {
     return (
       <>
         {path.length > 5 && (
-          <svg className="z-40" opacity={prop.opacity === 0 ? 0 : 1}>
+          <svg
+            className={`z-${10 + prop.id}`}
+            opacity={prop.opacity === 0 ? 0 : 1}
+          >
             <g>
               <circle
                 cx={startX + (pos.x ?? 0)}
@@ -115,7 +118,10 @@ export default function CompOverlay(prop: Prop) {
   return (
     <>
       {width > 0 && height > 0 && (
-        <svg className="z-40" opacity={prop.opacity === 0 ? 0 : 1}>
+        <svg
+          className={`z-${10 + prop.id}`}
+          opacity={prop.opacity === 0 ? 0 : 1}
+        >
           <g>
             <rect
               x={x}

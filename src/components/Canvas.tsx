@@ -59,7 +59,7 @@ export default function Canvas() {
 
   drawingId.current = useMemo(
     () => (!isToolActive ? drawing.length : drawingId.current),
-    [drawing]
+    [drawing, isToolActive]
   );
 
   if (activeTool !== "pointer" && highlighted.length !== 0) {
@@ -126,8 +126,14 @@ export default function Canvas() {
     //TODO: Use temp storage to avoid issues
     addDrawing({
       e: {
-        clientX: e.clientX - canvasRef.getBoundingClientRect().x,
-        clientY: e.clientY - canvasRef.getBoundingClientRect().y,
+        clientX:
+          e.clientX -
+          // canvasRef.getBoundingClientRect().width / 2 - //SCALING PROTOTYPE
+          canvasRef.getBoundingClientRect().x,
+        clientY:
+          e.clientY -
+          // canvasRef.getBoundingClientRect().height / 2 -
+          canvasRef.getBoundingClientRect().y,
       },
       drawing,
       activeTool,
@@ -211,8 +217,14 @@ export default function Canvas() {
     }
     modifyDrawing({
       e: {
-        clientX: e.clientX - canvasRef.getBoundingClientRect().x,
-        clientY: e.clientY - canvasRef.getBoundingClientRect().y,
+        clientX:
+          e.clientX -
+          // canvasRef.getBoundingClientRect().width / 2 -
+          canvasRef.getBoundingClientRect().x,
+        clientY:
+          e.clientY -
+          // canvasRef.getBoundingClientRect().height / 2 -
+          canvasRef.getBoundingClientRect().y,
       },
       drawingId,
       activeTool,

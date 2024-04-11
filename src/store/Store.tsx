@@ -14,6 +14,12 @@ import { produce } from "immer";
 //TODO= IMPLEMENT IMMER
 
 interface DrawingState {
+  lastAction: null | {
+    //I think all this immutability is affect it's performance
+    action: "update" | "set" | "hide" | "highlight" | "paste" | "deletePage";
+    prevState: Drawings | null;
+    id: number;
+  };
   drawing: { [key: number]: Drawings };
   page: number;
   copiedComps: { [key: number]: number[] };
@@ -105,6 +111,7 @@ export const useActive = create<ActiveCompState>()((set) => ({
 export const useDrawing = create<DrawingState>()(
   persist(
     immer((set, get) => ({
+      lastAction: null,
       drawing: {
         1: [],
       },
@@ -120,7 +127,7 @@ export const useDrawing = create<DrawingState>()(
           if (get().getPages().length > 1) {
             //Double guard
             delete state.drawing[payload];
-            state.page = get().getPages()[0];
+            state.page = +Object.keys(state.drawing)[0];
           }
         });
       },
@@ -242,7 +249,6 @@ export const useDrawing = create<DrawingState>()(
       restoreComp() {
         set((state) => {
           const update = state.deletedComps[get().page].pop();
-          console.log(update);
           if (!update) return state;
           state.drawing[get().page][update].opacity = 1;
         });
@@ -250,6 +256,12 @@ export const useDrawing = create<DrawingState>()(
       clearAll() {
         useLocation.setState((state) => {
           state.location = {};
+        });
+        useCanvas.setState((state) => {
+          state.canvasPos = {
+            x: 0,
+            y: 0,
+          };
         });
         set({
           drawing: {
