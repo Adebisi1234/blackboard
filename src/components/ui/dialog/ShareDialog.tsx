@@ -5,13 +5,48 @@ import { toPng } from "html-to-image";
 
 export default function ShareDialog() {
   const canvasRef = useCanvas((state) => state.canvasRef);
+  const room = new URL(location.toString()).searchParams.get("room") ?? "";
   return (
     <DialogContainer className="cursor-pointer w-fit">
-      <DialogItem className="flex-col items-start p-1 w-fit">
+      <DialogItem
+        className="flex-col items-start p-1 w-fit"
+        onClick={async () => {
+          if (room) {
+            navigator.clipboard.writeText(location.toString());
+            // Alert user: Do better
+            alert("Link copied to clipboard, redirecting once you close this.");
+            return;
+          }
+          const redirectURL = new URL(location.toString());
+          redirectURL.searchParams.append("room", crypto.randomUUID());
+
+          await navigator.clipboard.writeText(redirectURL.toString());
+          // Alert user: Do better
+          alert("Link copied to clipboard, redirecting once you close this.");
+          const newWindow = window.open(redirectURL, "_blank");
+          newWindow?.focus();
+        }}
+      >
         <p className="text-left w-max">Collaborate with others</p>
         <small className="font-light w-max">Share collaboration link</small>
       </DialogItem>
-      <DialogItem className="flex-col items-start p-1 w-fit">
+      <DialogItem
+        className="flex-col items-start p-1 w-fit"
+        onClick={async () => {
+          if (room) {
+            navigator.clipboard.writeText(location.toString());
+            // Alert user
+            return;
+          }
+          const redirectURL = new URL(location.toString());
+          redirectURL.searchParams.append("room", crypto.randomUUID());
+          redirectURL.searchParams.append("viewonly", "true");
+          await navigator.clipboard.writeText(redirectURL.toString());
+          // Alert user
+          const newWindow = window.open(redirectURL, "_blank");
+          newWindow?.focus();
+        }}
+      >
         <p className="text-left w-max">Share with others</p>
         <small className="font-light w-max">Share as readonly</small>
       </DialogItem>

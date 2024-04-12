@@ -65,5 +65,4 @@ export default function useShortcuts() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeComp]);
-  return handleKeyDown; //For the pages component
 }

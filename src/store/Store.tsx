@@ -11,18 +11,22 @@ import {
 import { cloneComp } from "../utils/drawings";
 import { produce } from "immer";
 
-//TODO= IMPLEMENT IMMER
-
+const room = new URL(location.toString()).searchParams.get("room") ?? "";
+const viewOnly = Boolean(
+  new URL(location.toString()).searchParams.get("viewonly")
+);
 interface DrawingState {
   ws: WebSocket | null;
   drawing: { [key: number]: Drawings };
   page: number;
   readOnly: boolean;
   userId: string;
-  isSharing: boolean;
+  viewOnly: boolean;
   timestamps: number;
   copiedComps: { [key: number]: number[] };
   deletedComps: { [key: number]: number[] };
+  setSharingToReadOnly: (payload: boolean) => void; // Set the readonly status of others
+  userOffline: (payload: boolean) => void;
   setPage: (payload: number) => void;
   deletePage: (payload: number) => void;
   getPages: () => number[];
@@ -118,10 +122,7 @@ export const useActive = create<ActiveCompState>()((set) => ({
 export const useDrawing = create<DrawingState>()(
   persist(
     immer((set, get) => ({
-      ws:
-        location.search.length > 0
-          ? new WebSocket(`ws://localhost:8080/${location.search}`)
-          : null,
+      ws: room.length > 0 ? new WebSocket(`ws://localhost:8080/${room}`) : null,
       drawing: {
         1: [],
       },
@@ -134,10 +135,16 @@ export const useDrawing = create<DrawingState>()(
       },
       readOnly: false,
       userId: crypto.randomUUID(),
-      isSharing: false,
+      viewOnly: viewOnly,
       timestamps: Date.now(),
+      setSharingToReadOnly(payload) {
+        set({ viewOnly: payload });
+      },
+      userOffline(payload) {
+        set({ readOnly: payload });
+      },
       deletePage(payload) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (get().getPages().length > 1) {
             //Double guard
@@ -148,7 +155,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       setPage(payload) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set(({ drawing }) => {
           return {
             drawing: { ...drawing, [payload]: drawing[payload] ?? [] },
@@ -163,8 +170,11 @@ export const useDrawing = create<DrawingState>()(
       getDrawing() {
         return get().drawing[get().page] ?? []; //Incase deletePage fails which I pray it doesn't
       },
-      init: ({ drawing, page, timestamps, userId, clear = false }) =>
+      init: ({ drawing, page, timestamps, userId, clear = false, readOnly }) =>
         set((state) => {
+          if (readOnly && !state.readOnly) {
+            state.readOnly = true;
+          }
           if (clear) {
             useLocation.setState((state) => {
               state.location = {};
@@ -200,7 +210,10 @@ export const useDrawing = create<DrawingState>()(
                   // If it's the same user then he can edit the comp
                   state.drawing[page][drawing.id] = { ...prev, ...drawing };
                 } else {
-                  state.drawing[page][state.drawing[page].length - 1] = drawing; //Since there's an comp in the index already add to the end
+                  // drawing.id = state.drawing[page].length - 1;
+                  // state.drawing[page][drawing.id] = drawing; //Since there's an comp in the index already add to the end, or should I just replace...
+                  // REPLACING FOR NOW BECAUSE OF IMAGE
+                  state.drawing[page][drawing.id] = { ...prev, ...drawing };
                 }
               } else {
                 state.drawing[page][drawing.id] = drawing;
@@ -217,7 +230,8 @@ export const useDrawing = create<DrawingState>()(
             // }
           }
         }),
-      setDrawing: (payload: Drawings[0]) =>
+      setDrawing(payload: Drawings[0]) {
+        if (get().viewOnly) return;
         set((state: DrawingState) => {
           if (state.drawing[get().page]) {
             state.drawing[get().page].push(payload);
@@ -228,17 +242,22 @@ export const useDrawing = create<DrawingState>()(
           if (state.ws?.OPEN && payload.prop.type !== "pointer") {
             state.ws.send(
               JSON.stringify({
-                drawing: payload,
-                page: state.page,
-                timestamps: Date.now(),
-                userId: state.userId,
-                readOnly: state.readOnly,
+                message: {
+                  drawing: payload,
+                  page: state.page,
+                  timestamps: Date.now(),
+                  userId: state.userId,
+                  readOnly: state.viewOnly,
+                },
+                room: room,
+                id: state.userId,
               })
             );
           }
-        }),
+        });
+      },
       updateDrawing(id, payload) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -246,18 +265,22 @@ export const useDrawing = create<DrawingState>()(
           if (state.ws?.OPEN && payload.prop.type !== "pointer") {
             state.ws.send(
               JSON.stringify({
-                drawing: payload,
-                page: state.page,
-                timestamps: Date.now(),
-                userId: state.userId,
-                readOnly: state.readOnly,
+                message: {
+                  drawing: payload,
+                  page: state.page,
+                  timestamps: Date.now(),
+                  userId: state.userId,
+                  readOnly: state.viewOnly,
+                },
+                room: room,
+                id: state.userId,
               })
             );
           }
         });
       },
       clearPointer(id) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -266,7 +289,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       hideComp(id) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -284,18 +307,22 @@ export const useDrawing = create<DrawingState>()(
           ) {
             state.ws.send(
               JSON.stringify({
-                drawing: state.drawing[get().page][id],
-                page: state.page,
-                timestamps: Date.now(),
-                userId: state.userId,
-                readOnly: state.readOnly,
+                message: {
+                  drawing: state.drawing[get().page][id],
+                  page: state.page,
+                  timestamps: Date.now(),
+                  userId: state.userId,
+                  readOnly: state.viewOnly,
+                },
+                room: room,
+                id: state.userId,
               })
             );
           }
         });
       },
       undo() {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           const id = state.drawing[get().page].length - 1;
           if (id < 0) return state;
@@ -310,18 +337,22 @@ export const useDrawing = create<DrawingState>()(
           ) {
             state.ws.send(
               JSON.stringify({
-                drawing: state.drawing[get().page][id],
-                page: state.page,
-                timestamps: Date.now(),
-                userId: state.userId,
-                readOnly: state.readOnly,
+                message: {
+                  drawing: state.drawing[get().page][id],
+                  page: state.page,
+                  timestamps: Date.now(),
+                  userId: state.userId,
+                  readOnly: state.viewOnly,
+                },
+                room: room,
+                id: state.userId,
               })
             );
           }
         });
       },
       toggleHighlight(id) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -330,7 +361,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       highlightComp(id) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -339,7 +370,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       hoverComp(id) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -348,7 +379,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       leaveComp(id) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
@@ -357,7 +388,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       copyComp(payload: number | number[], cut) {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           if (
             (typeof payload === "object" && payload.length === 0) ||
@@ -379,7 +410,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       pasteComp() {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           const update = state.copiedComps[get().page].map((comp, i) => {
             const newComp = produce(
@@ -404,7 +435,7 @@ export const useDrawing = create<DrawingState>()(
                   page: state.page,
                   timestamps: Date.now(),
                   userId: state.userId,
-                  readOnly: state.readOnly,
+                  readOnly: state.viewOnly,
                 })
               );
             }
@@ -412,7 +443,7 @@ export const useDrawing = create<DrawingState>()(
         });
       },
       restoreComp() {
-        if (get().readOnly) return;
+        if (get().viewOnly) return;
         set((state) => {
           const update = state.deletedComps[get().page].pop();
           if (!update) return state;
@@ -424,18 +455,22 @@ export const useDrawing = create<DrawingState>()(
           ) {
             state.ws.send(
               JSON.stringify({
-                drawing: state.drawing[get().page][update],
-                page: state.page,
-                timestamps: Date.now(),
-                userId: state.userId,
-                readOnly: state.readOnly,
+                message: {
+                  drawing: state.drawing[get().page][update],
+                  page: state.page,
+                  timestamps: Date.now(),
+                  userId: state.userId,
+                  readOnly: state.viewOnly,
+                },
+                room: room,
+                id: state.userId,
               })
             );
           }
         });
       },
       clearAll() {
-        if (get().readOnly) {
+        if (get().viewOnly) {
           return;
         }
         useLocation.setState((state) => {
@@ -464,13 +499,10 @@ export const useDrawing = create<DrawingState>()(
     })),
     {
       name: "blackboard:drawings",
-      partialize: (state) =>
-        !state.readOnly
-          ? {
-              drawing: state.drawing,
-              page: state.page,
-            }
-          : "",
+      partialize: (state) => ({
+        drawing: state.drawing,
+        page: state.page,
+      }),
       // onRehydrateStorage: (state) => {
       //   console.log("hydration starts");
 

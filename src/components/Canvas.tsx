@@ -36,7 +36,7 @@ export default function Canvas() {
     readOnly,
     ws,
   } = useDrawing();
-
+  const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
   const { highlighted, setHighlighted } = useHighlighted();
   const { activeTool, setActiveTool } = useActiveTool();
@@ -60,7 +60,7 @@ export default function Canvas() {
   const [moveCompId, setMoveCompId] = useState<number | null>(null);
 
   useEffect(() => {
-    if (location.search) {
+    if (room) {
       ws?.addEventListener("open", () => {
         console.log("ws connected");
       });
@@ -68,7 +68,7 @@ export default function Canvas() {
         init(JSON.parse(ev.data));
       });
     }
-  }, [location.search, ws]);
+  }, [room, ws]);
 
   drawingId.current = useMemo(
     () => (!isToolActive ? drawing.length : drawingId.current),
@@ -321,12 +321,12 @@ export default function Canvas() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
-      className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
+      className={`absolute inset-0 w-screen h-screen canvas bg overflow-clip ${
+        readOnly && "pointer-events-none"
+      }`}
     >
       <div
-        className={`absolute inset-0 w-screen h-screen canvas touch-none ${
-          readOnly && "pointer-events-none"
-        }`}
+        className="absolute inset-0 w-screen h-screen canvas touch-none"
         ref={(node) => {
           if (!node || canvasRef) return;
           setRef(node);
