@@ -79,7 +79,7 @@ export default function Canvas() {
     setHighlighted([]);
   }
 
-  const handleMouseDown = (
+  const handlePointerDown = (
     e: React.PointerEvent<HTMLDivElement | SVGCircleElement>
   ) => {
     if (!canvasRef) {
@@ -156,7 +156,7 @@ export default function Canvas() {
     setActiveComp(drawingId.current);
   };
 
-  const handleMouseMove = (
+  const handlePointerMove = (
     e: React.PointerEvent<HTMLDivElement | SVGCircleElement>
   ) => {
     if (!canvasRef) {
@@ -246,7 +246,7 @@ export default function Canvas() {
     });
     return;
   };
-  const handleMouseUp = (
+  const handlePointerUp = (
     e: React.PointerEvent<HTMLDivElement | SVGCircleElement>
   ) => {
     // Adjusting Existing comp
@@ -317,10 +317,10 @@ export default function Canvas() {
   const components = drawing.map(drawOnCanvas);
   return (
     <div
-      onPointerDown={handleMouseDown}
-      onPointerMove={handleMouseMove}
-      onPointerUp={handleMouseUp}
-      onPointerLeave={handleMouseUp}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
       className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >
       <div
