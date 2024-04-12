@@ -25,7 +25,7 @@ type Color =
 
 export interface ContainerProp<T = undefined>
   extends React.ButtonHTMLAttributes<T | HTMLButtonElement> {
-  children: JSX.Element | JSX.Element[];
+  children: JSX.Element | JSX.Element[] | string;
   className?: string;
   id?: string;
   title?: string;

@@ -14,7 +14,7 @@ export default function ShareDialog() {
           if (room) {
             navigator.clipboard.writeText(location.toString());
             // Alert user: Do better
-            alert("Link copied to clipboard, redirecting once you close this.");
+            alert("Link copied to clipboard, Please share.");
             return;
           }
           const redirectURL = new URL(location.toString());
@@ -36,6 +36,7 @@ export default function ShareDialog() {
           if (room) {
             navigator.clipboard.writeText(location.toString());
             // Alert user
+            alert("Link copied to clipboard, Please share.");
             return;
           }
           const redirectURL = new URL(location.toString());
@@ -43,6 +44,7 @@ export default function ShareDialog() {
           redirectURL.searchParams.append("viewonly", "true");
           await navigator.clipboard.writeText(redirectURL.toString());
           // Alert user
+          alert("Link copied to clipboard, redirecting once you close this.");
           const newWindow = window.open(redirectURL, "_blank");
           newWindow?.focus();
         }}

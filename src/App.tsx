@@ -1,14 +1,40 @@
+import { ErrorBoundary } from "react-error-boundary";
 import "./App.css";
 import Canvas from "./components/Canvas";
 import Alerts from "./components/ui/Alerts";
 import Overlay from "./components/ui/UiOverlay";
+import Button from "./components/ui/Button";
+import { useDrawing } from "./store/Store";
 
 export default function App() {
+  const clearAll = useDrawing((s) => s.clearAll);
   return (
-    <>
+    <ErrorBoundary
+      FallbackComponent={Fallback}
+      onReset={() => {
+        clearAll();
+      }}
+    >
       <Canvas />
       <Overlay />
       <Alerts />
-    </>
+    </ErrorBoundary>
+  );
+}
+
+function Fallback({ error, resetErrorBoundary }: any) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  return (
+    <div
+      role="alert"
+      className="inset-0 z-[100] flex w-screen h-screen justify-center items-center"
+    >
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+      <Button onClick={() => resetErrorBoundary()}>
+        Reset all state, and retry
+      </Button>
+    </div>
   );
 }
