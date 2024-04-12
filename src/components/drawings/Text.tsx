@@ -41,7 +41,7 @@ export default function Text(prop: Drawings<"text">[0]) {
         opacity: prop.opacity,
         fontSize: prop.font,
       }}
-      onPointerDown={(e) => e.stopPropagation()}
+      // onPointerDown={(e) => e.stopPropagation()}
     >
       <input
         name={`${prop.id}`}

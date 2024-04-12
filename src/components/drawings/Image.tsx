@@ -42,7 +42,6 @@ export default function Image(prop: Drawings<"image">[0]) {
           opacity: prop.opacity,
         }}
         onPointerDown={(ev) => {
-          ev.stopPropagation();
           activeTool === "hand" && setMoveComp(true);
         }}
         onDoubleClick={() => {
@@ -50,8 +49,8 @@ export default function Image(prop: Drawings<"image">[0]) {
           setMoveComp(true);
         }}
         onPointerMove={(ev) => {
-          ev.stopPropagation();
           if (!moveComp) return;
+          ev.bubbled = true;
           const edit = produce(prop, (draft) => {
             draft.prop.x += ev.movementX;
             draft.prop.y += ev.movementY;

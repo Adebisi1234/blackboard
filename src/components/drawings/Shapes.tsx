@@ -32,12 +32,11 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
           ref={rectRef}
           className={`z-${prop.id}`}
           onPointerDown={(ev) => {
-            ev.stopPropagation();
             activeTool === "hand" && setMoveComp(true);
           }}
           onPointerMove={(ev) => {
-            ev.stopPropagation();
             if (!moveComp) return;
+            ev.bubbled = true;
 
             const edit = produce(prop, (draft) => {
               draft.prop.pos.x += ev.movementX;

@@ -50,13 +50,11 @@ export default function Note(prop: Drawings<"note">[0]) {
           fontSize: prop.font,
         }}
         onPointerDown={(ev) => {
-          ev.stopPropagation();
           activeTool === "hand" && setMoveComp(true);
         }}
         onPointerMove={(ev) => {
-          ev.stopPropagation();
           if (!moveComp) return;
-
+          ev.bubbled = true;
           const edit = produce(prop, (draft) => {
             draft.pos.x = (draft.pos.x ?? 0) + ev.movementX;
             draft.pos.y = (draft.pos.y ?? 0) + ev.movementY;

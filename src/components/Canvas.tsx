@@ -21,6 +21,7 @@ import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
+
 export default function Canvas() {
   const {
     init,
@@ -60,7 +61,6 @@ export default function Canvas() {
 
   useEffect(() => {
     if (location.search) {
-      console.log(ws, "wtf");
       ws?.addEventListener("open", () => {
         console.log("ws connected");
       });
@@ -80,7 +80,7 @@ export default function Canvas() {
   }
 
   const handleMouseDown = (
-    e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
+    e: React.PointerEvent<HTMLDivElement | SVGCircleElement>
   ) => {
     if (!canvasRef) {
       return;
@@ -128,7 +128,6 @@ export default function Canvas() {
             (drawing[id].prop.type === "pencil" ||
               drawing[id].prop.type === "arrow")
           ) {
-            console.log("mover", id);
             setMoveCompId(+id);
             setActiveComp(+id);
             return;
@@ -158,7 +157,7 @@ export default function Canvas() {
   };
 
   const handleMouseMove = (
-    e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
+    e: React.PointerEvent<HTMLDivElement | SVGCircleElement>
   ) => {
     if (!canvasRef) {
       return;
@@ -178,8 +177,6 @@ export default function Canvas() {
       });
       return;
     }
-
-    // Move components too flicker to do so themselves: pencil, arrow
 
     // Showcase hovered components
     if (!isToolActive) {
@@ -211,21 +208,23 @@ export default function Canvas() {
       return;
     }
 
+    // Move components too flicker to do so themselves: pencil, arrow and also canvas
+
     if (activeTool === "hand") {
       if (!canvasRef) {
         return;
       }
       if (typeof moveCompId === "number") {
-        console.log("move");
         movePencilOrArrow(moveCompId, e);
         return;
       }
-
-      setCanvasPos({
-        x: canvasPos.x + e.movementX,
-        y: canvasPos.y + e.movementY,
-      });
-      canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
+      if (!e.bubbled) {
+        setCanvasPos({
+          x: canvasPos.x + e.movementX,
+          y: canvasPos.y + e.movementY,
+        });
+        canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
+      }
       return;
     }
     modifyDrawing({
@@ -248,7 +247,7 @@ export default function Canvas() {
     return;
   };
   const handleMouseUp = (
-    e: React.MouseEvent<HTMLDivElement | SVGCircleElement, MouseEvent>
+    e: React.PointerEvent<HTMLDivElement | SVGCircleElement>
   ) => {
     // Adjusting Existing comp
     if (adjustCompId) {
@@ -321,15 +320,7 @@ export default function Canvas() {
       onPointerDown={handleMouseDown}
       onPointerMove={handleMouseMove}
       onPointerUp={handleMouseUp}
-      onPointerLeave={() => {
-        // Removing pointer
-        if (drawing[drawing.length - 1]?.prop.type === "pointer") {
-          cleanUpDrawing({
-            drawing,
-            clearPointer,
-          });
-        }
-      }}
+      onPointerLeave={handleMouseUp}
       className="absolute inset-0 w-screen h-screen canvas bg overflow-clip"
     >
       <div

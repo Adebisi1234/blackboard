@@ -132,6 +132,7 @@ export default function CompOverlay(prop: Prop) {
               fill="none"
               stroke="white"
             ></rect>
+
             <circle
               cx={x}
               cy={y}
