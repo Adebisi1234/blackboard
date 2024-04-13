@@ -16,7 +16,7 @@ export default function MenuDialog() {
   const [popup, setPopup] = useState<
     "file" | "edit" | "view" | "export" | null
   >(null);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
 
   return (
     <DialogContainer

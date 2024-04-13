@@ -14,7 +14,7 @@ export default function Image(prop: Drawings<"image">[0]) {
   const { src, alt, width, height, x, y } = prop.prop;
   const imgRef = useRef<HTMLImageElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const [moveComp, setMoveComp] = useState(false);
   const { activeTool, setActiveTool } = useActiveTool();
   const updateDrawing = useDrawing((state) => state.updateDrawing);
@@ -28,7 +28,7 @@ export default function Image(prop: Drawings<"image">[0]) {
       height,
       id: prop.id,
     });
-  }, [width, height, prop.prop, canvasPos, windowWidth, imgRef]);
+  }, [width, height, prop.prop, canvasPos, windowWidth, windowHeight, imgRef]);
   return (
     <>
       <div

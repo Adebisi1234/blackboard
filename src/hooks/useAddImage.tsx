@@ -20,34 +20,37 @@ export default function useAddImage(drawingId: { current: number }) {
         alt: "Image uploaded by user",
         width: Math.min(
           (image.width / image.height) *
-            Math.min(image.height, innerHeight - 400),
+            Math.min(image.height, windowHeight - 400),
           innerWidth
         ),
-        height: Math.min(Math.min(image.height, innerHeight - 400), innerWidth),
+        height: Math.min(
+          Math.min(image.height, windowHeight - 400),
+          innerWidth
+        ),
         x:
           innerWidth / 2 -
           Math.min(
             (image.width / image.height) *
-              Math.min(image.height, innerHeight - 400),
+              Math.min(image.height, windowHeight - 400),
             innerWidth
           ) /
             2,
         y:
-          innerHeight / 2 -
-          Math.min(Math.min(image.height, innerHeight - 400), innerWidth) / 2,
+          windowHeight / 2 -
+          Math.min(Math.min(image.height, windowHeight - 400), innerWidth) / 2,
       },
       pos: {
         x:
           innerWidth / 2 -
           Math.min(
             (image.width / image.height) *
-              Math.min(image.height, innerHeight - 400),
+              Math.min(image.height, windowHeight - 400),
             innerWidth
           ) /
             2,
         y:
-          innerHeight / 2 -
-          Math.min(Math.min(image.height, innerHeight - 400), innerWidth) / 2,
+          windowHeight / 2 -
+          Math.min(Math.min(image.height, windowHeight - 400), innerWidth) / 2,
       },
     } satisfies Drawings<"image">[0];
     setDrawing(newImageComp);

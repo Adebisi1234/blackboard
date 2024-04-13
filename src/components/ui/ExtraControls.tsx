@@ -7,7 +7,7 @@ import { generateImage } from "../../utils/drawings";
 export default function ExtraControls() {
   const setImage = useImage((state) => state.setImage);
   const { activeTool, setActiveTool } = useActiveTool();
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   return (
     <>
       {windowWidth < 768 && (

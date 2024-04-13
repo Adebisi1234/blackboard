@@ -16,7 +16,7 @@ import {
 import UndoRedoTrash from "./UndoRedoTrash";
 
 export default function Pages() {
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const { dialog, setDialog, reset } = useOpenDialog();
   const page = useDrawing((s) => s.getPages()[0]);
   return (

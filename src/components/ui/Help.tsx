@@ -6,7 +6,7 @@ import { QuestionMark } from "./Svg";
 
 export default function Help() {
   const { dialog, setDialog, reset } = useOpenDialog();
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   return (
     <>
       {windowWidth >= 768 && (

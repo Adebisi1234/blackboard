@@ -15,7 +15,7 @@ import useWindowSize from "../../hooks/useWindowSize";
 export default function Arrow(prop: Drawings<"arrow">[0]) {
   const { startPos, endPos, qCurve } = prop.prop;
   const canvasPos = useCanvas((s) => s.canvasPos);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
 
   const headAngle = (() => {
     const dx = endPos.x - (qCurve ? qCurve.x : startPos.x);
@@ -39,7 +39,7 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
       width,
       height,
     });
-  }, [endPos, canvasPos, startPos, windowWidth, qCurve]);
+  }, [endPos, canvasPos, startPos, windowWidth, windowHeight, qCurve]);
   return (
     <>
       <svg id={`${prop.id}`} fill="none">

@@ -9,7 +9,7 @@ export default function Text(prop: Drawings<"text">[0]) {
   const containerRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
   const { getDrawing, updateDrawing } = useDrawing();
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const drawing = getDrawing();
   useEffect(() => {
     const { width, height, x, y } = containerRef.current
@@ -26,6 +26,7 @@ export default function Text(prop: Drawings<"text">[0]) {
     containerRef.current?.offsetWidth,
     containerRef.current?.offsetHeight,
     windowWidth,
+    windowHeight,
     prop.pos,
   ]);
   return (

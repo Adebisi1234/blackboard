@@ -8,7 +8,7 @@ import { useOpenDialog } from "../../store/Store";
 
 export default function Zoom() {
   const [miniActive, setMiniActive] = useState(false);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const { dialog, setDialog, reset } = useOpenDialog();
   return (
     <>

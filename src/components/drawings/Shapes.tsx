@@ -10,7 +10,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
   const setLocation = useLocation((state) => state.setLocation);
   const [moveComp, setMoveComp] = useState(false);
   const { activeTool, setActiveTool } = useActiveTool();
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const updateDrawing = useDrawing((s) => s.updateDrawing);
   useEffect(() => {
     if (!rectRef.current) return;
@@ -24,7 +24,14 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
       height,
       id: prop.id,
     });
-  }, [prop.prop.width, prop.prop.height, prop.prop.pos, windowWidth]);
+  }, [
+    prop.prop.width,
+    prop.prop.height,
+    prop.prop.pos,
+    windowWidth,
+    windowHeight,
+    windowHeight,
+  ]);
   return (
     <>
       <svg id={`${prop.id}`}>

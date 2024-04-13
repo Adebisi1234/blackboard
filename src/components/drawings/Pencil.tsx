@@ -8,7 +8,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
   const canvasPos = useCanvas((s) => s.canvasPos);
   const setLocation = useLocation((state) => state.setLocation);
   const pathRef = useRef<SVGPathElement>(null);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const d = prop.prop.path
     .map(({ func, x, y }) => {
       return `${func} ${x * prop.scale} ${y * prop.scale}`;
@@ -24,7 +24,15 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
       height,
       id: prop.id,
     });
-  }, [prop.prop.path, canvasPos, prop.pos.x, prop.pos.y, windowWidth]);
+  }, [
+    prop.prop.path,
+    canvasPos,
+    prop.pos.x,
+    prop.pos.y,
+    windowWidth,
+    windowHeight,
+    windowHeight,
+  ]);
   return (
     <>
       <svg

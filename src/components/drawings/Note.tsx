@@ -12,7 +12,7 @@ export default function Note(prop: Drawings<"note">[0]) {
   const { activeTool, setActiveTool } = useActiveTool();
   const [edit, setEdit] = useState(true);
   const [moveComp, setMoveComp] = useState(false);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   if (edit) {
     textRef.current?.focus();
   }
@@ -35,6 +35,7 @@ export default function Note(prop: Drawings<"note">[0]) {
     containerRef.current?.offsetHeight,
     prop.pos,
     windowWidth,
+    windowHeight,
   ]);
   return (
     <>

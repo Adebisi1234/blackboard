@@ -28,7 +28,7 @@ import UndoRedoTrash from "./UndoRedoTrash";
 export default function Controls() {
   const { activeTool, setActiveTool } = useActiveTool();
   const { dialog, setDialog, reset } = useOpenDialog();
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const setImage = useImage((state) => state.setImage);
   return (
     <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-fit">

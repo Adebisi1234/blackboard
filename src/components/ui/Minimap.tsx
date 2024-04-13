@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useCanvas, useDrawing, useLocation } from "../../store/Store";
 import useWindowSize from "../../hooks/useWindowSize";
 import { Drawings, Location } from "../../types/general";
+import { getRandomColor } from "../../utils/drawings";
 
 export default function Minimap() {
   const drawing = useDrawing((s) => s.getDrawing());
@@ -13,7 +14,7 @@ export default function Minimap() {
     shape: getRandomColor(),
   });
   const canvasPos = useCanvas((s) => s.canvasPos);
-  const windowWidth = useWindowSize();
+  const [windowWidth, windowHeight] = useWindowSize();
   const change = useRef({
     dx: 0,
     dy: 0,
@@ -32,14 +33,14 @@ export default function Minimap() {
   };
   const mapRatio = {
     x: mapSize.width / (windowWidth + change.current.dx),
-    y: mapSize.height / (innerHeight + change.current.dy),
+    y: mapSize.height / (windowHeight + change.current.dy),
   };
 
   const screenPos = {
     x: -canvasPos.x * mapRatio.x,
     y: -canvasPos.y * mapRatio.y,
     width: mapRatio.x * windowWidth,
-    height: mapRatio.y * innerHeight,
+    height: mapRatio.y * windowHeight,
   };
 
   const minimapRef = useRef<HTMLCanvasElement>(null);
@@ -176,13 +177,4 @@ function renderComp({
       break;
     }
   }
-}
-
-function getRandomColor() {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
 }

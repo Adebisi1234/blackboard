@@ -28,11 +28,14 @@ function Fallback({ error, resetErrorBoundary }: any) {
   return (
     <div
       role="alert"
-      className="absolute inset-0 flex items-center justify-center w-screen h-screen text-red-500"
+      className="absolute inset-0 flex flex-col items-center justify-center w-screen h-screen text-red-500"
     >
       <p>Something went wrong:</p>
       <pre style={{ color: "red" }}>{error.message}</pre>
-      <Button onClick={() => resetErrorBoundary()}>
+      <Button
+        onClick={() => resetErrorBoundary()}
+        className="w-fit bg-red-500 text-white px-2 py-1"
+      >
         Reset all state, and retry
       </Button>
     </div>
