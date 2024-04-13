@@ -119,7 +119,6 @@ export const useActive = create<ActiveCompState>()((set) => ({
   },
 }));
 
-// This has gotten reallllyyy messy
 export const useDrawing = create<DrawingState>()(
   persist(
     immer((set, get) => ({
