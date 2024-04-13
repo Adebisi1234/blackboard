@@ -21,6 +21,7 @@ import useUpdateGeneral from "../hooks/useUpdateGeneral";
 import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
+import { Cursor } from "./ui/Svg";
 
 export default function Canvas() {
   const {
@@ -35,6 +36,7 @@ export default function Canvas() {
     highlightComp,
     readOnly,
     ws,
+    userId,
   } = useDrawing();
   const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
@@ -58,6 +60,9 @@ export default function Canvas() {
   useShortcuts();
   const movePencilOrArrow = useMovePencilAndArrowComp();
   const [moveCompId, setMoveCompId] = useState<number | null>(null);
+  const [cursors, setCursors] = useState<
+    Record<string, { x: number; y: number }>
+  >({});
 
   useEffect(() => {
     if (room) {
@@ -65,7 +70,16 @@ export default function Canvas() {
         console.log("ws connected");
       });
       ws?.addEventListener("message", (ev) => {
-        init(JSON.parse(ev.data));
+        let message = JSON.parse(ev.data);
+        if (message.cursor) {
+          setCursors((prev) => {
+            const temp = { ...prev };
+            temp[message.cursor.userId] = message.cursor.pos;
+            return temp;
+          });
+          return;
+        }
+        init(message);
       });
     }
   }, [room, ws]);
@@ -163,6 +177,21 @@ export default function Canvas() {
       return;
     }
 
+    ws?.send(
+      JSON.stringify({
+        message: {
+          cursor: {
+            userId,
+            pos: {
+              x: e.clientX,
+              y: e.clientY,
+            },
+          },
+          timestamps: Date.now(),
+        },
+        id: userId,
+      })
+    );
     // Adjusting Existing comp
     if (adjustCompId) {
       adjustComp({
@@ -315,6 +344,10 @@ export default function Canvas() {
   };
 
   const components = drawing.map(drawOnCanvas);
+
+  const cursorEl = Object.keys(cursors).map((userId) => {
+    return <Cursor pos={cursors[userId]} key={userId}></Cursor>;
+  });
   return (
     <div
       onPointerDown={handlePointerDown}
@@ -332,6 +365,7 @@ export default function Canvas() {
           setRef(node);
         }}
       >
+        {cursorEl}
         {components}
       </div>
     </div>

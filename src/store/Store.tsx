@@ -254,7 +254,6 @@ export const useDrawing = create<DrawingState>()(
                   userId: state.userId,
                   readOnly: state.viewOnly,
                 },
-                room: room,
                 id: state.userId,
               })
             );
@@ -277,7 +276,6 @@ export const useDrawing = create<DrawingState>()(
                   userId: state.userId,
                   readOnly: state.viewOnly,
                 },
-                room: room,
                 id: state.userId,
               })
             );
@@ -319,7 +317,6 @@ export const useDrawing = create<DrawingState>()(
                   userId: state.userId,
                   readOnly: state.viewOnly,
                 },
-                room: room,
                 id: state.userId,
               })
             );
@@ -329,7 +326,10 @@ export const useDrawing = create<DrawingState>()(
       undo() {
         if (get().viewOnly) return;
         set((state) => {
-          const id = state.drawing[get().page].length - 1;
+          const id =
+            state.drawing[get().page].length -
+            state.deletedComps[get().page].length -
+            1;
           if (id < 0) return state;
           state.drawing[get().page][id].opacity = 0;
           if (state.drawing[get().page][id]?.prop.type !== "pointer") {
@@ -349,7 +349,6 @@ export const useDrawing = create<DrawingState>()(
                   userId: state.userId,
                   readOnly: state.viewOnly,
                 },
-                room: room,
                 id: state.userId,
               })
             );
@@ -467,7 +466,6 @@ export const useDrawing = create<DrawingState>()(
                   userId: state.userId,
                   readOnly: state.viewOnly,
                 },
-                room: room,
                 id: state.userId,
               })
             );

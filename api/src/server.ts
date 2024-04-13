@@ -11,8 +11,9 @@ wss.on("connection", function connection(ws: ws, req) {
   ws.room = req.url;
   ws.on("error", console.error);
   ws.on("message", function message(data, isBinary) {
-    const processedData: { message: any; room: string; id: string } =
-      JSON.parse(data.toString());
+    const processedData: { message: any; id: string } = JSON.parse(
+      data.toString()
+    );
     ws.id = processedData.id;
 
     wss.clients.forEach(function each(client: ws) {
