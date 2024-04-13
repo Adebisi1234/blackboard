@@ -176,22 +176,23 @@ export default function Canvas() {
     if (!canvasRef) {
       return;
     }
-
-    ws?.send(
-      JSON.stringify({
-        message: {
-          cursor: {
-            userId,
-            pos: {
-              x: e.clientX,
-              y: e.clientY,
+    if (navigator.onLine) {
+      ws?.send(
+        JSON.stringify({
+          message: {
+            cursor: {
+              userId,
+              pos: {
+                x: e.clientX - canvasRef.getBoundingClientRect().x,
+                y: e.clientY - canvasRef.getBoundingClientRect().y,
+              },
             },
+            timestamps: Date.now(),
           },
-          timestamps: Date.now(),
-        },
-        id: userId,
-      })
-    );
+          id: userId,
+        })
+      );
+    }
     // Adjusting Existing comp
     if (adjustCompId) {
       adjustComp({
