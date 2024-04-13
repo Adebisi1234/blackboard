@@ -1,49 +1,43 @@
-import { useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import "./App.css";
-import Board from "./components/Board";
-import Footer from "./components/Footer";
-import { type Colors, type Tools } from "./types/ActiveTools";
-function App() {
-  const [color, setColor] = useState<Colors>("#fff");
-  const [tool, setTool] = useState<Tools>({
-    toolName: "",
-    toolElement: null!,
-  });
-  const [title, setTitle] = useState(() => {
-    return localStorage.getItem("title") ?? "";
-  });
+import Canvas from "./components/Canvas";
+import Alerts from "./components/ui/Alerts";
+import Overlay from "./components/ui/UiOverlay";
+import Button from "./components/ui/Button";
+import { useDrawing } from "./store/Store";
 
-  useEffect(() => {
-    tool.toolElement?.classList.add("active");
-  }, [tool]);
-
-  useEffect(() => {
-    if (title === "") {
-      document.title =
-        "Blackboard | Beautiful Interactive board you can share with friends";
-    } else {
-      document.title = `Blackboard | ${title}`;
-    }
-    localStorage.setItem("title", title);
-  }, [title]);
+export default function App() {
+  const clearAll = useDrawing((s) => s.clearAll);
   return (
-    <>
-      <Board
-        toolName={tool.toolName}
-        shape={tool.shape}
-        color={color}
-        setTitle={setTitle}
-      />
-      <Footer
-        setTool={setTool}
-        tool={tool}
-        setColor={setColor}
-        color={color}
-        title={title}
-        setTitle={setTitle}
-      />
-    </>
+    <ErrorBoundary
+      FallbackComponent={Fallback}
+      onReset={() => {
+        clearAll();
+      }}
+    >
+      <Canvas />
+      <Overlay />
+      <Alerts />
+    </ErrorBoundary>
   );
 }
 
-export default App;
+function Fallback({ error, resetErrorBoundary }: any) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  return (
+    <div
+      role="alert"
+      className="absolute inset-0 flex flex-col items-center justify-center w-screen h-screen text-red-500"
+    >
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+      <Button
+        onClick={() => resetErrorBoundary()}
+        className="w-fit bg-red-500 text-white px-2 py-1"
+      >
+        Reset all state, and retry
+      </Button>
+    </div>
+  );
+}

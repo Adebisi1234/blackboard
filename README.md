@@ -1,8 +1,10 @@
-# Maths + SVGs + Awesomeness 
+# Maths + SVGs + Awesomeness
+
 
 ## Main Branch
 
 A simple, fast and efficient drawing tool with the following features
+
 - Free hand draw
 - Multiple shapes (triangle, rectangle, circle, etc)
 - Eraser
@@ -10,7 +12,6 @@ A simple, fast and efficient drawing tool with the following features
 - Customization
 - Text input
 - Undo/Redo Feature
-
 
 ## Prod Branch
 
@@ -22,4 +23,5 @@ Currently implemented better versions of all main branch features
 
 - Image upload feature
 
-*In active development*
+_In active development_
+
