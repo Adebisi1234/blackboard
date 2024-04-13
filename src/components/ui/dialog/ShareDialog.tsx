@@ -34,7 +34,16 @@ export default function ShareDialog() {
         className="flex-col items-start p-1 w-fit"
         onClick={async () => {
           if (room) {
-            navigator.clipboard.writeText(location.toString());
+            if (
+              new URL(location.toString()).searchParams.get("viewonly") ===
+              "true"
+            ) {
+              navigator.clipboard.writeText(location.toString());
+            } else {
+              const redirectURL = new URL(location.toString());
+              redirectURL.searchParams.append("viewonly", "true");
+              await navigator.clipboard.writeText(redirectURL.toString());
+            }
             // Alert user
             alert("Link copied to clipboard, Please share.");
             return;

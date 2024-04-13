@@ -28,7 +28,7 @@ export default function Alerts() {
   }, []);
   return (
     <aside className="absolute top-0 flex justify-center w-full p-2 text-xs text-center pointer-events-none h-fit">
-      <p className="text-red-500" ref={disclaimerRef}>
+      {!room && <p className="text-red-500" ref={disclaimerRef}>
         This project is inspired by{" "}
         <a href="http://tldraw.com" className="underline">
           tldraw.com
@@ -43,7 +43,7 @@ export default function Alerts() {
         >
           x
         </span>
-      </p>
+      </p>}
       {readOnly && (
         <p className="absolute p-2 mt-5 border rounded-md">Offline</p>
       )}

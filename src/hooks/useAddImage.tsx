@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { Drawings, ImageType } from "../types/general";
+import { Drawings } from "../types/general";
 import { useDrawing, useGeneral, useImage } from "../store/Store";
+import useWindowSize from "./useWindowSize";
 
 export default function useAddImage(drawingId: { current: number }) {
   const { image, clearImage } = useImage();
   const setDrawing = useDrawing((state) => state.setDrawing);
   const general = useGeneral((state) => state.general);
+  const windowHeight = useWindowSize()[1];
   useEffect(() => {
     if (!image) {
       return;
