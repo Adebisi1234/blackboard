@@ -28,7 +28,7 @@ function Fallback({ error, resetErrorBoundary }: any) {
   return (
     <div
       role="alert"
-      className="inset-0 z-[100] flex w-screen h-screen justify-center items-center"
+      className="absolute inset-0 flex items-center justify-center w-screen h-screen text-red-500"
     >
       <p>Something went wrong:</p>
       <pre style={{ color: "red" }}>{error.message}</pre>

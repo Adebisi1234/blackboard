@@ -15,6 +15,7 @@ const room = new URL(location.toString()).searchParams.get("room") ?? "";
 const viewOnly = Boolean(
   new URL(location.toString()).searchParams.get("viewonly")
 );
+const WS_URL = import.meta.env.VITE_WS_URL;
 interface DrawingState {
   ws: WebSocket | null;
   drawing: { [key: number]: Drawings };
@@ -122,7 +123,12 @@ export const useActive = create<ActiveCompState>()((set) => ({
 export const useDrawing = create<DrawingState>()(
   persist(
     immer((set, get) => ({
-      ws: room.length > 0 ? new WebSocket(`ws://localhost:8080/${room}`) : null,
+      ws:
+        room.length > 0
+          ? new WebSocket(
+              `${import.meta.env.DEV ? "ws" : "wss"}://${WS_URL}/${room}`
+            )
+          : null,
       drawing: {
         1: [],
       },
