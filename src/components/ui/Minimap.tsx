@@ -103,6 +103,7 @@ function renderComp({
     shape: string;
   };
 }) {
+	ctx.beginPath();
   switch (comp?.prop.type) {
     case "image":
     case "note":
@@ -146,7 +147,6 @@ function renderComp({
       };
 
       ctx.strokeStyle = colors.arrow;
-      ctx.beginPath();
       ctx.moveTo(startPos.x, startPos.y);
       if (qCurve) {
         qCurve = {
