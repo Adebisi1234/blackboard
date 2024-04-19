@@ -37,6 +37,7 @@ export default function Canvas() {
     readOnly,
     ws,
     userId,
+    userOffline,
   } = useDrawing();
   const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
@@ -68,6 +69,7 @@ export default function Canvas() {
     if (room) {
       ws?.addEventListener("open", () => {
         console.log("ws connected");
+        !readOnly && userOffline(false);
       });
       ws?.addEventListener("message", (ev) => {
         let message = JSON.parse(ev.data);
@@ -176,7 +178,7 @@ export default function Canvas() {
     if (!canvasRef) {
       return;
     }
-    if (navigator.onLine) {
+    if (navigator.onLine && ws?.readyState === ws?.OPEN) {
       ws?.send(
         JSON.stringify({
           message: {
