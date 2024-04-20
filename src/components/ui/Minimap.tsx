@@ -103,7 +103,7 @@ function renderComp({
     shape: string;
   };
 }) {
-	ctx.beginPath();
+  ctx.beginPath();
   switch (comp?.prop.type) {
     case "image":
     case "note":

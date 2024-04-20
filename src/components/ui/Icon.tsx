@@ -1,7 +1,7 @@
 import { cn } from "../../utils/cn";
 
 export interface IconProp extends React.HTMLAttributes<HTMLDivElement> {
-  children?: JSX.Element;
+  children?: JSX.Element | string;
   className?: string;
 }
 

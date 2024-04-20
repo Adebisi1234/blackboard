@@ -6,7 +6,7 @@ import useWindowSize from "../../hooks/useWindowSize";
 
 export function Pencil() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -35,7 +35,7 @@ export function Pencil() {
 
 export function Arrow() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -59,7 +59,7 @@ export function Arrow() {
 
 export function Eraser() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -83,7 +83,7 @@ export function Eraser() {
 
 export function Hand() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -107,7 +107,7 @@ export function Hand() {
 
 export function Note() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -130,7 +130,7 @@ export function Note() {
 
 export function Text() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -151,7 +151,7 @@ export function Text() {
 
 export function Pointer() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -174,7 +174,7 @@ export function Pointer() {
 
 export function Trash() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -204,7 +204,7 @@ export function Trash() {
 
 export function Undo() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -227,7 +227,7 @@ export function Undo() {
 
 export function SizeS() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -248,7 +248,7 @@ export function SizeS() {
 
 export function SizeM() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -269,7 +269,7 @@ export function SizeM() {
 
 export function SizeL() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -290,7 +290,7 @@ export function SizeL() {
 
 export function SizeXL() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="31"
@@ -311,7 +311,7 @@ export function SizeXL() {
 
 export function Redo() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -334,7 +334,7 @@ export function Redo() {
 
 export function QuestionMark() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -362,7 +362,7 @@ export function QuestionMark() {
 
 export function Menu() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -383,7 +383,7 @@ export function Menu() {
 
 export function ImageIcon() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -413,7 +413,7 @@ export function ImageIcon() {
 
 export function GeoRect() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -435,7 +435,7 @@ export function GeoRect() {
 
 export function FillSolid() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -464,7 +464,7 @@ export function FillSolid() {
 
 export function FillSemi() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -487,7 +487,7 @@ export function FillSemi() {
 
 export function FillPattern() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -517,7 +517,7 @@ export function FillPattern() {
 
 export function FillNone() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -540,7 +540,7 @@ export function FillNone() {
 
 export function Duplicate() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -563,7 +563,7 @@ export function Duplicate() {
 
 export function DotVertical() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -584,7 +584,7 @@ export function DotVertical() {
 
 export function DashSolid() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -598,7 +598,7 @@ export function DashSolid() {
           cy="15"
           r="11.5"
           stroke="#fff"
-          className=" stroke-current"
+          className="stroke-current "
           strokeWidth="3"
         />
       </svg>
@@ -608,7 +608,7 @@ export function DashSolid() {
 
 export function DashDraw() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -631,7 +631,7 @@ export function DashDraw() {
 
 export function DashDotted() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -652,7 +652,7 @@ export function DashDotted() {
 
 export function DashDashed() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -675,7 +675,7 @@ export function DashDashed() {
 
 export function ColorsIcon() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -692,7 +692,7 @@ export function ColorsIcon() {
 
 export function ChevronNe() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -716,7 +716,7 @@ export function ChevronNe() {
 
 export function ChevronUp() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -738,7 +738,7 @@ export function ChevronUp() {
 }
 export function ChevronDown() {
   return (
-    <Icon className="bg-transparent flex justify-center items-center">
+    <Icon className="flex items-center justify-center bg-transparent">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"

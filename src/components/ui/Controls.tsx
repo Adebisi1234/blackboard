@@ -30,6 +30,13 @@ export default function Controls() {
   const { dialog, setDialog, reset } = useOpenDialog();
   const [windowWidth, windowHeight] = useWindowSize();
   const setImage = useImage((state) => state.setImage);
+  // const tools = [
+  //   {
+  //     title: "Tool - Grab",
+  //     tool: "hand",
+
+  //   }
+  // ]TODO:  Make it easily extendable..
   return (
     <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-fit">
       {windowWidth < 768 && (
