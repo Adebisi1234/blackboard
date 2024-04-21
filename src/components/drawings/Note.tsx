@@ -116,7 +116,7 @@ export default function Note(prop: Drawings<"note">[0]) {
         </div>
       </div>
       {prop.highlight && prop.opacity !== 0 && (
-        <CompOverlay id={prop.id} opacity={prop.opacity} type={"text"} />
+        <CompOverlay id={prop.id} opacity={prop.opacity} type={"note"} />
       )}
     </>
   );

@@ -6,7 +6,7 @@ type AdjustProp = {
   drawing: Drawings;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
   id: number;
-  compType: "arrow" | "pencil" | "image" | "shape" | "text";
+  compType: "arrow" | "pencil" | "image" | "shape" | "text" | "note";
   pos: string;
   location?: {
     [key: number]: Location;
@@ -56,7 +56,7 @@ export default function adjustComp({
   else return;
 }
 
-function adjustArrow({
+export function adjustArrow({
   e,
   drawing,
   updateDrawing,
@@ -85,7 +85,7 @@ function adjustArrow({
   updateDrawing(id, edit);
 }
 
-function adjustRect({
+export function adjustRect({
   e,
   drawing,
   updateDrawing,
@@ -143,7 +143,7 @@ function adjustRect({
   }
 }
 
-function adjustPencil({
+export function adjustPencil({
   e,
   drawing,
   updateDrawing,
@@ -183,7 +183,7 @@ function adjustPencil({
 
   updateDrawing(id, edit);
 }
-function adjustImage({
+export function adjustImage({
   e,
   drawing,
   updateDrawing,
@@ -227,7 +227,7 @@ function adjustImage({
   });
   updateDrawing!(id, edit);
 }
-function adjustShape({
+export function adjustShape({
   e,
   drawing,
   updateDrawing,
@@ -272,12 +272,16 @@ function adjustShape({
   // rect shape first
   updateDrawing!(id, edit);
 }
-function adjustText({
+export function adjustText({
   e,
   drawing,
   updateDrawing,
   id,
   pos,
+  canvasPos,
 }: Omit<AdjustProp, "compType">) {
-  const edit = produce(drawing[id] as Drawings<"text">[0], (draft) => {});
+  const edit = produce(drawing[id] as Drawings<"text">[0], (draft) => {
+    draft.pos = { x: e.clientX - canvasPos.x, y: e.clientY - canvasPos.y };
+  });
+  updateDrawing!(id, edit);
 }

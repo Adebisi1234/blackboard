@@ -22,17 +22,7 @@ describe(getRandomColor, () => {
 
 // describe(generateImage, () => {
 //   test("setImage should be called", async () => {
-//     const testingFile: File = {
-//       lastModified: 2393993,
-//       name: "demo.jpg",
-//       webkitRelativePath: "./",
-//       size: 2334,
-//       type: "test",
-//       arrayBuffer: vi.fn(),
-//       slice: vi.fn(),
-//       stream: vi.fn(),
-//       text: vi.fn(),
-//     };
+
 //     // Don't understand why this works yet
 //     // const setImage = vi.mock("../store/Store", async (Original) => {
 //     //   const actual: typeof useImage = await Original();

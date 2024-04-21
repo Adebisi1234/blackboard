@@ -2,7 +2,7 @@ import { useDrawing, useLocation } from "../../store/Store";
 import { Drawings } from "../../types/general";
 
 type Prop = {
-  type: "arrow" | "pencil" | "image" | "shape" | "text";
+  type: "arrow" | "pencil" | "image" | "shape" | "text" | "note";
   id: number;
   opacity: number;
 };
