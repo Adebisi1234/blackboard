@@ -17,7 +17,11 @@ export default function CompOverlay(prop: Prop) {
     return (
       <>
         {startPos.x !== endPos.x && startPos.y !== endPos.y && (
-          <svg opacity={prop.opacity === 0 ? 0 : 1} fill="none">
+          <svg
+            opacity={prop.opacity === 0 ? 0 : 1}
+            fill="none"
+            data-testid={`overlay-${prop.id}`}
+          >
             <g>
               <path
                 d={`M ${startPos.x} ${startPos.y} ${
@@ -81,6 +85,7 @@ export default function CompOverlay(prop: Prop) {
           <svg
             className={`z-${10 + prop.id}`}
             opacity={prop.opacity === 0 ? 0 : 1}
+            data-testid={`overlay-${prop.id}`}
           >
             <g>
               <circle
@@ -121,6 +126,7 @@ export default function CompOverlay(prop: Prop) {
         <svg
           className={`z-${10 + prop.id}`}
           opacity={prop.opacity === 0 ? 0 : 1}
+          data-testid={`overlay-${prop.id}`}
         >
           <g>
             <rect

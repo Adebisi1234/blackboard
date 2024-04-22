@@ -16,7 +16,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
     .join(" ");
   useEffect(() => {
     if (!pathRef.current) return;
-    const { width, height, x, y } = pathRef.current?.getBoundingClientRect();
+    const { width, height, x, y } = pathRef.current.getBoundingClientRect();
     setLocation({
       x,
       y,
@@ -43,6 +43,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
       >
         <g id={`${prop.id}`} opacity={prop.opacity}>
           <path
+            data-testid={prop.id}
             id={`${prop.id}`}
             ref={pathRef}
             d={`${d} z`}
@@ -59,6 +60,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
           {prop.hovered && (
             <path
               id={`${prop.id}`}
+              data-testid={`hovered-${prop.id}`}
               d={`${d} z`}
               stroke={"green"}
               strokeWidth={prop.strokeWidth / 2}

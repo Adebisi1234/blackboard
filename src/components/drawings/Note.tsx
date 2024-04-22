@@ -20,9 +20,8 @@ export default function Note(prop: Drawings<"note">[0]) {
   const drawing = getDrawing();
   useEffect(() => {
     if (!containerRef.current) return;
-    const { width, height, x, y } = containerRef.current
-      ?.getBoundingClientRect()
-      .toJSON();
+    const { width, height, x, y } =
+      containerRef.current.getBoundingClientRect();
     setLocation({
       width,
       height,
@@ -41,6 +40,7 @@ export default function Note(prop: Drawings<"note">[0]) {
     <>
       <div
         className={`z-${prop.id} -translate-x-1/2 -translate-y-1/2 min-h-[200px] w-[200px] max-w-[200px] rounded-lg h-fit relative flex justify-center items-center  p-1`}
+        data-testid={prop.id}
         style={{
           left: `${prop.pos.x}px`,
           top: `${prop.pos.y}px`,
@@ -92,6 +92,7 @@ export default function Note(prop: Drawings<"note">[0]) {
               name={`${prop.id}`}
               id={`${prop.id}`}
               ref={textRef}
+              data-testid={`textarea-${prop.id}`}
               onKeyDown={(e) => {
                 if (!textRef.current) return;
                 if (e.key === "Backspace") {

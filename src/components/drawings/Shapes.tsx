@@ -16,7 +16,6 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
     if (!rectRef.current) return;
     const { x, y } = prop.prop.pos;
     const { width, height } = prop.prop;
-
     setLocation({
       x,
       y,
@@ -37,13 +36,15 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
       <svg id={`${prop.id}`}>
         <rect
           ref={rectRef}
+          data-testid={prop.id}
           className={`z-${prop.id}`}
           onPointerDown={(ev) => {
+            // console.log(ev);
             activeTool === "hand" && setMoveComp(true);
           }}
           onPointerMove={(ev) => {
+            console.log("move", ev);
             if (!moveComp) return;
-            ev.bubbled = true;
 
             const edit = produce(prop, (draft) => {
               draft.prop.pos.x += ev.movementX;
@@ -89,6 +90,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
             strokeDasharray={prop.dash}
             strokeWidth={1.5}
             className={`z-${prop.id}`}
+            data-testid={`hovered-${prop.id}`}
           ></rect>
         )}
       </svg>

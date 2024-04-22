@@ -12,7 +12,7 @@ import { useDrawing, useGeneral } from "../../store/Store";
 import { Drawings } from "../../types/general";
 
 describe(Text, () => {
-  test("Text component renders", () => {
+  test("Text component renders", async () => {
     const { setDrawing, getDrawing, updateDrawing } = renderHook(() =>
       useDrawing()
     ).result.current;
@@ -41,7 +41,7 @@ describe(Text, () => {
     act(() => {
       updateDrawing(0, { ...newTextComp, opacity: 0 });
     });
-    expect(comp).toBeVisible();
+    expect(screen.findByTestId(0)).toBeVisible();
   });
   test("Hide component with opacity prop", async () => {
     const { setDrawing, getDrawing, updateDrawing } = renderHook(() =>
