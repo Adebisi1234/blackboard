@@ -237,15 +237,6 @@ export const useDrawing = create<DrawingState>()(
                 state.drawing[page][drawing.id] = drawing;
               }
             }
-            // state.drawing[page]
-            // if (get().timestamps < payload.timestamps) {
-            //   console.log("wtf");
-            //   return payload;
-            // } else {
-            //   // Check for differences and update them
-            //   console.log(get().timestamps, payload.timestamps);
-            //   console.log("skipped");
-            // }
           }
         }),
       setDrawing(payload: Drawings[0]) {

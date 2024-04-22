@@ -23,8 +23,8 @@ export default function Note(prop: Drawings<"note">[0]) {
     const { width, height, x, y } =
       containerRef.current.getBoundingClientRect();
     setLocation({
-      width,
-      height,
+      width: Math.max(width, 200), //For headless testing purpose
+      height: Math.max(height, 200),
       x: (prop.pos.x ?? x) - width / 2,
       y: (prop.pos.y ?? y) - height / 2,
       id: prop.id,
@@ -49,6 +49,7 @@ export default function Note(prop: Drawings<"note">[0]) {
           }`,
           opacity: prop.opacity,
           fontSize: prop.font,
+          width: 200,
         }}
         onPointerDown={(ev) => {
           activeTool === "hand" && setMoveComp(true);

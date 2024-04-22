@@ -38,12 +38,10 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
           ref={rectRef}
           data-testid={prop.id}
           className={`z-${prop.id}`}
-          onPointerDown={(ev) => {
-            // console.log(ev);
+          onPointerDown={() => {
             activeTool === "hand" && setMoveComp(true);
           }}
           onPointerMove={(ev) => {
-            console.log("move", ev);
             if (!moveComp) return;
 
             const edit = produce(prop, (draft) => {

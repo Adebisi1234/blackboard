@@ -184,43 +184,21 @@ describe(Shapes, () => {
         id: 0,
       });
     });
-    const container = render(
+    const old = getDrawing()[0];
+    const { rerender } = render(
       <Shapes {...(getDrawing()[0] as Drawings<"shape">[0])} />
-    ).container;
+    );
     const shapeComp = screen.getByTestId(0) as unknown as SVGRectElement;
-    fireEvent(
-      shapeComp,
-      new MouseEvent("pointermove", { clientX: 10, clientY: 10 })
-    );
-    fireEvent(
-      shapeComp,
-      new MouseEvent("pointermove", {
-        clientX: 2,
-        clientY: 2,
-        movementX: 1,
-        movementY: 1,
-      })
-    );
-    // user.pointer([
-    //   // touch the screen at element1
-    //   {
-    //     keys: "[TouchA>]",
-    //     target: container,
-    //     coords: { clientX: 10, clientY: 10 },
-    //   },
-    //   // move the touch pointer to element2
-    //   {
-    //     pointerName: "TouchA",
-    //     target: shapeComp,
-    //     coords: { clientX: 40, clientY: 30 },
-    //   },
-    //   // release the touch pointer at the last position (element2)
-    //   { keys: "[/TouchA]" },
-    // ]);
-    await waitFor(() => {
-      // expect(screen.queryByTestId(0)?.getAttribute("x")).toBe("30");
-      // console.log(screen.queryByTestId(0));
+    const event = new MouseEvent("pointermove", {
+      clientX: 200,
+      clientY: 200,
+      bubbles: true,
+      movementX: 100,
+      movementY: 50,
     });
-    // expect(shapeComp.getAttribute("x")).toBe("30");
+
+    fireEvent.pointerMove(shapeComp, event);
+    rerender(<Shapes {...(getDrawing()[0] as Drawings<"shape">[0])} />);
+    expect(old).toEqual(getDrawing()[0]);
   });
 });

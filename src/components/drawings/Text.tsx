@@ -15,8 +15,8 @@ export default function Text(prop: Drawings<"text">[0]) {
     if (!textRef.current) return;
     const { width, height, x, y } = textRef.current.getBoundingClientRect();
     setLocation({
-      width,
-      height,
+      width: Math.max(width, 4),
+      height: Math.max(height, 16),
       x,
       y,
       id: prop.id,
@@ -45,7 +45,7 @@ export default function Text(prop: Drawings<"text">[0]) {
           width: textRef.current?.offsetWidth,
           height: textRef.current?.offsetHeight,
         }}
-        // onPointerDown={(e) => e.stopPropagation()}
+        onPointerDown={(e) => (e.bubbled = true)}
       >
         <input
           name={`${prop.id}`}
