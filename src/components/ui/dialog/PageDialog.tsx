@@ -11,7 +11,10 @@ export default function PageDialog() {
   for (let i = 0; i < num.length; i++) {
     pages[i] = (
       <DialogItem key={`page:${num[i]}`}>
-        <div className="flex gap-3 ml-1 w-full text-left">
+        <div
+          className="flex gap-3 ml-1 w-full text-left"
+          data-testid="page-dialog"
+        >
           <p>{page === num[i] ? "•" : ""}</p>
           <p
             className="w-full"

@@ -12,8 +12,8 @@ describe("Share", () => {
     render(<Share />);
     const shareButton = screen.getByText("Share");
     fireEvent.click(shareButton);
-    const shareDialog = screen.getByRole("dialog");
-    expect(shareDialog).toBeInTheDocument();
+    const shareDialog = screen.getByTestId<HTMLDialogElement>("share-dialog");
+    expect(shareDialog.open).toBe(true);
   });
 
   test("closes the share dialog when the button is clicked again", () => {
@@ -21,7 +21,7 @@ describe("Share", () => {
     const shareButton = screen.getByText("Share");
     fireEvent.click(shareButton);
     fireEvent.click(shareButton);
-    const shareDialog = screen.queryByRole("dialog");
-    expect(shareDialog).not.toBeInTheDocument();
+    const shareDialog = screen.getByTestId<HTMLDialogElement>("share-dialog");
+    expect(shareDialog.open).toBe(false);
   });
 });

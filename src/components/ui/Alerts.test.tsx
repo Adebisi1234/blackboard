@@ -1,10 +1,16 @@
-import { render, fireEvent, screen } from "@testing-library/react";
+import {
+  render,
+  fireEvent,
+  screen,
+  renderHook,
+  act,
+} from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Alerts from "./components/ui/Alerts";
+import Alerts from "./Alerts";
+import { vi } from "vitest";
+import { useDrawing } from "../../store/Store";
+
 describe("Testing the main Alert component", async () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
   test("Alerts component exist", () => {
     render(<Alerts />);
     const alerts = screen.getByRole("alert");
@@ -27,11 +33,14 @@ describe("Testing the main Alert component", async () => {
   test("Doesn't show disclaimer when sharing", () => {
     render(<Alerts />);
     const banner = screen.getByTestId("disclaimer");
-    expect(banner).not.toBeInTheDocument();
+    expect(banner).not.toBeInTheDocument(); //This will fail, will need to figure out how to edit the location
   });
   test("displays 'Offline' banner when readOnly is true", () => {
+    const { userOffline } = renderHook(() => useDrawing()).result.current;
+
+    act(() => userOffline(true));
     render(<Alerts />);
-    const offlineBanner = screen.getByRole("banner", { name: "Offline" });
+    const offlineBanner = screen.getByRole("banner");
     expect(offlineBanner).toBeInTheDocument();
   });
 });

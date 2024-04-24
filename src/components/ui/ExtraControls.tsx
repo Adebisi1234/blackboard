@@ -32,6 +32,7 @@ export default function ExtraControls() {
             <label
               htmlFor="image"
               className="size-full flex justify-center items-center cursor-pointer"
+              data-testid="file-label"
             >
               <ImageIcon />
             </label>

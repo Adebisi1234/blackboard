@@ -6,7 +6,7 @@ export default function BackToContent() {
   return (
     <>
       {(Math.abs(canvasPos.x) > 300 || Math.abs(canvasPos.y) > 300) && (
-        <Button //Magic number habibi
+        <Button
           className="!absolute px-2 py-1 mt-2 rounded-md top-full left-2 w-fit bg-[#333438] z-20"
           onPointerDown={() => {
             if (!canvasRef) return;

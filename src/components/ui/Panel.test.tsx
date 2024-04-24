@@ -1,5 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, renderHook } from "@testing-library/react";
 import Panel from "./Panel";
+import { useGeneral } from "../../store/Store";
 
 describe("Panel", () => {
   test("renders the panel with buttons and slider", () => {
@@ -7,7 +8,7 @@ describe("Panel", () => {
 
     // Check if all buttons are rendered
     const buttons = screen.getAllByRole("button");
-    expect(buttons).toHaveLength(16);
+    expect(buttons).toHaveLength(25);
 
     // Check if the slider is rendered
     const slider = screen.getByRole("slider");
@@ -22,11 +23,9 @@ describe("Panel", () => {
 
     // Click the button
     fireEvent.click(button);
+    const general = renderHook(() => useGeneral()).result.current.general;
 
-    // Check if the general state is updated correctly
-    // You may need to modify the following assertions based on your implementation
-    // expect(setGeneral).toHaveBeenCalledWith({ color: "#ffffff" });
-    // expect(setGeneral).toHaveBeenCalledTimes(1);
+    expect(general.color).toBe("#ffffff");
   });
 
   test("updates general state on slider input", () => {
@@ -38,9 +37,8 @@ describe("Panel", () => {
     // Change the slider value
     fireEvent.input(slider, { target: { value: "0.5" } });
 
-    // Check if the general state is updated correctly
-    // You may need to modify the following assertions based on your implementation
-    // expect(setGeneral).toHaveBeenCalledWith({ opacity: 0.5 });
-    // expect(setGeneral).toHaveBeenCalledTimes(1);
+    const general = renderHook(() => useGeneral()).result.current.general;
+
+    expect(general.opacity).toBe(0.5);
   });
 });

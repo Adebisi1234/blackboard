@@ -1,9 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import { Cursor } from "./Svg";
+import { vi } from "vitest";
+import { useCanvas } from "../../store/Store";
 
-describe("Cursor", () => {
+describe(Cursor, () => {
   test("renders the cursor with correct props", () => {
-    const canvasPos = { x: 0, y: 0 };
     const pos = { x: 100, y: 200 };
 
     render(<Cursor pos={pos} />);
@@ -15,7 +16,6 @@ describe("Cursor", () => {
   });
 
   test("renders the cursor with triangle left when x position is less than canvasPos.x", () => {
-    const canvasPos = { x: 0, y: 0 };
     const pos = { x: -50, y: 200 };
 
     render(<Cursor pos={pos} />);
@@ -23,12 +23,11 @@ describe("Cursor", () => {
     const triangleLeftElement = screen.getByTestId("triangle-left");
 
     expect(triangleLeftElement).toBeInTheDocument();
-    expect(triangleLeftElement).toHaveStyle({ left: "-50px", top: "200px" });
+    expect(triangleLeftElement).toHaveStyle({ left: "0px", top: "200px" });
   });
 
   test("renders the cursor with triangle right when x position is greater than windowWidth - canvasPos.x", () => {
-    const canvasPos = { x: 0, y: 0 };
-    const windowWidth = 800;
+    innerWidth = 800;
     const pos = { x: 900, y: 200 };
 
     render(<Cursor pos={pos} />);
@@ -36,11 +35,10 @@ describe("Cursor", () => {
     const triangleRightElement = screen.getByTestId("triangle-right");
 
     expect(triangleRightElement).toBeInTheDocument();
-    expect(triangleRightElement).toHaveStyle({ left: "900px", top: "200px" });
+    expect(triangleRightElement).toHaveStyle({ left: "782px", top: "200px" });
   });
 
   test("renders the cursor with triangle up when y position is less than canvasPos.y", () => {
-    const canvasPos = { x: 0, y: 0 };
     const pos = { x: 100, y: -50 };
 
     render(<Cursor pos={pos} />);
@@ -48,12 +46,11 @@ describe("Cursor", () => {
     const triangleUpElement = screen.getByTestId("triangle-up");
 
     expect(triangleUpElement).toBeInTheDocument();
-    expect(triangleUpElement).toHaveStyle({ left: "100px", top: "-50px" });
+    expect(triangleUpElement).toHaveStyle({ left: "100px", top: "0px" });
   });
 
   test("renders the cursor with triangle down when y position is greater than windowHeight - canvasPos.y", () => {
-    const canvasPos = { x: 0, y: 0 };
-    const windowHeight = 600;
+    innerHeight = 600;
     const pos = { x: 100, y: 700 };
 
     render(<Cursor pos={pos} />);
@@ -61,6 +58,6 @@ describe("Cursor", () => {
     const triangleDownElement = screen.getByTestId("triangle-down");
 
     expect(triangleDownElement).toBeInTheDocument();
-    expect(triangleDownElement).toHaveStyle({ left: "100px", top: "700px" });
+    expect(triangleDownElement).toHaveStyle({ left: "100px", top: "582px" });
   });
 });

@@ -14,7 +14,9 @@ export default function UndoRedoTrash() {
     <div className="relative flex items-center gap-1">
       <Button
         className={`${drawing.length === 0 ? "opacity-50" : ""}`}
-        onPointerDown={() => undo()}
+        onPointerDown={() => {
+          undo();
+        }}
         title="Remove last component(s)"
       >
         <Undo />

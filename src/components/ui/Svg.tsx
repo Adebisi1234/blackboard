@@ -872,13 +872,6 @@ export function Cursor({ pos }: { pos: { x: number; y: number } }) {
   const canvasPos = useCanvas((s) => s.canvasPos);
   const color = useRef(getRandomColor());
   const [windowWidth, windowHeight] = useWindowSize();
-  if (
-    pos.x < -canvasPos.x ||
-    pos.x > windowWidth - canvasPos.x ||
-    pos.y < -canvasPos.y ||
-    pos.y > windowHeight - canvasPos.y
-  ) {
-  }
   return (
     <>
       {!(
@@ -889,6 +882,7 @@ export function Cursor({ pos }: { pos: { x: number; y: number } }) {
       ) ? (
         <Icon
           className={`absolute -translate-x-1/2 -translate-y-1/2 touch-none pointer-events-none `}
+          data-testid="cursor"
           style={{
             left: pos.x,
             top: pos.y,
@@ -929,9 +923,10 @@ export function TriangleLeft({
   color: string;
 }) {
   const canvasPos = useCanvas((s) => s.canvasPos);
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowHeight] = useWindowSize();
   return (
     <Icon
+      data-testid="triangle-left"
       style={{
         left: -canvasPos.x,
         top:
@@ -970,6 +965,7 @@ export function TriangleRight({
   const [windowWidth, windowHeight] = useWindowSize();
   return (
     <Icon
+      data-testid="triangle-right"
       style={{
         left: windowWidth - 18,
         top:
@@ -1004,9 +1000,10 @@ export function TriangleUp({
   color: string;
 }) {
   const canvasPos = useCanvas((s) => s.canvasPos);
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
   return (
     <Icon
+      data-testid="triangle-up"
       style={{
         top: -canvasPos.y,
         left:
@@ -1044,6 +1041,7 @@ export function TriangleDown({
   const [windowWidth, windowHeight] = useWindowSize();
   return (
     <Icon
+      data-testid="triangle-down"
       style={{
         top: windowHeight - 18,
         left:

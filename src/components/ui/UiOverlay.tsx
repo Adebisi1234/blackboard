@@ -9,7 +9,7 @@ import Share from "./Share";
 import Zoom from "./Zoom";
 
 export default function Overlay() {
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
   return (
     <div className="flex flex-col justify-between w-full h-full z-[99]">
       <div className="flex items-start justify-between mt-1">

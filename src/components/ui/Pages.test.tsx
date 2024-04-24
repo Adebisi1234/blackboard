@@ -6,8 +6,8 @@ describe("Pages", () => {
     render(<Pages />);
 
     // Assert that the buttons are rendered
-    const menuButton = screen.getByRole("button", { name: "Menu" });
-    const pageButton = screen.getByRole("button", { name: "Page 1" });
+    const menuButton = screen.getByTestId("menu-button");
+    const pageButton = screen.getByTestId("page-button");
 
     expect(menuButton).toBeInTheDocument();
     expect(pageButton).toBeInTheDocument();
@@ -17,11 +17,11 @@ describe("Pages", () => {
     render(<Pages />);
 
     // Click the menu button
-    const menuButton = screen.getByRole("button", { name: "Menu" });
+    const menuButton = screen.getByTestId("menu-button");
     fireEvent.click(menuButton);
 
     // Assert that the menu dialog is open
-    const menuDialog = screen.getByRole("dialog", { name: "Menu Dialog" });
+    const menuDialog = screen.getByTestId("menu-dialog");
     expect(menuDialog).toBeInTheDocument();
   });
 
@@ -29,11 +29,11 @@ describe("Pages", () => {
     render(<Pages />);
 
     // Click the page button
-    const pageButton = screen.getByRole("button", { name: "Page 1" });
+    const pageButton = screen.getByTestId("page-button");
     fireEvent.click(pageButton);
 
     // Assert that the page dialog is open
-    const pageDialog = screen.getByRole("dialog", { name: "Page Dialog" });
+    const pageDialog = screen.getByTestId("page-dialog");
     expect(pageDialog).toBeInTheDocument();
   });
 });

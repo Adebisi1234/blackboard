@@ -4,24 +4,23 @@ import BackToContent from "./BackToContent";
 import Button from "./Button";
 import MenuDialog from "./dialog/MenuDialog";
 import PageDialog from "./dialog/PageDialog";
-import {
-  ChevronDown,
-  DotVertical,
-  Duplicate,
-  Menu,
-  Redo,
-  Trash,
-  Undo,
-} from "./Svg";
+import { ChevronDown, Menu } from "./Svg";
 import UndoRedoTrash from "./UndoRedoTrash";
 
 export default function Pages() {
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
   const { dialog, setDialog, reset } = useOpenDialog();
   const page = useDrawing((s) => s.getPages()[0]);
   return (
-    <div className="flex items-center gap-1 bg-[#1f1e21] relative" id="pages">
-      <Button onClick={() => (dialog !== "menu" ? setDialog("menu") : reset())}>
+    <div
+      className="flex items-center gap-1 bg-[#1f1e21] relative"
+      id="pages"
+      data-testid="pages"
+    >
+      <Button
+        onClick={() => (dialog !== "menu" ? setDialog("menu") : reset())}
+        data-testid="menu-button"
+      >
         <Menu />
       </Button>
       <dialog open={dialog === "menu"} className="top-full m-0">
@@ -31,6 +30,7 @@ export default function Pages() {
         <div
           className="flex items-center justify-center h-full gap-4 p-1 "
           onClick={() => (dialog !== "pages" ? setDialog("pages") : reset())}
+          data-testid="page-button"
         >
           <p className="pr-4 text-left w-fit">Page {page}</p>
 

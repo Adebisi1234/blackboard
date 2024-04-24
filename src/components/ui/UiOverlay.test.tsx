@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import Overlay from "./UiOverlay";
+import { vi } from "vitest";
 
 describe("Overlay", () => {
   test("renders the overlay component", () => {
@@ -15,21 +16,25 @@ describe("Overlay", () => {
 
   test("renders the panel component when window width is greater than or equal to 768", () => {
     // Mock the useWindowSize hook to return a window width of 800
-    jest.spyOn(window, "innerWidth", "get").mockReturnValue(800);
+    window.innerWidth = 800;
 
     render(<Overlay />);
 
     // Assert that the panel component is rendered
-    expect(screen.getByTestId("panel")).toBeInTheDocument();
+    expect(screen.queryByTestId("panel")?.parentElement?.tagName).not.toBe(
+      "DIALOG"
+    );
   });
 
   test("does not render the panel component when window width is less than 768", () => {
     // Mock the useWindowSize hook to return a window width of 600
-    jest.spyOn(window, "innerWidth", "get").mockReturnValue(600);
+    window.innerWidth = 600;
 
     render(<Overlay />);
 
     // Assert that the panel component is not rendered
-    expect(screen.queryByTestId("panel")).toBeNull();
+    expect(screen.queryByTestId("panel")?.parentElement?.tagName).toBe(
+      "DIALOG"
+    );
   });
 });

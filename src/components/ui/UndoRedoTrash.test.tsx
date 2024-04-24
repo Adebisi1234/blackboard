@@ -1,5 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import UndoRedoTrash from "./UndoRedoTrash";
+import { vi } from "vitest";
+import userEvent from "@testing-library/user-event";
+const user = userEvent.setup();
 
 describe("UndoRedoTrash", () => {
   test("renders the UndoRedoTrash component with correct buttons", () => {
@@ -18,21 +21,24 @@ describe("UndoRedoTrash", () => {
     expect(resetButton).toBeInTheDocument();
   });
 
-  test("calls the undo function when the undo button is clicked", () => {
-    const undoMock = jest.fn();
-    jest.mock("./useDrawing", () => ({
+  test("calls the undo function when the undo button is clicked", async () => {
+    const undoMock = vi.fn(() => {
+      console.log("Hallelujah");
+    });
+    vi.mock("./useDrawing", () => ({
       useDrawing: () => ({
         undo: undoMock,
-        getDrawing: () => [],
+        restoreComp: undoMock,
+        getDrawing: () => [1],
       }),
     }));
 
     render(<UndoRedoTrash />);
 
     const undoButton = screen.getByTitle("Remove last component(s)");
-    fireEvent.pointerDown(undoButton);
-
-    expect(undoMock).toHaveBeenCalled();
+    await user.pointer({ keys: "[MouseLeft]", target: undoButton });
+    expect(undoButton).toBeInTheDocument();
+    expect(undoMock).toHaveBeenCalledTimes(1);
   });
 
   // Add more tests for other button functionalities...
