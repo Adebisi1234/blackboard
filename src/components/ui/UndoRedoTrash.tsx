@@ -40,7 +40,7 @@ export default function UndoRedoTrash() {
         <Trash />
       </Button>
       <Button
-        title="copy selected component(s)"
+        title="Duplicate"
         className={`${activeComp.length === 0 ? "opacity-50" : ""}`}
         onPointerDown={() => {
           // Copy then paste, I hope this works
