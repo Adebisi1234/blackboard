@@ -43,7 +43,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
           }}
           onPointerMove={(ev) => {
             if (!moveComp) return;
-
+            ev.bubbled = true;
             const edit = produce(prop, (draft) => {
               draft.prop.pos.x += ev.movementX;
               draft.prop.pos.y += ev.movementY;

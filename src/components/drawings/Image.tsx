@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { type Drawings } from "../../types/general";
 import {
   useActiveTool,
@@ -19,6 +19,7 @@ export default function Image(prop: Drawings<"image">[0]) {
   const { activeTool, setActiveTool } = useActiveTool();
   const updateDrawing = useDrawing((state) => state.updateDrawing);
   const canvasPos = useCanvas((s) => s.canvasPos);
+  const imgSrc = useMemo(() => src, []);
   useEffect(() => {
     if (!imgRef.current) return;
     setLocation({
@@ -41,7 +42,7 @@ export default function Image(prop: Drawings<"image">[0]) {
           height,
           opacity: prop.opacity,
         }}
-        onPointerDown={(ev) => {
+        onPointerDown={() => {
           activeTool === "hand" && setMoveComp(true);
         }}
         onDoubleClick={() => {
@@ -65,7 +66,7 @@ export default function Image(prop: Drawings<"image">[0]) {
         }}
       >
         <img
-          src={src}
+          src={imgSrc}
           ref={imgRef}
           alt={alt}
           id={`${prop.id}`}
