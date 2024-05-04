@@ -46,6 +46,10 @@ export default function Minimap() {
   const minimapRef = useRef<HTMLCanvasElement>(null);
   const ctx = minimapRef.current?.getContext("2d");
 
+  if (drawing.length === 0) {
+    ctx?.reset();
+  }
+
   const renderMovingCanvas = useCallback(() => {
     if (!ctx) return;
     ctx.clearRect(0, 0, mapSize.width, mapSize.height);
@@ -59,7 +63,6 @@ export default function Minimap() {
   useEffect(() => {
     renderMovingCanvas();
   }, [canvasPos]); // Moving minimap
-
   useEffect(() => {
     if (!ctx) return;
     ctx.clearRect(0, 0, mapSize.width, mapSize.height);

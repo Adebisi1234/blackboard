@@ -86,6 +86,11 @@ export default function Canvas() {
     }
   }, [room, ws]);
 
+  useEffect(() => {
+    if (!canvasRef) return;
+    canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
+  }, [canvasPos]);
+
   drawingId.current = useMemo(
     () => (!isToolActive ? drawing.length : drawingId.current),
     [drawing, isToolActive]
@@ -155,12 +160,12 @@ export default function Canvas() {
         e: {
           clientX:
             e.clientX -
-            // canvasRef.getBoundingClientRect().width / 2 - //SCALING PROTOTYPE
-            canvasRef.getBoundingClientRect().x,
+            // canvasRef.getBoundingClientRect().width / 4 - //SCALING PROTOTYPE
+            canvasPos.x,
           clientY:
             e.clientY -
-            // canvasRef.getBoundingClientRect().height / 2 -
-            canvasRef.getBoundingClientRect().y,
+            // canvasRef.getBoundingClientRect().height / 4 -
+            canvasPos.y,
         },
         drawing,
         activeTool,
@@ -185,8 +190,8 @@ export default function Canvas() {
               cursor: {
                 userId,
                 pos: {
-                  x: e.clientX - canvasRef.getBoundingClientRect().x,
-                  y: e.clientY - canvasRef.getBoundingClientRect().y,
+                  x: e.clientX - canvasPos.x,
+                  y: e.clientY - canvasPos.y,
                 },
               },
               timestamps: Date.now(),
@@ -255,7 +260,6 @@ export default function Canvas() {
             x: canvasPos.x + e.movementX,
             y: canvasPos.y + e.movementY,
           });
-          canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
         }
         return;
       }
@@ -263,12 +267,12 @@ export default function Canvas() {
         e: {
           clientX:
             e.clientX -
-            // canvasRef.getBoundingClientRect().width / 2 -
-            canvasRef.getBoundingClientRect().x,
+            // canvasRef.getBoundingClientRect().width / 4 -
+            canvasPos.x,
           clientY:
             e.clientY -
-            // canvasRef.getBoundingClientRect().height / 2 -
-            canvasRef.getBoundingClientRect().y,
+            // canvasRef.getBoundingClientRect().height / 4 -
+            canvasPos.y,
         },
         drawingId,
         activeTool,
@@ -382,6 +386,7 @@ export default function Canvas() {
           if (!node || canvasRef) return;
           setRef(node);
         }}
+        id="blackboard"
       >
         {cursorEl}
         {components}
