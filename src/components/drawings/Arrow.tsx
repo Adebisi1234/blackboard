@@ -83,7 +83,12 @@ export default function Arrow(prop: Drawings<"arrow">[0]) {
         </g>
       </svg>
       {prop.highlight && prop.opacity !== 0 && (
-        <CompOverlay id={prop.id} opacity={prop.opacity} type={"arrow"} />
+        <CompOverlay
+          id={prop.id}
+          opacity={prop.opacity}
+          type={"arrow"}
+          drawing={prop}
+        />
       )}
     </>
   );

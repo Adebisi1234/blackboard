@@ -9,15 +9,14 @@ export default function Note(prop: Drawings<"note">[0]) {
   const textRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
-  const { activeTool, setActiveTool } = useActiveTool();
+  const { activeTool } = useActiveTool();
   const [edit, setEdit] = useState(true);
   const [moveComp, setMoveComp] = useState(false);
   const [windowWidth, windowHeight] = useWindowSize();
   if (edit) {
     textRef.current?.focus();
   }
-  const { getDrawing, updateDrawing } = useDrawing();
-  const drawing = getDrawing();
+  const updateDrawing = useDrawing((s) => s.updateDrawing);
   useEffect(() => {
     if (!containerRef.current) return;
     const { width, height, x, y } =
@@ -41,6 +40,7 @@ export default function Note(prop: Drawings<"note">[0]) {
       <div
         className={`z-${prop.id} -translate-x-1/2 -translate-y-1/2 min-h-[200px] w-[200px] max-w-[200px] rounded-lg h-fit relative flex justify-center items-center  p-1`}
         data-testid={prop.id}
+        ref={containerRef}
         style={{
           left: `${prop.pos.x}px`,
           top: `${prop.pos.y}px`,
@@ -51,7 +51,7 @@ export default function Note(prop: Drawings<"note">[0]) {
           fontSize: prop.font,
           width: 200,
         }}
-        onPointerDown={(ev) => {
+        onPointerDown={() => {
           activeTool === "hand" && setMoveComp(true);
         }}
         onPointerMove={(ev) => {
@@ -81,7 +81,6 @@ export default function Note(prop: Drawings<"note">[0]) {
             prop.hovered && "border-green-500"
           }`}
           id={`${prop.id}`}
-          ref={containerRef}
         >
           <div
             className={`static min-w-10 min-h-full size-fit max-w-full break-words text-center whitespace-pre-wrap`}
@@ -104,7 +103,7 @@ export default function Note(prop: Drawings<"note">[0]) {
                 if (!textRef.current) return;
                 textRef.current.style.height = `${textRef.current?.scrollHeight}px`;
                 let edit = {
-                  ...drawing[prop.id],
+                  ...prop,
                   prop: { ...prop.prop, value: e.currentTarget.value },
                 };
                 updateDrawing(prop.id, edit);

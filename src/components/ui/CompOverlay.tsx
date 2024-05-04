@@ -1,20 +1,19 @@
-import { useDrawing, useLocation } from "../../store/Store";
+import { useLocation } from "../../store/Store";
 import { Drawings } from "../../types/general";
 
 type Prop = {
   type: "arrow" | "pencil" | "image" | "shape" | "text" | "note";
   id: number;
   opacity: number;
+  drawing?: Drawings<Prop["type"]>[0];
 };
 
 export default function CompOverlay(prop: Prop) {
-  const drawing = useDrawing((state) => state.getDrawing());
   const location = useLocation((state) => state.location);
-
   if (prop.type === "arrow") {
     const {
       prop: { startPos, endPos, qCurve },
-    } = drawing[prop.id] as Drawings<"arrow">[0];
+    } = prop.drawing as Drawings<"arrow">[0];
     return (
       <>
         {startPos.x !== endPos.x && startPos.y !== endPos.y && (
@@ -33,39 +32,30 @@ export default function CompOverlay(prop: Prop) {
                 strokeWidth={1}
                 stroke="green"
               ></path>
-              <circle
+              <Circle
                 cx={startPos.x}
                 cy={startPos.y}
                 r={6}
-                stroke="blue"
-                fill="white"
-                data-comp="arrow"
-                data-comp-id={prop.id}
-                className="adjust"
-                data-pos="start"
-              ></circle>
-              <circle
+                dataComp="arrow"
+                dataCompId={prop.id}
+                pos="start"
+              />
+              <Circle
                 cx={qCurve ? qCurve.x : (endPos.x + startPos.x) / 2}
                 cy={qCurve ? qCurve.y : (endPos.y + startPos.y) / 2}
                 r={6}
-                stroke="blue"
-                fill="white"
-                data-comp="arrow"
-                data-comp-id={prop.id}
-                className="adjust"
-                data-pos="mid"
-              ></circle>
-              <circle
+                dataComp="arrow"
+                dataCompId={prop.id}
+                pos="mid"
+              />
+              <Circle
                 cx={endPos.x}
                 cy={endPos.y}
                 r={6}
-                stroke="blue"
-                fill="white"
-                data-comp="arrow"
-                data-comp-id={prop.id}
-                className="adjust"
-                data-pos="end"
-              ></circle>
+                dataComp="arrow"
+                dataCompId={prop.id}
+                pos="end"
+              />
             </g>
           </svg>
         )}
@@ -73,7 +63,7 @@ export default function CompOverlay(prop: Prop) {
     );
   }
   if (prop.type === "pencil") {
-    const pencil = drawing[prop.id] as Drawings<"pencil">[0];
+    const pencil = prop.drawing as Drawings<"pencil">[0];
     const path = pencil.prop.path;
     const pos = pencil.pos;
 
@@ -89,28 +79,22 @@ export default function CompOverlay(prop: Prop) {
             data-testid={`overlay-${prop.id}`}
           >
             <g>
-              <circle
+              <Circle
                 cx={startX + (pos.x ?? 0)}
                 cy={startY + (pos.y ?? 0)}
                 r={6}
-                stroke="blue"
-                fill="white"
-                data-comp={prop.type}
-                data-comp-id={prop.id}
-                className="adjust"
-                data-pos="start"
-              ></circle>
-              <circle
+                dataComp={prop.type}
+                dataCompId={prop.id}
+                pos="start"
+              />
+              <Circle
                 cx={endX + (pos.x ?? 0)}
                 cy={endY + (pos.y ?? 0)}
                 r={6}
-                stroke="blue"
-                fill="white"
-                data-comp={prop.type}
-                data-comp-id={prop.id}
-                className="adjust"
-                data-pos="end"
-              ></circle>
+                dataComp={prop.type}
+                dataCompId={prop.id}
+                pos="end"
+              />
             </g>
           </svg>
         )}
@@ -139,54 +123,81 @@ export default function CompOverlay(prop: Prop) {
               fill="none"
               stroke="white"
             ></rect>
-
-            <circle
-              cx={x}
-              cy={y}
-              r={6}
-              stroke="blue"
-              fill="white"
-              data-comp={prop.type}
-              data-comp-id={prop.id}
-              className="adjust"
-              data-pos="tl"
-            ></circle>
-            <circle
-              cx={x + width}
-              cy={y}
-              r={6}
-              stroke="blue"
-              fill="white"
-              data-comp={prop.type}
-              data-comp-id={prop.id}
-              className="adjust"
-              data-pos="tr"
-            ></circle>
-            <circle
-              cx={x}
-              cy={y + height}
-              r={6}
-              stroke="blue"
-              fill="white"
-              data-comp={prop.type}
-              data-comp-id={prop.id}
-              className="adjust"
-              data-pos="bl"
-            ></circle>
-            <circle
-              cx={x + width}
-              cy={y + height}
-              r={6}
-              stroke="blue"
-              fill="white"
-              data-comp={prop.type}
-              data-comp-id={prop.id}
-              className="adjust"
-              data-pos="br"
-            ></circle>
+            {prop.type !== "note" && (
+              <>
+                <Circle
+                  cx={x}
+                  cy={y}
+                  r={6}
+                  dataComp={prop.type}
+                  dataCompId={prop.id}
+                  pos="tl"
+                />
+                <Circle
+                  cx={x + width}
+                  cy={y}
+                  r={6}
+                  dataComp={prop.type}
+                  dataCompId={prop.id}
+                  pos="tr"
+                />
+                <Circle
+                  cx={x}
+                  cy={y + height}
+                  r={6}
+                  dataComp={prop.type}
+                  dataCompId={prop.id}
+                  pos="bl"
+                />
+                <Circle
+                  cx={x + width}
+                  cy={y + height}
+                  r={6}
+                  dataComp={prop.type}
+                  dataCompId={prop.id}
+                  pos="br"
+                />
+              </>
+            )}
           </g>
         </svg>
       )}
+    </>
+  );
+}
+
+function Circle(prop: {
+  cx: number;
+  cy: number;
+  r?: number;
+  dataComp: string;
+  dataCompId: number;
+  pos: string;
+}) {
+  return (
+    <>
+      <circle
+        cx={prop.cx}
+        cy={prop.cy}
+        r={16}
+        stroke="none"
+        fill="#40c05738"
+        data-comp={prop.dataComp}
+        data-comp-id={prop.dataCompId}
+        className="adjust"
+        data-pos={prop.pos}
+      ></circle>
+      <circle
+        cx={prop.cx}
+        cy={prop.cy}
+        r={prop.r ? prop.r : 6}
+        stroke="blue"
+        fill="white"
+        data-comp={prop.dataComp}
+        data-comp-id={prop.dataCompId}
+        className="adjust"
+        data-pos={prop.pos}
+      ></circle>
     </>
   );
 }

@@ -72,7 +72,12 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
       </svg>
 
       {prop.highlight && prop.opacity !== 0 && (
-        <CompOverlay id={prop.id} opacity={prop.opacity} type={"pencil"} />
+        <CompOverlay
+          id={prop.id}
+          opacity={prop.opacity}
+          type={"pencil"}
+          drawing={prop}
+        />
       )}
     </>
   );

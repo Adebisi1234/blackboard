@@ -8,9 +8,8 @@ export default function Text(prop: Drawings<"text">[0]) {
   const textRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
-  const { getDrawing, updateDrawing } = useDrawing();
+  const updateDrawing = useDrawing((s) => s.updateDrawing);
   const [windowWidth, windowHeight] = useWindowSize();
-  const drawing = getDrawing();
   useEffect(() => {
     if (!textRef.current) return;
     const { width, height, x, y } = textRef.current.getBoundingClientRect();
@@ -60,7 +59,7 @@ export default function Text(prop: Drawings<"text">[0]) {
           onPointerLeave={(e) => {
             if (!textRef.current) return;
             let edit = {
-              ...drawing[prop.id],
+              ...prop,
               prop: { ...prop.prop, value: e.currentTarget.value },
             };
             updateDrawing(prop.id, edit);
