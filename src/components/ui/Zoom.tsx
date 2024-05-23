@@ -24,7 +24,6 @@ export default function Zoom() {
                       className={`rounded-md ${
                         scale === 0.25 ? "cursor-not-allowed opacity-60" : ""
                       }`}
-                      title="Not implemented yet"
                       data-testid="minus-button"
                       onClick={() => setScale(Math.max(0.25, scale - 0.25))}
                     >
@@ -42,7 +41,6 @@ export default function Zoom() {
                       className={`rounded-md ${
                         scale === 2 ? "cursor-not-allowed opacity-60" : ""
                       }`}
-                      title="Not implemented yet"
                       data-testid="plus-button"
                       onClick={() => setScale(Math.min(2, scale + 0.25))}
                     >
