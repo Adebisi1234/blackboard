@@ -9,7 +9,7 @@ Please give this repo a Star
 
 A simple, fast and efficient drawing tool with the following features
 
-- Free hand draw
+- Freehand draw
 - Multiple shapes (triangle, rectangle, circle, etc)
 - Eraser
 - Pointer
@@ -26,11 +26,11 @@ Currently taking inspiration from [@tldraw](https://github.com/tldraw)
 Implemented better versions of all main branch features
 
 - Image upload feature
-- Collaboration feature (readonly and true)
+- Collaboration feature (read-only and true)
 
 ## TODO
 
-- Zoom in/out feature
+- Zoom in/out feature ☑️
 - Optimize minimap
 - Embedding other media
 - Better curve arrow feature
