@@ -110,11 +110,9 @@ export default function Canvas() {
         return;
       }
       e.clientX =
-        (e.clientX - canvasRef.getBoundingClientRect().x - canvasPos.x) *
-        Math.pow(scale, -1);
+        (e.clientX - canvasRef.getBoundingClientRect().x) * Math.pow(scale, -1);
       e.clientY =
-        (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
-        Math.pow(scale, -1);
+        (e.clientY - canvasRef.getBoundingClientRect().y) * Math.pow(scale, -1);
 
       // Reset highlighted components on tool change
 
@@ -186,11 +184,9 @@ export default function Canvas() {
       }
       console.log(canvasPos);
       e.clientX =
-        (e.clientX - canvasRef.getBoundingClientRect().x - canvasPos.x) *
-        Math.pow(scale, -1);
+        (e.clientX - canvasRef.getBoundingClientRect().x) * Math.pow(scale, -1);
       e.clientY =
-        (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
-        Math.pow(scale, -1);
+        (e.clientY - canvasRef.getBoundingClientRect().y) * Math.pow(scale, -1);
 
       if (navigator.onLine && ws?.readyState === ws?.OPEN) {
         ws?.send(
