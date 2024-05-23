@@ -109,6 +109,12 @@ export default function Canvas() {
       if (!canvasRef) {
         return;
       }
+      e.clientX =
+        (e.clientX - canvasRef.getBoundingClientRect().x - canvasPos.x) *
+        Math.pow(scale, -1);
+      e.clientY =
+        (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
+        Math.pow(scale, -1);
 
       // Reset highlighted components on tool change
 
@@ -161,16 +167,7 @@ export default function Canvas() {
       }
       //TODO: Use temp storage to avoid issues
       addDrawing({
-        e: {
-          clientX:
-            (e.clientX -
-              canvasRef.getBoundingClientRect().x - //SCALING PROTOTYPE
-              canvasPos.x) *
-            Math.pow(scale, -1),
-          clientY:
-            (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
-            Math.pow(scale, -1),
-        },
+        e,
         drawing,
         activeTool,
         general,
@@ -187,6 +184,14 @@ export default function Canvas() {
       if (!canvasRef) {
         return;
       }
+      console.log(canvasPos);
+      e.clientX =
+        (e.clientX - canvasRef.getBoundingClientRect().x - canvasPos.x) *
+        Math.pow(scale, -1);
+      e.clientY =
+        (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
+        Math.pow(scale, -1);
+
       if (navigator.onLine && ws?.readyState === ws?.OPEN) {
         ws?.send(
           JSON.stringify({
@@ -194,8 +199,8 @@ export default function Canvas() {
               cursor: {
                 userId,
                 pos: {
-                  x: e.clientX - canvasPos.x,
-                  y: e.clientY - canvasPos.y,
+                  x: e.clientX,
+                  y: e.clientY,
                 },
               },
               timestamps: Date.now(),
@@ -261,22 +266,15 @@ export default function Canvas() {
         }
         if (!e.bubbled) {
           setCanvasPos({
-            x: canvasPos.x + e.movementX,
-            y: canvasPos.y + e.movementY,
+            x: canvasPos.x + e.movementX * Math.pow(scale, -1),
+            y: canvasPos.y + e.movementY * Math.pow(scale, -1),
           });
         }
         return;
       }
 
       modifyDrawing({
-        e: {
-          clientX:
-            (e.clientX - canvasRef.getBoundingClientRect().x - canvasPos.x) *
-            Math.pow(scale, -1),
-          clientY:
-            (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
-            Math.pow(scale, -1),
-        },
+        e,
         drawingId,
         activeTool,
         drawing,
