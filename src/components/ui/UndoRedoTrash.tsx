@@ -6,15 +6,14 @@ import { useState } from "react";
 export default function UndoRedoTrash() {
   const clearAll = useDrawing((state) => state.clearAll);
   const { activeComp, setActiveComp } = useActive();
-  const [copied, setCopied] = useState<number>(0);
-  const { hideComp, copyComp, pasteComp, restoreComp, undo, getDrawing } =
-    useDrawing();
-  const drawing = getDrawing();
+  const { hideComp, copyComp, pasteComp, restoreComp, undo } = useDrawing();
   return (
     <div className="relative flex items-center gap-1">
       <Button
-        className={`${drawing.length === 0 ? "opacity-50" : ""}`}
-        onPointerDown={() => undo()}
+        // className={`${drawing.length === 0 ? "opacity-50" : ""}`}
+        onPointerDown={() => {
+          undo();
+        }}
         title="Remove last component(s)"
       >
         <Undo />
@@ -38,21 +37,12 @@ export default function UndoRedoTrash() {
         <Trash />
       </Button>
       <Button
-        title="copy selected component(s)"
+        title="Duplicate"
         className={`${activeComp.length === 0 ? "opacity-50" : ""}`}
         onPointerDown={() => {
           // Copy then paste, I hope this works
           copyComp(activeComp);
-          setCopied(activeComp.length);
           pasteComp();
-          // Set the new components as active
-          if (typeof copied === "number") {
-            let newActiveComp = [];
-            for (let i = drawing.length; i <= drawing.length + copied; i++) {
-              newActiveComp.push(i);
-            }
-            setActiveComp(newActiveComp);
-          }
         }}
       >
         <Duplicate />

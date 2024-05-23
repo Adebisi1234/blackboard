@@ -22,7 +22,10 @@ export default function Panel() {
   return (
     <>
       {!(activeTool === "eraser" || activeTool === "hand") && (
-        <div className="w-[148px] max-w-[148px] relative mr-2 mb-[7px] border-black border bg-[#232529]  mt-2 rounded-lg">
+        <div
+          className="w-[148px] max-w-[148px] relative mr-2 mb-[7px] border-black border bg-[#232529]  mt-2 rounded-lg"
+          data-testid="panel"
+        >
           <div className="grid grid-cols-4 overflow-hidden">
             <Button
               className={`rounded-lg hover:bg-[#333438] ${

@@ -17,15 +17,16 @@ const viewOnly = Boolean(
 );
 const WS_URL = import.meta.env.VITE_WS_URL;
 interface DrawingState {
-  ws: WebSocket | null;
-  drawing: { [key: number]: Drawings };
-  page: number;
-  readOnly: boolean;
-  userId: string;
-  viewOnly: boolean;
+  readonly ws: WebSocket | null;
+  readonly drawing: { [key: number]: Drawings };
+  readonly page: number;
+  readonly readOnly: boolean;
+  readonly userId: string;
+  readonly viewOnly: boolean;
   timestamps: number;
-  copiedComps: { [key: number]: number[] };
-  deletedComps: { [key: number]: number[] };
+  setWs: (payload: WebSocket | null) => void;
+  readonly copiedComps: { [key: number]: number[] };
+  readonly deletedComps: { [key: number]: number[] };
   setSharingToReadOnly: (payload: boolean) => void; // Set the readonly status of others
   userOffline: (payload: boolean) => void;
   setPage: (payload: number) => void;
@@ -44,6 +45,7 @@ interface DrawingState {
     userId: string;
     readOnly: boolean;
     clear?: true;
+    initDrawings: { [key: number]: Drawings }; //For when a new client joing after drawings have been shared
   }) => void;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
   clearPointer: (id: number) => void;
@@ -142,6 +144,9 @@ export const useDrawing = create<DrawingState>()(
       userId: crypto.randomUUID(),
       viewOnly: viewOnly,
       timestamps: Date.now(),
+      setWs(payload) {
+        set({ ws: payload });
+      },
       setSharingToReadOnly(payload) {
         set({ viewOnly: payload });
       },
@@ -175,12 +180,21 @@ export const useDrawing = create<DrawingState>()(
       getDrawing() {
         return get().drawing[get().page] ?? []; //Incase deletePage fails which I pray it doesn't
       },
-      init: ({ drawing, page, timestamps, userId, clear = false, readOnly }) =>
+      init: ({
+        drawing,
+        page,
+        timestamps,
+        userId,
+        clear = false,
+        readOnly,
+        initDrawings = null,
+      }) =>
         set((state) => {
           if (readOnly && !state.readOnly) {
             state.readOnly = true;
-          }
-          if (clear) {
+          } else if (initDrawings) {
+            state.drawing = initDrawings;
+          } else if (clear) {
             useLocation.setState((state) => {
               state.location = {};
             });
@@ -203,8 +217,7 @@ export const useDrawing = create<DrawingState>()(
               },
               timestamps: Date.now(),
             };
-          }
-          if (userId !== get().userId) {
+          } else if (userId !== get().userId) {
             if (!state.drawing[page]) {
               //If the page doesn't exist on this client
               state.drawing[page] = [drawing];
@@ -224,15 +237,6 @@ export const useDrawing = create<DrawingState>()(
                 state.drawing[page][drawing.id] = drawing;
               }
             }
-            // state.drawing[page]
-            // if (get().timestamps < payload.timestamps) {
-            //   console.log("wtf");
-            //   return payload;
-            // } else {
-            //   // Check for differences and update them
-            //   console.log(get().timestamps, payload.timestamps);
-            //   console.log("skipped");
-            // }
           }
         }),
       setDrawing(payload: Drawings[0]) {
@@ -244,7 +248,11 @@ export const useDrawing = create<DrawingState>()(
             state.drawing[get().page] = [payload];
           }
           state.timestamps = Date.now();
-          if (state.ws?.OPEN && payload.prop.type !== "pointer") {
+          if (
+            state.ws &&
+            state.ws?.readyState === state.ws?.OPEN &&
+            payload.prop.type !== "pointer"
+          ) {
             state.ws.send(
               JSON.stringify({
                 message: {
@@ -266,7 +274,11 @@ export const useDrawing = create<DrawingState>()(
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
           state.drawing[get().page][id] = payload;
-          if (state.ws?.OPEN && payload.prop.type !== "pointer") {
+          if (
+            state.ws &&
+            state.ws?.readyState === state.ws?.OPEN &&
+            payload.prop.type !== "pointer"
+          ) {
             state.ws.send(
               JSON.stringify({
                 message: {
@@ -305,7 +317,8 @@ export const useDrawing = create<DrawingState>()(
           });
           state.timestamps = Date.now();
           if (
-            state.ws?.OPEN &&
+            state.ws &&
+            state.ws?.readyState === state.ws?.OPEN &&
             state.drawing[get().page][id].prop.type !== "pointer"
           ) {
             state.ws.send(
@@ -337,7 +350,8 @@ export const useDrawing = create<DrawingState>()(
           }
           state.timestamps = Date.now();
           if (
-            state.ws?.OPEN &&
+            state.ws &&
+            state.ws?.readyState === state.ws?.OPEN &&
             state.drawing[get().page][id].prop.type !== "pointer"
           ) {
             state.ws.send(
@@ -432,7 +446,11 @@ export const useDrawing = create<DrawingState>()(
           state.drawing[get().page].push(...update);
           state.timestamps = Date.now();
           update.forEach((payload) => {
-            if (state.ws?.OPEN && payload.prop.type !== "pointer") {
+            if (
+              state.ws &&
+              state.ws?.readyState === state.ws?.OPEN &&
+              payload.prop.type !== "pointer"
+            ) {
               state.ws.send(
                 JSON.stringify({
                   drawing: payload,
@@ -454,7 +472,8 @@ export const useDrawing = create<DrawingState>()(
           state.drawing[get().page][update].opacity = 1;
           state.timestamps = Date.now();
           if (
-            state.ws?.OPEN &&
+            state.ws &&
+            state.ws?.readyState === state.ws?.OPEN &&
             state.drawing[get().page][update].prop.type !== "pointer"
           ) {
             state.ws.send(
@@ -498,6 +517,16 @@ export const useDrawing = create<DrawingState>()(
           },
           timestamps: Date.now(),
         });
+        if (get().ws && get().ws?.readyState === get().ws?.OPEN) {
+          get().ws?.send(
+            JSON.stringify({
+              message: {
+                clear: true,
+              },
+              id: get().userId,
+            })
+          );
+        }
       },
     })),
     {
@@ -630,3 +659,61 @@ export const useOpenDialog = create<OpenDialog>()((set) => ({
     });
   },
 }));
+
+// Second/Third go but from your view first go:
+let retries = 0;
+let timeoutId: NodeJS.Timeout;
+function refreshWs() {
+  const s = useDrawing.getState();
+  s.ws?.addEventListener("open", () => {
+    console.log("ws connected");
+    s.readOnly &&
+      useDrawing.setState({
+        readOnly: false,
+      });
+  });
+  s.ws?.addEventListener("close", () => {
+    tryReconnectingToWs();
+    retries < 25 && retries++;
+  });
+
+  s.ws?.addEventListener("error", () => {
+    tryReconnectingToWs();
+    useDrawing.setState({
+      readOnly: true,
+    });
+    retries < 25 && retries++;
+  });
+}
+
+function tryReconnectingToWs() {
+  console.log("retrying", retries);
+
+  const ws = new WebSocket(
+    `${import.meta.env.DEV ? "ws" : "wss"}://${WS_URL}/${room}`
+  );
+  ws?.addEventListener("open", () => {
+    clearTimeout(timeoutId);
+    retries = 0;
+    console.log("reconnected");
+    useDrawing.setState({
+      ws,
+      readOnly: false,
+    });
+  });
+
+  ws?.addEventListener("error", () => {
+    if (retries === 25) {
+      useDrawing.setState({
+        readOnly: true,
+      });
+      clearTimeout(timeoutId);
+      return;
+    }
+    timeoutId = setTimeout(() => {
+      tryReconnectingToWs();
+    }, retries * 250);
+    retries < 25 && retries++;
+  });
+}
+refreshWs();

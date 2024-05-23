@@ -16,11 +16,12 @@ export default function MenuDialog() {
   const [popup, setPopup] = useState<
     "file" | "edit" | "view" | "export" | null
   >(null);
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
 
   return (
     <DialogContainer
       className="w-[150px] gap-4"
+      data-testid="menu-dialog"
       onPointerOut={() => windowWidth > 1000 && setPopup(null)} //large screen only
     >
       <DialogItem

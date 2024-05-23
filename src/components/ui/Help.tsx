@@ -13,9 +13,14 @@ export default function Help() {
         <Button
           className="rounded-full bg-[#1f1e21] p-2 mb-1 size-10"
           onClick={() => (dialog !== "help" ? setDialog("help") : reset())}
+          data-testid="help"
         >
           <QuestionMark />
-          <dialog open={dialog === "help"} className="bottom-full -left-full">
+          <dialog
+            open={dialog === "help"}
+            className="bottom-full -left-full"
+            data-testid="help-dialog"
+          >
             <HelpDialog />
           </dialog>
         </Button>

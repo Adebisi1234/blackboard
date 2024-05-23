@@ -1,15 +1,15 @@
 import { produce } from "immer";
 import { useDrawing } from "../store/Store";
+import { Drawings } from "../types/general";
 
 export default function useMovePencilAndArrowComp() {
-  const { updateDrawing, getDrawing } = useDrawing();
-  const drawing = getDrawing();
+  const updateDrawing = useDrawing((s) => s.updateDrawing);
 
   const movePencilOrArrow = (
-    id: number,
+    prop: Drawings[0],
     e: { movementX: number; movementY: number }
   ) => {
-    const edit = produce(drawing[id], (draft) => {
+    const edit = produce(prop, (draft) => {
       if (draft.prop.type === "pencil") {
         if (draft.pos.x && draft.pos.y) {
           draft.pos.x += e.movementX;
@@ -29,7 +29,7 @@ export default function useMovePencilAndArrowComp() {
         draft.prop.endPos.y += e.movementY;
       }
     });
-    updateDrawing(id, edit);
+    updateDrawing(prop.id, edit);
   };
 
   return movePencilOrArrow;

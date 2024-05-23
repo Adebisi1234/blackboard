@@ -8,67 +8,69 @@ export default function Text(prop: Drawings<"text">[0]) {
   const textRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const setLocation = useLocation((state) => state.setLocation);
-  const { getDrawing, updateDrawing } = useDrawing();
+  const updateDrawing = useDrawing((s) => s.updateDrawing);
   const [windowWidth, windowHeight] = useWindowSize();
-  const drawing = getDrawing();
   useEffect(() => {
-    const { width, height, x, y } = containerRef.current
-      ?.getBoundingClientRect()
-      .toJSON();
+    if (!textRef.current) return;
+    const { width, height, x, y } = textRef.current.getBoundingClientRect();
     setLocation({
-      width,
-      height,
+      width: Math.max(width, 4),
+      height: Math.max(height, 16),
       x,
       y,
       id: prop.id,
     });
   }, [
-    containerRef.current?.offsetWidth,
-    containerRef.current?.offsetHeight,
+    textRef.current?.offsetWidth,
+    textRef.current?.offsetHeight,
     windowWidth,
     windowHeight,
     prop.pos,
   ]);
   return (
-    <div
-      ref={containerRef}
-      id={`${prop.id}`}
-      className={`z-${prop.id} ${prop.hovered && "border-green-500"}`}
-      style={{
-        left: `${prop.pos.x}px`,
-        top: `${prop.pos.y}px`,
-        backgroundColor: `transparent`,
-        color: prop.color,
-        opacity: prop.opacity,
-        fontSize: prop.font,
-      }}
-      // onPointerDown={(e) => e.stopPropagation()}
-    >
-      <input
-        name={`${prop.id}`}
+    <>
+      <div
+        ref={containerRef}
         id={`${prop.id}`}
-        ref={textRef}
-        width={4}
-        height={prop.font}
-        className="bg-transparent outline-none size-fit"
-        onChange={(e) =>
-          (e.currentTarget.style.width = `${e.currentTarget.scrollWidth}px`)
-        }
-        onPointerLeave={(e) => {
-          if (!textRef.current) return;
-          let edit = {
-            ...drawing[prop.id],
-            prop: { ...prop.prop, value: e.currentTarget.value },
-          };
-          updateDrawing(prop.id, edit);
+        data-testid={prop.id}
+        className={`z-${prop.id} ${prop.hovered && "border-green-500"}`}
+        style={{
+          left: `${prop.pos.x}px`,
+          top: `${prop.pos.y}px`,
+          backgroundColor: `transparent`,
+          color: prop.color,
+          opacity: prop.opacity,
+          fontSize: prop.font,
+          width: textRef.current?.offsetWidth,
+          height: textRef.current?.offsetHeight,
         }}
-        defaultValue={prop.prop.value}
-        placeholder="Enter your text"
-      ></input>
-
+        onPointerDown={(e) => (e.bubbled = true)}
+      >
+        <input
+          name={`${prop.id}`}
+          id={`${prop.id}`}
+          ref={textRef}
+          width={4}
+          height={prop.font}
+          className="bg-transparent outline-none size-fit"
+          onChange={(e) =>
+            (e.currentTarget.style.width = `${e.currentTarget.scrollWidth}px`)
+          }
+          onPointerLeave={(e) => {
+            if (!textRef.current) return;
+            let edit = {
+              ...prop,
+              prop: { ...prop.prop, value: e.currentTarget.value },
+            };
+            updateDrawing(prop.id, edit);
+          }}
+          defaultValue={prop.prop.value}
+          placeholder="Enter your text"
+        ></input>
+      </div>
       {prop.highlight && prop.opacity !== 0 && (
         <CompOverlay id={prop.id} opacity={prop.opacity} type={"text"} />
       )}
-    </div>
+    </>
   );
 }

@@ -1,14 +1,7 @@
 import useWindowSize from "../../hooks/useWindowSize";
-import {
-  useActiveTool,
-  useDrawing,
-  useImage,
-  useOpenDialog,
-} from "../../store/Store";
-import { Drawings } from "../../types/general";
+import { useActiveTool, useImage, useOpenDialog } from "../../store/Store";
 import Button from "./Button";
 import ExtraControlsDialog from "./dialog/ExtraControlsDialog";
-import ExtraControls from "./ExtraControls";
 import Icon from "./Icon";
 import Panel from "./Panel";
 import {
@@ -28,10 +21,20 @@ import UndoRedoTrash from "./UndoRedoTrash";
 export default function Controls() {
   const { activeTool, setActiveTool } = useActiveTool();
   const { dialog, setDialog, reset } = useOpenDialog();
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
   const setImage = useImage((state) => state.setImage);
+  // const tools = [
+  //   {
+  //     title: "Tool - Grab",
+  //     tool: "hand",
+
+  //   }
+  // ]TODO:  Make it easily extendable..
   return (
-    <div className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-fit">
+    <div
+      className="absolute flex gap-1 w-fit h-fit bottom-2 left-1/2 -translate-x-1/2 bg-[#232529] rounded-xl p-1 z-50 max-w-fit"
+      data-testid="controls"
+    >
       {windowWidth < 768 && (
         <div className="absolute bottom-full left-0 rounded-lg bg-[#1f1e21]">
           <UndoRedoTrash />

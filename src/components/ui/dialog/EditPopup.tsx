@@ -5,7 +5,7 @@ import DialogItem from "./DialogItem";
 
 export default function EditPopup() {
   const activeComp = useActive((s) => s.activeComp);
-  const setHighlighted = useHighlighted((s) => s.setHighlighted); // Seems this have taking over
+  const setHighlighted = useHighlighted((s) => s.setHighlighted);
   const [copied, setCopied] = useState<number>(0);
   const {
     hideComp,
@@ -49,6 +49,7 @@ export default function EditPopup() {
       <hr />
       <DialogItem
         className="justify-between items-end"
+        title="copy selected component(s)"
         onPointerDown={() => {
           // Copy then paste, I hope this works
           copyComp([...activeComp]);
@@ -71,6 +72,7 @@ export default function EditPopup() {
       </DialogItem>
       <DialogItem
         className="justify-between items-end"
+        title="paste copied component(s)"
         onPointerDown={() => {
           pasteComp();
           // Set the new components as active
@@ -88,6 +90,7 @@ export default function EditPopup() {
       </DialogItem>
       <DialogItem
         className="justify-between items-end"
+        title="Duplicate"
         onPointerDown={() => {
           // Copy then paste, I hope this works
           copyComp([...activeComp]);
@@ -108,6 +111,7 @@ export default function EditPopup() {
       </DialogItem>
       <DialogItem
         className="justify-between items-end"
+        title="Remove selected component(s)"
         onPointerDown={() => {
           activeComp.forEach((id) => {
             hideComp(id);
@@ -120,6 +124,7 @@ export default function EditPopup() {
       <hr />
       <DialogItem
         className="justify-between items-end bg-red-500"
+        title="Reset Everything"
         onPointerDown={() => {
           useDrawing.persist.clearStorage();
           clearAll();

@@ -46,6 +46,10 @@ export default function Minimap() {
   const minimapRef = useRef<HTMLCanvasElement>(null);
   const ctx = minimapRef.current?.getContext("2d");
 
+  if (drawing.length === 0) {
+    ctx?.reset();
+  }
+
   const renderMovingCanvas = useCallback(() => {
     if (!ctx) return;
     ctx.clearRect(0, 0, mapSize.width, mapSize.height);
@@ -59,7 +63,6 @@ export default function Minimap() {
   useEffect(() => {
     renderMovingCanvas();
   }, [canvasPos]); // Moving minimap
-
   useEffect(() => {
     if (!ctx) return;
     ctx.clearRect(0, 0, mapSize.width, mapSize.height);
@@ -103,6 +106,7 @@ function renderComp({
     shape: string;
   };
 }) {
+  ctx.beginPath();
   switch (comp?.prop.type) {
     case "image":
     case "note":
@@ -121,15 +125,24 @@ function renderComp({
       break;
     }
     case "pencil": {
-      let { width, height, x, y } = loc;
-      x *= mapRatio.x;
-      x += screenPos.x; //Accounting for canvas translating
-      width *= mapRatio.x;
-      y *= mapRatio.x;
-      y += screenPos.y;
-      height *= mapRatio.x;
-      ctx.fillStyle = colors.pencil;
-      ctx.fillRect(x, y, width, height);
+      let path = comp.prop.path;
+      ctx.beginPath();
+      ctx.strokeStyle = colors.pencil;
+      path.forEach(({ x, y, func }) => {
+        x *= mapRatio.x;
+        x += screenPos.x; //Accounting for canvas translating
+        y *= mapRatio.x;
+        y += screenPos.y;
+        if (func === "M") {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      // width *= mapRatio.x;
+      // height *= mapRatio.x;
+      ctx.moveTo(0, 0);
+      ctx.closePath();
       ctx.stroke();
 
       break;
@@ -144,9 +157,8 @@ function renderComp({
         x: endPos.x * mapRatio.x,
         y: endPos.y * mapRatio.y,
       };
-
-      ctx.strokeStyle = colors.arrow;
       ctx.beginPath();
+      ctx.strokeStyle = colors.arrow;
       ctx.moveTo(startPos.x, startPos.y);
       if (qCurve) {
         qCurve = {
@@ -160,6 +172,7 @@ function renderComp({
         return;
       }
       ctx.lineTo(endPos.x, endPos.y);
+      ctx.closePath();
       ctx.moveTo(0, 0);
       ctx.stroke();
       break;

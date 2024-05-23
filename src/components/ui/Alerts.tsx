@@ -27,25 +27,43 @@ export default function Alerts() {
     };
   }, []);
   return (
-    <aside className="absolute top-0 flex justify-center w-full p-2 text-xs text-center pointer-events-none h-fit">
-      {!room && <p className="text-red-500" ref={disclaimerRef}>
-        This project is inspired by{" "}
-        <a href="http://tldraw.com" className="underline">
-          tldraw.com
-        </a>{" "}
-        please use the real thing. This is just a fun project |{" "}
-        <span
-          className="text-white cursor-pointer pointer-events-auto"
-          onClick={() => {
-            if (!disclaimerRef.current) return;
-            disclaimerRef.current.style.display = "none";
-          }}
+    <aside
+      className="absolute top-0 flex justify-center w-full p-2 text-xs text-center pointer-events-none h-fit"
+      role="alert"
+    >
+      {!room && (
+        <p
+          className="text-red-500"
+          ref={disclaimerRef}
+          role="complementary"
+          data-testid="disclaimer"
         >
-          x
-        </span>
-      </p>}
+          This project is inspired by{" "}
+          <a
+            href="http://tldraw.com"
+            className="underline"
+            role="complementary"
+          >
+            tldraw.com
+          </a>{" "}
+          please use the real thing. This is just a fun project |{" "}
+          <span
+            className="text-white cursor-pointer pointer-events-auto"
+            role="button"
+            data-testid="close-disclaimer"
+            onClick={() => {
+              if (!disclaimerRef.current) return;
+              disclaimerRef.current.style.display = "none";
+            }}
+          >
+            x
+          </span>
+        </p>
+      )}
       {readOnly && (
-        <p className="absolute p-2 mt-5 border rounded-md">Offline</p>
+        <p className="absolute p-2 mt-5 border rounded-md" role="banner">
+          Offline
+        </p>
       )}
     </aside>
   );

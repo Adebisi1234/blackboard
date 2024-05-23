@@ -380,7 +380,10 @@ export function removeComp(id: number, hideComp: (id: number) => void) {
   hideComp(id);
 }
 
-export function cloneComp(comp: Drawings[0]) {
+// For testing mainly
+export function cloneComp<T extends ActiveTool | undefined>(
+  comp: Drawings<T>[0]
+) {
   const clone = { ...comp };
   switch (clone.prop.type) {
     case "image":
@@ -414,7 +417,7 @@ export function cloneComp(comp: Drawings[0]) {
       clone.prop.pos.x += 20;
       clone.prop.pos.y += 20;
   }
-  return clone;
+  return clone as typeof comp;
 }
 
 export function generateImage(

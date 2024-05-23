@@ -9,13 +9,13 @@ import Share from "./Share";
 import Zoom from "./Zoom";
 
 export default function Overlay() {
-  const [windowWidth, windowHeight] = useWindowSize();
+  const [windowWidth] = useWindowSize();
   return (
     <div className="flex flex-col justify-between w-full h-full z-[99]">
       <div className="flex items-start justify-between mt-1">
         <Pages />
         <div className="flex flex-col items-end mr-1">
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             {/* <Button>
               <Icon className="bg-pink-700 rounded-full"></Icon>
             </Button> */
