@@ -24,9 +24,11 @@ interface DrawingState {
   readonly userId: string;
   readonly viewOnly: boolean;
   timestamps: number;
-  setWs: (payload: WebSocket | null) => void;
   readonly copiedComps: { [key: number]: number[] };
   readonly deletedComps: { [key: number]: number[] };
+  readonly scale: number;
+  setWs: (payload: WebSocket | null) => void;
+  setScale: (payload: number) => void;
   setSharingToReadOnly: (payload: boolean) => void; // Set the readonly status of others
   userOffline: (payload: boolean) => void;
   setPage: (payload: number) => void;
@@ -140,12 +142,16 @@ export const useDrawing = create<DrawingState>()(
       deletedComps: {
         1: [],
       },
+      scale: 1,
       readOnly: false,
       userId: crypto.randomUUID(),
       viewOnly: viewOnly,
       timestamps: Date.now(),
       setWs(payload) {
         set({ ws: payload });
+      },
+      setScale(payload) {
+        set({ scale: payload });
       },
       setSharingToReadOnly(payload) {
         set({ viewOnly: payload });
@@ -515,6 +521,7 @@ export const useDrawing = create<DrawingState>()(
           deletedComps: {
             1: [],
           },
+          scale: 1,
           timestamps: Date.now(),
         });
         if (get().ws && get().ws?.readyState === get().ws?.OPEN) {

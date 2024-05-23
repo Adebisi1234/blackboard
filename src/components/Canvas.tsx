@@ -38,6 +38,7 @@ export default function Canvas() {
     ws,
     userId,
     userOffline,
+    scale,
   } = useDrawing();
   const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
@@ -68,7 +69,6 @@ export default function Canvas() {
   useEffect(() => {
     if (room) {
       ws?.addEventListener("open", () => {
-        console.log("ws connected");
         !readOnly && userOffline(false);
       });
       ws?.addEventListener("message", (ev) => {
@@ -90,6 +90,10 @@ export default function Canvas() {
     if (!canvasRef) return;
     canvasRef.style.transform = `translate(${canvasPos.x}px, ${canvasPos.y}px)`;
   }, [canvasPos]);
+  useEffect(() => {
+    if (!canvasRef) return;
+    canvasRef.style.scale = `${scale}`;
+  }, [scale]);
 
   drawingId.current = useMemo(
     () => (!isToolActive ? drawing.length : drawingId.current),
@@ -159,13 +163,13 @@ export default function Canvas() {
       addDrawing({
         e: {
           clientX:
-            e.clientX -
-            // canvasRef.getBoundingClientRect().width / 4 - //SCALING PROTOTYPE
-            canvasPos.x,
+            (e.clientX -
+              canvasRef.getBoundingClientRect().x - //SCALING PROTOTYPE
+              canvasPos.x) *
+            Math.pow(scale, -1),
           clientY:
-            e.clientY -
-            // canvasRef.getBoundingClientRect().height / 4 -
-            canvasPos.y,
+            (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
+            Math.pow(scale, -1),
         },
         drawing,
         activeTool,
@@ -263,16 +267,15 @@ export default function Canvas() {
         }
         return;
       }
+
       modifyDrawing({
         e: {
           clientX:
-            e.clientX -
-            // canvasRef.getBoundingClientRect().width / 4 -
-            canvasPos.x,
+            (e.clientX - canvasRef.getBoundingClientRect().x - canvasPos.x) *
+            Math.pow(scale, -1),
           clientY:
-            e.clientY -
-            // canvasRef.getBoundingClientRect().height / 4 -
-            canvasPos.y,
+            (e.clientY - canvasRef.getBoundingClientRect().y - canvasPos.y) *
+            Math.pow(scale, -1),
         },
         drawingId,
         activeTool,
@@ -381,7 +384,7 @@ export default function Canvas() {
       }`}
     >
       <div
-        className="absolute inset-0 w-screen h-screen canvas touch-none"
+        className={`absolute inset-0 w-screen h-screen canvas touch-none`}
         ref={(node) => {
           if (!node || canvasRef) return;
           setRef(node);

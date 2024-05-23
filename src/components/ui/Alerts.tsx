@@ -62,7 +62,7 @@ export default function Alerts() {
       )}
       {readOnly && (
         <p className="absolute p-2 mt-5 border rounded-md" role="banner">
-          Offline
+          ReadOnly (Offline or Zoomed)
         </p>
       )}
     </aside>

@@ -4,12 +4,13 @@ import { ChevronNe, Minus, Plus } from "./Svg";
 import Minimap from "./Minimap";
 import useWindowSize from "../../hooks/useWindowSize";
 import ZoomDialog from "./dialog/ZoomDialog";
-import { useOpenDialog } from "../../store/Store";
+import { useDrawing, useOpenDialog } from "../../store/Store";
 
 export default function Zoom() {
   const [miniActive, setMiniActive] = useState(false);
   const [windowWidth] = useWindowSize();
   const { dialog, setDialog, reset } = useOpenDialog();
+  const [scale, setScale] = useDrawing((s) => [s.scale, s.setScale]);
   return (
     <>
       {windowWidth >= 768 && (
@@ -20,9 +21,12 @@ export default function Zoom() {
                 <>
                   {dialog === "zoom" && (
                     <Button
-                      className="rounded-md cursor-not-allowed"
+                      className={`rounded-md ${
+                        scale === 0.25 ? "cursor-not-allowed opacity-60" : ""
+                      }`}
                       title="Not implemented yet"
                       data-testid="minus-button"
+                      onClick={() => setScale(Math.max(0.25, scale - 0.25))}
                     >
                       <Minus />
                     </Button>
@@ -31,13 +35,16 @@ export default function Zoom() {
                     className="rounded-md"
                     data-testid="hundred-percent-button"
                   >
-                    <p>100%</p>
+                    <p>{scale * 100}</p>
                   </Button>
                   {dialog === "zoom" && (
                     <Button
-                      className="rounded-md cursor-not-allowed"
+                      className={`rounded-md ${
+                        scale === 2 ? "cursor-not-allowed opacity-60" : ""
+                      }`}
                       title="Not implemented yet"
                       data-testid="plus-button"
+                      onClick={() => setScale(Math.min(2, scale + 0.25))}
                     >
                       <Plus />
                     </Button>
