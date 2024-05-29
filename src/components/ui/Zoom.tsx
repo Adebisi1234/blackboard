@@ -19,7 +19,7 @@ export default function Zoom() {
             <div className="flex justify-center items-center bg-[#1f1e21] px-1 ml-1 mb-1 rounded-lg">
               {windowWidth > 1000 && (
                 <>
-                  {dialog === "zoom" && (
+                  {miniActive && (
                     <Button
                       className={`rounded-md ${
                         scale === 0.25 ? "cursor-not-allowed opacity-60" : ""
@@ -36,7 +36,7 @@ export default function Zoom() {
                   >
                     <p>{scale * 100}</p>
                   </Button>
-                  {dialog === "zoom" && (
+                  {miniActive && (
                     <Button
                       className={`rounded-md ${
                         scale === 2 ? "cursor-not-allowed opacity-60" : ""
