@@ -227,7 +227,6 @@ export function modifyDrawing({
         (draft) => {
           draft.prop.path.push(
             { func: "L", x: e.clientX, y: e.clientY },
-            { func: "M", x: e.clientX, y: e.clientY }
           );
         }
       );

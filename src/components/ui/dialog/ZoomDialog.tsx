@@ -49,7 +49,6 @@ export default function ZoomDialog() {
       // });
       // r.width -= diff.x;
       // r.height -= diff.y;
-      console.log(loc[s.activeComp[0]]);
       return loc[s.activeComp[0]];
       // s.activeComp.reduce((prev, curr, i) => {
       //   if(loc[prev].x)
@@ -111,12 +110,11 @@ function zoomToSelection(
     x: canvasPos.x - loc.x,
     y: canvasPos.y - loc.y,
   };
-  console.log(newPos);
   setCanvasPos(newPos);
   const newScale =
     Math.round(
       Math.sqrt(((innerWidth / loc.width) * innerHeight) / loc.height) / 0.25
     ) * 0.25; //Random calc :>
-  console.log(loc.x, loc.y);
+
   setScale(Math.max(0.25, Math.min(2, newScale)));
 }

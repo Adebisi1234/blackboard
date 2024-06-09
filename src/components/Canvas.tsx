@@ -22,6 +22,8 @@ import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
 import { Cursor } from "./ui/Svg";
+import { getExtremePoints } from "../algorithms/recogniseShapes";
+import { Drawings } from "../types/general";
 
 export default function Canvas() {
   const {
@@ -109,6 +111,9 @@ export default function Canvas() {
       if (!canvasRef) {
         return;
       }
+      [...document.getElementsByClassName("marker")].forEach((el) =>
+        document.querySelector("#root")?.removeChild(el)
+      );
       e.clientX =
         (e.clientX - canvasRef.getBoundingClientRect().x) * Math.pow(scale, -1);
       e.clientY =
@@ -182,7 +187,6 @@ export default function Canvas() {
       if (!canvasRef) {
         return;
       }
-      console.log(canvasPos);
       e.clientX =
         (e.clientX - canvasRef.getBoundingClientRect().x) * Math.pow(scale, -1);
       e.clientY =
@@ -301,6 +305,11 @@ export default function Canvas() {
         setAdjustCompId(null);
         setActiveTool(prevTool.current);
         return;
+      }
+      if (activeTool === "pencil" && isToolActive) {
+        getExtremePoints(
+          (drawing as Drawings<"pencil">)[drawing.length - 1]?.prop.path
+        );
       }
       // Removing pointer
       if (drawing[drawing.length - 1]?.prop.type === "pointer") {

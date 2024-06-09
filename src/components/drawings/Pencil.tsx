@@ -46,7 +46,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
             data-testid={prop.id}
             id={`${prop.id}`}
             ref={pathRef}
-            d={`${d} z`}
+            d={d}
             stroke={prop.color}
             strokeWidth={prop.strokeWidth}
             strokeDasharray={prop.dash}
