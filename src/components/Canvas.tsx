@@ -22,7 +22,7 @@ import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
 import { Cursor } from "./ui/Svg";
-import { getExtremePoints } from "../algorithms/recogniseShapes";
+import { redrawShape, recognizeShape } from "../algorithms/recogniseShapes";
 import { Drawings } from "../types/general";
 
 export default function Canvas() {
@@ -41,6 +41,7 @@ export default function Canvas() {
     userId,
     userOffline,
     scale,
+    formatShape,
   } = useDrawing();
   const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
@@ -307,9 +308,17 @@ export default function Canvas() {
         return;
       }
       if (activeTool === "pencil" && isToolActive) {
-        getExtremePoints(
+        const res = recognizeShape(
           (drawing as Drawings<"pencil">)[drawing.length - 1]?.prop.path
         );
+        if (res && (res.Name === "circle" || res.Name === "rectangle")) {
+          redrawShape(
+            res.Name,
+            (drawing as Drawings<"pencil">)[drawing.length - 1],
+            loc[drawing.length - 1],
+            formatShape
+          );
+        }
       }
       // Removing pointer
       if (drawing[drawing.length - 1]?.prop.type === "pointer") {

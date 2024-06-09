@@ -69,7 +69,6 @@ export function addDrawing({
           type: "pencil",
           path: [
             {
-              func: "M",
               x: e.clientX,
               y: e.clientY,
             },
@@ -150,6 +149,7 @@ export function addDrawing({
         ...general,
         prop: {
           type: "shape",
+          shape: "rect",
           startPos: {
             x: e.clientX,
             y: e.clientY,
@@ -225,9 +225,7 @@ export function modifyDrawing({
       const edit = produce(
         drawing[drawingId.current] as Drawings<"pencil">[0],
         (draft) => {
-          draft.prop.path.push(
-            { func: "L", x: e.clientX, y: e.clientY },
-          );
+          draft.prop.path.push({ x: e.clientX, y: e.clientY });
         }
       );
 

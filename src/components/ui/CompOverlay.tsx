@@ -102,6 +102,10 @@ export default function CompOverlay(prop: Prop) {
     );
   }
 
+  if (prop.type === "shape") {
+    return null;
+  }
+
   // Square
   const { x, y, width, height } = location[prop.id];
 

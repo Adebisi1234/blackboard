@@ -6,16 +6,19 @@ import { produce } from "immer";
 import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Shapes(prop: Drawings<"shape">[0]) {
-  const rectRef = useRef<SVGRectElement>(null);
+  const shapeRef = useRef<SVGRectElement | SVGCircleElement | SVGPathElement>(
+    null
+  );
   const setLocation = useLocation((state) => state.setLocation);
   const [moveComp, setMoveComp] = useState(false);
   const { activeTool, setActiveTool } = useActiveTool();
   const [windowWidth, windowHeight] = useWindowSize();
   const updateDrawing = useDrawing((s) => s.updateDrawing);
   useEffect(() => {
-    if (!rectRef.current) return;
+    if (!shapeRef.current) return;
     const { x, y } = prop.prop.pos;
     const { width, height } = prop.prop;
+
     setLocation({
       x,
       y,
@@ -34,10 +37,7 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
   return (
     <>
       <svg id={`${prop.id}`}>
-        <rect
-          ref={rectRef}
-          data-testid={prop.id}
-          className={`z-${prop.id}`}
+        <g
           onPointerDown={() => {
             activeTool === "hand" && setMoveComp(true);
           }}
@@ -60,37 +60,54 @@ export default function Shapes(prop: Drawings<"shape">[0]) {
             setActiveTool("hand");
             setMoveComp(true);
           }}
-          id={`${prop.id}`}
-          rx={15}
-          x={prop.prop.pos.x}
-          y={prop.prop.pos.y}
-          width={prop.prop.width}
-          height={prop.prop.height}
           stroke={prop.color}
           fillOpacity={prop.fill}
           fill={prop.color}
           opacity={prop.opacity}
           strokeDasharray={prop.dash}
           strokeWidth={prop.strokeWidth}
-        ></rect>
-        {prop.hovered && (
-          <rect
-            id={`${prop.id}`}
-            rx={15}
-            x={prop.prop.pos.x}
-            y={prop.prop.pos.y}
-            width={prop.prop.width}
-            height={prop.prop.height}
-            stroke={"green"}
-            fillOpacity={prop.fill}
-            fill={"none"}
-            opacity={prop.opacity}
-            strokeDasharray={prop.dash}
-            strokeWidth={1.5}
-            className={`z-${prop.id}`}
-            data-testid={`hovered-${prop.id}`}
-          ></rect>
-        )}
+        >
+          {prop.prop.shape === "rect" ? (
+            <rect
+              ref={shapeRef as React.RefObject<SVGRectElement>}
+              data-testid={prop.id}
+              className={`z-${prop.id}`}
+              id={`${prop.id}`}
+              rx={15}
+              x={prop.prop.pos.x}
+              y={prop.prop.pos.y}
+              width={prop.prop.width}
+              height={prop.prop.height}
+            ></rect>
+          ) : prop.prop.shape === "oval" ? (
+            <circle
+              cx={prop.prop.pos.x}
+              cy={prop.prop.pos.y}
+              r={prop.prop.radius}
+              ref={shapeRef as React.RefObject<SVGCircleElement>}
+            ></circle>
+          ) : prop.prop.shape === "tri" ? (
+            <path ref={shapeRef}></path>
+          ) : null}
+          {prop.hovered && (
+            <rect
+              id={`${prop.id}`}
+              rx={15}
+              x={prop.prop.pos.x}
+              y={prop.prop.pos.y}
+              width={prop.prop.width}
+              height={prop.prop.height}
+              stroke={"green"}
+              fillOpacity={prop.fill}
+              fill={"none"}
+              opacity={prop.opacity}
+              strokeDasharray={prop.dash}
+              strokeWidth={1.5}
+              className={`z-${prop.id}`}
+              data-testid={`hovered-${prop.id}`}
+            ></rect>
+          )}
+        </g>
       </svg>
       {prop.highlight && prop.opacity !== 0 && (
         <CompOverlay id={prop.id} opacity={prop.opacity} type={"shape"} />
