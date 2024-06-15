@@ -45,11 +45,37 @@ export const redrawShape = (
         height: loc.height,
       },
     } satisfies Drawings<"shape">[0];
-    console.log(newShape);
+
     formatShape(
       { id: old.id, drawing: newShape },
       { id: old.id, drawing: old }
     );
   } else if (type === "rectangle") {
+    const { prop, ...general } = old;
+    const newShape = {
+      ...general,
+      prop: {
+        type: "shape",
+        shape: "rect",
+        startPos: {
+          x: loc.x,
+          y: loc.y,
+        },
+        pos: {
+          x: loc.x,
+          y: loc.y,
+        },
+        width: loc.width,
+        height: loc.height,
+      },
+      pos: {
+        x: loc.x,
+        y: loc.y,
+      },
+    } satisfies Drawings<"shape">[0];
+    formatShape(
+      { id: old.id, drawing: newShape },
+      { id: old.id, drawing: old }
+    );
   }
 };
