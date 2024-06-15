@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import { Drawings, Location } from "../types/general";
+import { lerp } from "./math";
 
 type AdjustProp = {
   e: React.MouseEvent<SVGCircleElement | HTMLDivElement, MouseEvent>;
@@ -229,40 +230,62 @@ export function adjustShape({
   updateDrawing,
   id,
   pos,
+  location,
 }: Omit<AdjustProp, "compType">) {
+  console.log(location![id], e);
   const edit = produce(drawing[id] as Drawings<"shape">[0], (draft) => {
-    if (pos === "tl") {
-      const diff = {
-        x: draft.prop.pos.x - e.clientX,
-        y: draft.prop.pos.y - e.clientY,
-      };
-      draft.prop.pos.x = e.clientX;
-      draft.prop.pos.y = e.clientY;
-      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
-      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
-    } else if (pos === "tr") {
-      const diff = {
-        x: e.clientX - (draft.prop.pos.x + draft.prop.width),
-        y: draft.prop.pos.y - e.clientY,
-      };
-      draft.prop.pos.y = e.clientY;
-      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
-      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
-    } else if (pos === "bl") {
-      const diff = {
-        x: draft.prop.pos.x - e.clientX,
-        y: e.clientY - (draft.prop.pos.y + draft.prop.height),
-      };
-      draft.prop.pos.x = e.clientX;
-      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
-      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
-    } else if (pos === "br") {
-      const diff = {
-        x: e.clientX - (draft.prop.pos.x + draft.prop.width),
-        y: e.clientY - (draft.prop.pos.y + draft.prop.height),
-      };
-      draft.prop.width = Math.max(0, draft.prop.width + diff.x);
-      draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+    if (draft.prop.shape === "rect") {
+      if (pos === "tl") {
+        const diff = {
+          x: draft.prop.pos.x - e.clientX,
+          y: draft.prop.pos.y - e.clientY,
+        };
+        draft.prop.pos.x = e.clientX;
+        draft.prop.pos.y = e.clientY;
+        draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+        draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+      } else if (pos === "tr") {
+        const diff = {
+          x: e.clientX - (draft.prop.pos.x + draft.prop.width),
+          y: draft.prop.pos.y - e.clientY,
+        };
+        draft.prop.pos.y = e.clientY;
+        draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+        draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+      } else if (pos === "bl") {
+        const diff = {
+          x: draft.prop.pos.x - e.clientX,
+          y: e.clientY - (draft.prop.pos.y + draft.prop.height),
+        };
+        draft.prop.pos.x = e.clientX;
+        draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+        draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+      } else if (pos === "br") {
+        const diff = {
+          x: e.clientX - (draft.prop.pos.x + draft.prop.width),
+          y: e.clientY - (draft.prop.pos.y + draft.prop.height),
+        };
+        draft.prop.width = Math.max(0, draft.prop.width + diff.x);
+        draft.prop.height = Math.max(0, draft.prop.height + diff.y);
+      }
+    } else if (draft.prop.shape === "oval") {
+      if (pos === "tl" || pos === "tr") {
+        draft.prop.radius = Math.abs(
+          (-e.clientY + location![id].height + location![id].y) / 2
+        );
+      } else if (pos === "bl" || pos === "br") {
+        draft.prop.radius = Math.abs((e.clientY - location![id].y) / 2);
+      }
+    } else if (draft.prop.shape === "tri") {
+      if (pos === "tc") {
+        draft.prop.pos.y = e.clientY;
+      } else if (pos === "bl") {
+        draft.prop.height = e.clientY - draft.prop.pos.y;
+        draft.prop.pos.x = e.clientX;
+      } else if (pos === "br") {
+        draft.prop.width = e.clientX - draft.prop.pos.x;
+        draft.prop.height = e.clientY - draft.prop.pos.y;
+      }
     }
   });
   // rect shape first

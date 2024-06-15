@@ -3,7 +3,7 @@ import { lerp } from "../utils/math.js";
 import { DollarRecognizer, Point } from "./DollarRecogniser.js";
 
 const dR = new DollarRecognizer();
-const threshold = 0.8; // This seems to be the best threshold for accuracy
+const threshold = 0.9; // This seems to be the best threshold for accuracy
 
 export const recognizeShape = (points: { x: number; y: number }[]) => {
   const res = dR.Recognize(points.map(({ x, y }) => new Point(x, y)));
@@ -14,7 +14,7 @@ export const recognizeShape = (points: { x: number; y: number }[]) => {
 };
 
 export const redrawShape = (
-  type: "circle" | "rectangle",
+  type: "circle" | "rectangle" | "triangle",
   old: Drawings<"pencil">[0],
   loc: Location,
   formatShape: (
@@ -71,6 +71,35 @@ export const redrawShape = (
       pos: {
         x: loc.x,
         y: loc.y,
+      },
+    } satisfies Drawings<"shape">[0];
+    formatShape(
+      { id: old.id, drawing: newShape },
+      { id: old.id, drawing: old }
+    );
+  } else if (type === "triangle") {
+    const { x, y, width, height } = loc;
+    const cx = lerp(x, x + width, 0.5);
+    const { prop, ...general } = old;
+    const newShape = {
+      ...general,
+      prop: {
+        type: "shape",
+        shape: "tri",
+        startPos: {
+          x: cx,
+          y: y,
+        },
+        pos: {
+          x: x,
+          y: y,
+        },
+        width: width,
+        height: height,
+      },
+      pos: {
+        x: x,
+        y: y,
       },
     } satisfies Drawings<"shape">[0];
     formatShape(

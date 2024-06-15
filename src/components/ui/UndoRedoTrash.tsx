@@ -2,15 +2,17 @@ import Button from "./Button";
 import { Duplicate, Redo, Reset, Trash, Undo } from "./Svg";
 import { useActive, useDrawing } from "../../store/Store";
 import { useState } from "react";
+import { cn } from "../../utils/cn";
 
 export default function UndoRedoTrash() {
   const clearAll = useDrawing((state) => state.clearAll);
   const { activeComp, setActiveComp } = useActive();
-  const { hideComp, copyComp, pasteComp, restoreComp, undo } = useDrawing();
+  const { hideComp, copyComp, pasteComp, restoreComp, undo, shapeRecognised } =
+    useDrawing();
   return (
     <div className="relative flex items-center gap-1">
       <Button
-        // className={`${drawing.length === 0 ? "opacity-50" : ""}`}
+        className={cn({ "bg-red-500": shapeRecognised })}
         onPointerDown={() => {
           undo();
         }}

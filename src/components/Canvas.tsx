@@ -308,13 +308,15 @@ export default function Canvas() {
         return;
       }
       if (activeTool === "pencil" && isToolActive) {
-        console.log(
-          (drawing as Drawings<"pencil">)[drawing.length - 1]?.prop.path
-        );
         const res = recognizeShape(
           (drawing as Drawings<"pencil">)[drawing.length - 1]?.prop.path
         );
-        if (res && (res.Name === "circle" || res.Name === "rectangle")) {
+        if (
+          res &&
+          (res.Name === "circle" ||
+            res.Name === "rectangle" ||
+            res.Name === "triangle")
+        ) {
           redrawShape(
             res.Name,
             (drawing as Drawings<"pencil">)[drawing.length - 1],
