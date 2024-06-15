@@ -23,11 +23,17 @@ interface DrawingState {
   readonly readOnly: boolean;
   readonly userId: string;
   readonly viewOnly: boolean;
+  shapeRecognised: boolean;
+  tempStorage: { id: number; drawing: Drawings[0] } | null;
   timestamps: number;
   readonly copiedComps: { [key: number]: number[] };
   readonly deletedComps: { [key: number]: number[] };
   readonly scale: number;
   setWs: (payload: WebSocket | null) => void;
+  formatShape: (
+    newShape: { id: number; drawing: Drawings[0] },
+    old: { id: number; drawing: Drawings[0] }
+  ) => void;
   setScale: (payload: number) => void;
   setSharingToReadOnly: (payload: boolean) => void; // Set the readonly status of others
   userOffline: (payload: boolean) => void;
@@ -47,7 +53,7 @@ interface DrawingState {
     userId: string;
     readOnly: boolean;
     clear?: true;
-    initDrawings: { [key: number]: Drawings }; //For when a new client joing after drawings have been shared
+    initDrawings: { [key: number]: Drawings }; //For when a new client joining after drawings have been shared
   }) => void;
   updateDrawing: (id: number, payload: Drawings[0]) => void;
   clearPointer: (id: number) => void;
@@ -147,8 +153,17 @@ export const useDrawing = create<DrawingState>()(
       userId: crypto.randomUUID(),
       viewOnly: viewOnly,
       timestamps: Date.now(),
+      shapeRecognised: false,
+      tempStorage: null,
       setWs(payload) {
         set({ ws: payload });
+      },
+      formatShape(newShape, old) {
+        set((state) => {
+          state.shapeRecognised = true;
+          state.tempStorage = old;
+          state.drawing[get().page][newShape.id] = newShape.drawing;
+        });
       },
       setScale(payload) {
         set({ scale: payload });
@@ -248,6 +263,7 @@ export const useDrawing = create<DrawingState>()(
       setDrawing(payload: Drawings[0]) {
         if (get().viewOnly) return;
         set((state: DrawingState) => {
+          state.shapeRecognised = false;
           if (state.drawing[get().page]) {
             state.drawing[get().page].push(payload);
           } else {
@@ -277,6 +293,7 @@ export const useDrawing = create<DrawingState>()(
       updateDrawing(id, payload) {
         if (get().viewOnly) return;
         set((state) => {
+          state.shapeRecognised = false;
           if (typeof id !== "number" || !state.drawing[get().page][id])
             return state;
           state.drawing[get().page][id] = payload;
@@ -349,12 +366,21 @@ export const useDrawing = create<DrawingState>()(
             state.drawing[get().page].length -
             state.deletedComps[get().page].length -
             1;
-          if (id < 0) return state;
-          state.drawing[get().page][id].opacity = 0;
-          if (state.drawing[get().page][id]?.prop.type !== "pointer") {
-            state.deletedComps[get().page].push(id);
+          if (state.shapeRecognised && state.tempStorage) {
+            state.timestamps = Date.now();
+
+            state.drawing[get().page][state.tempStorage.id] =
+              state.tempStorage.drawing;
+            state.tempStorage = null;
+            state.shapeRecognised = false;
+          } else {
+            if (id < 0) return state;
+            state.drawing[get().page][id].opacity = 0;
+            if (state.drawing[get().page][id]?.prop.type !== "pointer") {
+              state.deletedComps[get().page].push(id);
+            }
+            state.timestamps = Date.now();
           }
-          state.timestamps = Date.now();
           if (
             state.ws &&
             state.ws?.readyState === state.ws?.OPEN &&

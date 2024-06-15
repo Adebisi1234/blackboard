@@ -87,7 +87,7 @@ describe(cloneComp, () => {
     const comp: Partial<Drawings<"pencil">[0]> = {
       prop: {
         type: "pencil",
-        path: [{ func: "M", x: 10, y: 10 }],
+        path: [{ x: 10, y: 10 }],
       },
     };
     const clone = cloneComp<"pencil">(comp as Drawings<"pencil">[0]);
@@ -145,7 +145,6 @@ describe(drawOnCanvas, () => {
         strokeWidth: 3,
         dash: 0,
         fill: 0,
-        scale: 1,
         highlight: true,
         copy: false,
         font: 24,
@@ -155,12 +154,10 @@ describe(drawOnCanvas, () => {
           type: "pencil",
           path: [
             {
-              func: "M",
               x: 125,
               y: 286,
             },
             {
-              func: "L",
               x: 140,
               y: 292,
             },
@@ -178,7 +175,6 @@ describe(drawOnCanvas, () => {
         strokeWidth: 3,
         dash: 0,
         fill: 0,
-        scale: 1,
         highlight: true,
         copy: false,
         font: 24,
@@ -188,12 +184,10 @@ describe(drawOnCanvas, () => {
           type: "pencil",
           path: [
             {
-              func: "M",
               x: 126,
               y: 216,
             },
             {
-              func: "L",
               x: 146,
               y: 209,
             },
@@ -251,12 +245,10 @@ describe(modifyDrawing, () => {
           type: "pencil",
           path: [
             {
-              func: "M",
               x: 125,
               y: 286,
             },
             {
-              func: "L",
               x: 140,
               y: 292,
             },

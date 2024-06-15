@@ -24,3 +24,7 @@ export function getRelativeMin(v1: number, v2: number) {
   }
   return v2;
 }
+
+export function lerp(A: number, B: typeof A, t: number) {
+  return A + (B - A) * t;
+}

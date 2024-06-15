@@ -39,7 +39,6 @@ export type General = {
   strokeWidth: number;
   fill: 0 | 0.5 | 1 | "pattern";
   dash: "draw" | 0 | 10 | 2;
-  scale: 0.25 | 0.5 | 1 | 1.5 | 2.0;
   font: 18 | 24 | 36 | 44;
   highlight: boolean;
   copy: boolean;
@@ -119,18 +118,10 @@ export type PointerProp = {
 };
 
 export type PencilProp = {
-  path: (
-    | {
-        func: "M";
-        x: number;
-        y: number;
-      }
-    | {
-        func: "L";
-        x: number;
-        y: number;
-      }
-  )[];
+  path: {
+    x: number;
+    y: number;
+  }[];
   type: "pencil";
 };
 export type NoteProp = {

@@ -1,5 +1,6 @@
 import { useLocation } from "../../store/Store";
-import { Drawings } from "../../types/general";
+import { Drawings, ShapesProp } from "../../types/general";
+import { lerp } from "../../utils/math";
 
 type Prop = {
   type: "arrow" | "pencil" | "image" | "shape" | "text" | "note";
@@ -100,6 +101,118 @@ export default function CompOverlay(prop: Prop) {
         )}
       </>
     );
+  }
+
+  if (prop.type === "shape") {
+    const { x, y, width, height } = location[prop.id];
+    switch ((prop.drawing?.prop as ShapesProp).shape) {
+      case "rect":
+      case "oval":
+        return (
+          <>
+            {width > 0 && height > 0 && (
+              <svg
+                className={`z-${10 + prop.id}`}
+                opacity={prop.opacity === 0 ? 0 : 1}
+                data-testid={`overlay-${prop.id}`}
+              >
+                <g>
+                  <rect
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    fillOpacity={0}
+                    fill="none"
+                    stroke="white"
+                  ></rect>
+                  <>
+                    <Circle
+                      cx={x}
+                      cy={y}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="tl"
+                    />
+                    <Circle
+                      cx={x + width}
+                      cy={y}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="tr"
+                    />
+                    <Circle
+                      cx={x}
+                      cy={y + height}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="bl"
+                    />
+                    <Circle
+                      cx={x + width}
+                      cy={y + height}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="br"
+                    />
+                  </>
+                </g>
+              </svg>
+            )}
+          </>
+        );
+        break;
+
+      case "tri":
+        return (
+          <>
+            {width > 0 && height > 0 && (
+              <svg
+                className={`z-${10 + prop.id}`}
+                opacity={prop.opacity === 0 ? 0 : 1}
+                data-testid={`overlay-${prop.id}`}
+              >
+                <g>
+                  <>
+                    <Circle
+                      cx={lerp(x, x + width, 0.5)}
+                      cy={y}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="tc"
+                    />
+                    <Circle
+                      cx={x}
+                      cy={y + height}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="bl"
+                    />
+                    <Circle
+                      cx={x + width}
+                      cy={y + height}
+                      r={6}
+                      dataComp={prop.type}
+                      dataCompId={prop.id}
+                      pos="br"
+                    />
+                  </>
+                </g>
+              </svg>
+            )}
+          </>
+        );
+        break;
+      default:
+        break;
+    }
+    return null;
   }
 
   // Square

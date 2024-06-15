@@ -10,8 +10,11 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
   const pathRef = useRef<SVGPathElement>(null);
   const [windowWidth, windowHeight] = useWindowSize();
   const d = prop.prop.path
-    .map(({ func, x, y }) => {
-      return `${func} ${x * prop.scale} ${y * prop.scale}`;
+    .map(({ x, y }, i) => {
+      if (i === 0) {
+        return `M ${x} ${y} L ${x} ${y}`;
+      }
+      return `L ${x} ${y}`;
     })
     .join(" ");
   useEffect(() => {
@@ -46,7 +49,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
             data-testid={prop.id}
             id={`${prop.id}`}
             ref={pathRef}
-            d={`${d} z`}
+            d={d}
             stroke={prop.color}
             strokeWidth={prop.strokeWidth}
             strokeDasharray={prop.dash}

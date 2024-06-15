@@ -35,3 +35,9 @@ Implemented better versions of all main branch features
 - Embedding other media
 - Better curve arrow feature
 - Component Snapping
+
+
+<!-- 
+Fix minimap
+Zoom to Selection
+ -->

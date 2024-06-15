@@ -68,32 +68,26 @@ describe("CompOverlay", () => {
         type: "pencil",
         path: [
           {
-            func: "M",
             x: 0,
             y: 0,
           },
           {
-            func: "M",
             x: 0,
             y: 0,
           },
           {
-            func: "M",
             x: 0,
             y: 0,
           },
           {
-            func: "M",
             x: 0,
             y: 0,
           },
           {
-            func: "M",
             x: 0,
             y: 0,
           },
           {
-            func: "M",
             x: 0,
             y: 0,
           },

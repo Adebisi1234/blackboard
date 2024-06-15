@@ -22,6 +22,8 @@ import adjustComp from "../utils/adjustComp";
 import useShortcuts from "../hooks/useShortcuts";
 import useMovePencilAndArrowComp from "../hooks/useMovePencilAndArrowComp";
 import { Cursor } from "./ui/Svg";
+import { redrawShape, recognizeShape } from "../algorithms/recogniseShapes";
+import { Drawings } from "../types/general";
 
 export default function Canvas() {
   const {
@@ -39,6 +41,7 @@ export default function Canvas() {
     userId,
     userOffline,
     scale,
+    formatShape,
   } = useDrawing();
   const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
@@ -109,6 +112,9 @@ export default function Canvas() {
       if (!canvasRef) {
         return;
       }
+      [...document.getElementsByClassName("marker")].forEach((el) =>
+        document.querySelector("#root")?.removeChild(el)
+      );
       e.clientX =
         (e.clientX - canvasRef.getBoundingClientRect().x) * Math.pow(scale, -1);
       e.clientY =
@@ -182,7 +188,6 @@ export default function Canvas() {
       if (!canvasRef) {
         return;
       }
-      console.log(canvasPos);
       e.clientX =
         (e.clientX - canvasRef.getBoundingClientRect().x) * Math.pow(scale, -1);
       e.clientY =
@@ -301,6 +306,24 @@ export default function Canvas() {
         setAdjustCompId(null);
         setActiveTool(prevTool.current);
         return;
+      }
+      if (activeTool === "pencil" && isToolActive) {
+        const res = recognizeShape(
+          (drawing as Drawings<"pencil">)[drawing.length - 1]?.prop.path
+        );
+        if (
+          res &&
+          (res.Name === "circle" ||
+            res.Name === "rectangle" ||
+            res.Name === "triangle")
+        ) {
+          redrawShape(
+            res.Name,
+            (drawing as Drawings<"pencil">)[drawing.length - 1],
+            loc[drawing.length - 1],
+            formatShape
+          );
+        }
       }
       // Removing pointer
       if (drawing[drawing.length - 1]?.prop.type === "pointer") {
