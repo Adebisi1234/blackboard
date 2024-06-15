@@ -34,7 +34,6 @@ describe(Pencil, () => {
         type: "pencil",
         path: [
           {
-            func: "M",
             x: 10,
             y: 10,
           },
@@ -73,7 +72,6 @@ describe(Pencil, () => {
         type: "pencil",
         path: [
           {
-            func: "M",
             x: 10,
             y: 10,
           },
@@ -112,32 +110,26 @@ describe(Pencil, () => {
         type: "pencil",
         path: [
           {
-            func: "M",
             x: 10,
             y: 10,
           },
           {
-            func: "M",
             x: 10,
             y: 10,
           },
           {
-            func: "M",
             x: 10,
             y: 10,
           },
           {
-            func: "M",
             x: 10,
             y: 10,
           },
           {
-            func: "M",
             x: 10,
             y: 10,
           },
           {
-            func: "M",
             x: 10,
             y: 10,
           },

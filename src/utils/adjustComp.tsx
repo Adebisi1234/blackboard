@@ -155,12 +155,10 @@ export function adjustPencil({
     if (pos === "start") {
       draft.prop.path.unshift(
         {
-          func: "M",
           x: e.clientX - canvasPos.x,
           y: e.clientY - canvasPos.y,
         },
         {
-          func: "L",
           x: draft.prop.path[0].x,
           y: draft.prop.path[0].y,
         }
@@ -168,12 +166,10 @@ export function adjustPencil({
     } else if (pos === "end") {
       draft.prop.path.push(
         {
-          func: "L",
           x: e.clientX - canvasPos.x,
           y: e.clientY - canvasPos.y,
         },
         {
-          func: "M",
           x: e.clientX - canvasPos.x,
           y: e.clientY - canvasPos.y,
         }

@@ -128,12 +128,12 @@ function renderComp({
       let path = comp.prop.path;
       ctx.beginPath();
       ctx.strokeStyle = colors.pencil;
-      path.forEach(({ x, y, func }) => {
+      path.forEach(({ x, y }, i) => {
         x *= mapRatio.x;
         x += screenPos.x; //Accounting for canvas translating
         y *= mapRatio.x;
         y += screenPos.y;
-        if (func === "M") {
+        if (i === 0) {
           ctx.moveTo(x, y);
         } else {
           ctx.lineTo(x, y);
@@ -142,7 +142,6 @@ function renderComp({
       // width *= mapRatio.x;
       // height *= mapRatio.x;
       ctx.moveTo(0, 0);
-      ctx.closePath();
       ctx.stroke();
 
       break;
