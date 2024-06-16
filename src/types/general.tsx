@@ -44,6 +44,7 @@ export type General = {
   copy: boolean;
   hovered: boolean;
   userId: string;
+  shape?: "rect" | "oval" | "tri";
 };
 
 export type Drawings<T extends ActiveTool | undefined = undefined> = ({

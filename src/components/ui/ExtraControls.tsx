@@ -1,17 +1,17 @@
 import Button from "./Button";
-import { GeoRect, ImageIcon, Note } from "./Svg";
+import { Circle, GeoRect, ImageIcon, Note, Triangle } from "./Svg";
 import { useActiveTool, useImage } from "../../store/Store";
 import useWindowSize from "../../hooks/useWindowSize";
 import { generateImage } from "../../utils/drawings";
 
 export default function ExtraControls() {
   const setImage = useImage((state) => state.setImage);
-  const { activeTool, setActiveTool } = useActiveTool();
-  const [windowWidth, windowHeight] = useWindowSize();
+  const { activeTool, setActiveTool, shape } = useActiveTool();
+  const [windowWidth] = useWindowSize();
   return (
-    <>
+    <div className="flex gap-1 flex-wrap">
       {windowWidth < 768 && (
-        <div className="flex gap-1 flex-wrap">
+        <>
           <Button
             className={`rounded-lg  hover:bg-[#2e3034] ${
               activeTool === "note" && "bg-[#4387f4]"
@@ -52,18 +52,39 @@ export default function ExtraControls() {
               }}
             />
           </Button>
-          <Button
-            className={`rounded-lg  hover:bg-[#2e3034] ${
-              activeTool === "shape" && "bg-[#4387f4]"
-            }`}
-            tool="shape"
-            title="Tool - shape"
-            onClick={() => setActiveTool("shape")}
-          >
-            <GeoRect />
-          </Button>
-        </div>
+        </>
       )}
-    </>
+      <Button
+        className={`rounded-lg  hover:bg-[#2e3034] ${
+          activeTool === "shape" && shape === "rect" && "bg-[#4387f4]"
+        }`}
+        tool="shape"
+        title="Tool - shape (Rect)"
+        onClick={() => setActiveTool("shape", "rect")}
+      >
+        <GeoRect />
+      </Button>
+      <Button
+        className={`rounded-lg  relative hover:bg-[#2e3034] ${
+          activeTool === "shape" && shape === "oval" && "bg-[#4387f4]"
+        }`}
+        tool="pointer"
+        title="Tool - shape (Circle)"
+        onClick={() => setActiveTool("shape", "oval")}
+      >
+        <Circle />
+      </Button>
+
+      <Button
+        className={`rounded-lg  relative hover:bg-[#2e3034] ${
+          activeTool === "shape" && shape === "tri" && "bg-[#4387f4]"
+        }`}
+        tool="pointer"
+        title="Tool - shape (Circle)"
+        onClick={() => setActiveTool("shape", "tri")}
+      >
+        <Triangle />
+      </Button>
+    </div>
   );
 }

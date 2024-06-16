@@ -64,7 +64,7 @@ export default function Pencil(prop: Drawings<"pencil">[0]) {
             <path
               id={`${prop.id}`}
               data-testid={`hovered-${prop.id}`}
-              d={`${d} z`}
+              d={d}
               stroke={"green"}
               strokeWidth={prop.strokeWidth / 2}
               fill="none"

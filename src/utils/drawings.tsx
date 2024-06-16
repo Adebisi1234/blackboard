@@ -12,7 +12,7 @@ import type {
   ImageType,
 } from "../types/general";
 
-import { getDiff } from "./math";
+import { getDiff, lerp } from "./math";
 import { produce } from "immer";
 
 type ModifyDrawing = {
@@ -24,6 +24,7 @@ type ModifyDrawing = {
   general: General;
   activeTool: ActiveTool;
   clearPointer?: (id: number) => void;
+  shape?: "rect" | "oval" | "tri";
 };
 
 export function addDrawing({
@@ -32,6 +33,7 @@ export function addDrawing({
   activeTool,
   setDrawing,
   general,
+  shape,
 }: ModifyDrawing) {
   switch (activeTool) {
     case "hand":
@@ -149,7 +151,7 @@ export function addDrawing({
         ...general,
         prop: {
           type: "shape",
-          shape: "rect",
+          shape,
           startPos: {
             x: e.clientX,
             y: e.clientY,
@@ -295,19 +297,51 @@ export function modifyDrawing({
       const edit = produce(
         drawing[drawingId.current] as Drawings<"shape">[0],
         (draft) => {
-          if (e.clientX < draft.prop.startPos.x) {
-            draft.prop.pos.x =
-              draft.prop.startPos.x - getDiff(draft.prop.startPos.x, e.clientX);
-            draft.prop.width = getDiff(draft.prop.startPos.x, e.clientX);
-          } else {
-            draft.prop.width = e.clientX - draft.prop.pos.x;
-          }
-          if (e.clientY < draft.prop.startPos.y) {
-            draft.prop.pos.y =
-              draft.prop.startPos.y - getDiff(draft.prop.startPos.y, e.clientY);
-            draft.prop.height = getDiff(draft.prop.startPos.y, e.clientY);
-          } else {
-            draft.prop.height = e.clientY - draft.prop.pos.y;
+          switch (draft.prop.shape) {
+            case "rect":
+              if (e.clientX < draft.prop.startPos.x) {
+                draft.prop.pos.x =
+                  draft.prop.startPos.x -
+                  getDiff(draft.prop.startPos.x, e.clientX);
+                draft.prop.width = getDiff(draft.prop.startPos.x, e.clientX);
+              } else {
+                draft.prop.width = e.clientX - draft.prop.pos.x;
+              }
+              if (e.clientY < draft.prop.startPos.y) {
+                draft.prop.pos.y =
+                  draft.prop.startPos.y -
+                  getDiff(draft.prop.startPos.y, e.clientY);
+                draft.prop.height = getDiff(draft.prop.startPos.y, e.clientY);
+              } else {
+                draft.prop.height = e.clientY - draft.prop.pos.y;
+              }
+              break;
+            case "oval":
+              draft.prop.radius = getDiff(draft.prop.pos.x, e.clientX);
+              break;
+            case "tri":
+              if (e.clientX < draft.prop.startPos.x) {
+                draft.prop.pos.x =
+                  draft.prop.pos.x - getDiff(draft.prop.pos.x, e.clientX);
+                draft.prop.width = getDiff(draft.prop.pos.x, e.clientX);
+              } else {
+                draft.prop.width = e.clientX - draft.prop.pos.x;
+              }
+              if (e.clientY < draft.prop.pos.y) {
+                draft.prop.pos.y =
+                  draft.prop.pos.y - getDiff(draft.prop.pos.y, e.clientY);
+                draft.prop.height = getDiff(draft.prop.pos.y, e.clientY);
+              } else {
+                draft.prop.height = e.clientY - draft.prop.pos.y;
+              }
+              draft.prop.startPos.x = lerp(
+                draft.prop.pos.x,
+                draft.prop.pos.x + draft.prop.width,
+                0.5
+              );
+              break;
+            default:
+              break;
           }
         }
       );

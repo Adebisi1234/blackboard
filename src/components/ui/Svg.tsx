@@ -4,6 +4,45 @@ import { getRandomColor } from "../../utils/drawings";
 import Icon from "./Icon";
 import useWindowSize from "../../hooks/useWindowSize";
 
+export function Triangle() {
+  return (
+    <Icon className="flex items-center justify-center bg-transparent">
+      <svg
+        className="size-[18px] stroke-current"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#fff"
+        viewBox="0 0 1024 1024"
+        version="1.1"
+      >
+        <path d="M933.12 823.04l-384-664.746667a42.666667 42.666667 0 0 0-74.24 0l-384 664.746667a42.666667 42.666667 0 0 0 0 42.666667 42.666667 42.666667 0 0 0 37.12 21.333333h768a42.666667 42.666667 0 0 0 37.12-21.333333 42.666667 42.666667 0 0 0 0-42.666667z m-731.306667-21.333333L512 264.96l310.186667 536.746667z" />
+      </svg>
+    </Icon>
+  );
+}
+export function Shapes() {
+  return (
+    <Icon className="flex items-center justify-center bg-transparent">
+      <svg
+        viewBox="0 0 1024 1024"
+        version="1.1"
+        className="size-[18px] stroke-current"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="#fff"
+      >
+        <path
+          className="stroke-current"
+          strokeWidth="2"
+          d="M373.333333 149.333333A224 224 0 0 0 341.333333 595.072v64.512A288.042667 288.042667 0 1 1 659.584 341.333333h-64.512A224.042667 224.042667 0 0 0 373.333333 149.333333z"
+        />
+        <path
+          className="stroke-current"
+          strokeWidth="2"
+          d="M522.666667 384A138.666667 138.666667 0 0 0 384 522.666667v277.333333A138.666667 138.666667 0 0 0 522.666667 938.666667h277.333333A138.666667 138.666667 0 0 0 938.666667 800v-277.333333A138.666667 138.666667 0 0 0 800 384h-277.333333z m-74.666667 138.666667c0-41.216 33.450667-74.666667 74.666667-74.666667h277.333333c41.216 0 74.666667 33.450667 74.666667 74.666667v277.333333a74.666667 74.666667 0 0 1-74.666667 74.666667h-277.333333a74.666667 74.666667 0 0 1-74.666667-74.666667v-277.333333z"
+        />
+      </svg>
+    </Icon>
+  );
+}
 export function Pencil() {
   return (
     <Icon className="flex items-center justify-center bg-transparent">
@@ -673,7 +712,7 @@ export function DashDashed() {
   );
 }
 
-export function ColorsIcon() {
+export function Circle() {
   return (
     <Icon className="flex items-center justify-center bg-transparent">
       <svg
@@ -681,10 +720,11 @@ export function ColorsIcon() {
         width="30"
         height="30"
         viewBox="0 0 30 30"
-        className="size-[18px] text-current "
+        className="size-[18px]"
         fill="none"
+        stroke="#fff"
       >
-        <circle cx="15" cy="15" r="13" fill="#fff" className="fill-current" />
+        <circle cx="15" cy="15" r="13" strokeWidth={2} stroke="#fff" />
       </svg>
     </Icon>
   );

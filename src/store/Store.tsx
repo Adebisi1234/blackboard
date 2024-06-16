@@ -102,7 +102,8 @@ interface HighlightedState {
 }
 interface ActiveToolState {
   activeTool: ActiveTool;
-  setActiveTool: (payload: ActiveTool) => void;
+  setActiveTool: (payload: ActiveTool, shape?: "rect" | "oval" | "tri") => void;
+  shape?: "rect" | "oval" | "tri";
 }
 
 interface ActiveCompState {
@@ -636,9 +637,11 @@ export const useLocation = create<LocationState>()(
 export const useActiveTool = create<ActiveToolState>()(
   immer((set) => ({
     activeTool: "pencil",
-    setActiveTool: (payload) =>
+    shape: "rect",
+    setActiveTool: (payload, shape) =>
       set({
         activeTool: payload,
+        shape: shape,
       }),
   }))
 );

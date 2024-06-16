@@ -46,7 +46,7 @@ export default function Canvas() {
   const room = new URL(location.toString()).searchParams.get("room") ?? "";
   const drawing = useDrawing((state) => state.getDrawing());
   const { highlighted, setHighlighted } = useHighlighted();
-  const { activeTool, setActiveTool } = useActiveTool();
+  const { activeTool, setActiveTool, shape } = useActiveTool();
   const { general } = useGeneral();
   const drawingId = useRef(0);
   const [isToolActive, setIsToolActive] = useState(false);
@@ -68,7 +68,6 @@ export default function Canvas() {
   const [cursors, setCursors] = useState<
     Record<string, { x: number; y: number }>
   >({});
-
   useEffect(() => {
     if (room) {
       ws?.addEventListener("open", () => {
@@ -177,10 +176,11 @@ export default function Canvas() {
         general,
         setDrawing,
         drawingId,
+        shape,
       });
       setActiveComp(drawingId.current);
     },
-    [canvasRef, activeTool, drawing, prevTool, general, loc]
+    [canvasRef, activeTool, drawing, prevTool, general, loc, shape]
   );
 
   const handlePointerMove = useCallback(
@@ -255,7 +255,7 @@ export default function Canvas() {
         return;
       }
 
-      // Move components too flicker to do so themselves: pencil, arrow and also canvas
+      // Move components too fickle to do so themselves: pencil, arrow and also canvas
 
       if (activeTool === "hand") {
         if (!canvasRef) {
@@ -296,6 +296,7 @@ export default function Canvas() {
       general,
       loc,
       adjustCompId,
+      shape
     ]
   );
   const handlePointerUp = useCallback(

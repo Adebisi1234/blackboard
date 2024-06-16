@@ -286,6 +286,11 @@ export function adjustShape({
         draft.prop.width = e.clientX - draft.prop.pos.x;
         draft.prop.height = e.clientY - draft.prop.pos.y;
       }
+      draft.prop.startPos.x = lerp(
+        draft.prop.pos.x,
+        draft.prop.pos.x + draft.prop.width,
+        0.5
+      );
     }
   });
   // rect shape first

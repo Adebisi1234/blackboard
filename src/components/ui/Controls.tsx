@@ -8,12 +8,12 @@ import {
   Arrow,
   ChevronUp,
   Eraser,
-  GeoRect,
   Hand,
   ImageIcon,
   Note,
   Pencil,
   Pointer,
+  Shapes,
   Text,
 } from "./Svg";
 import UndoRedoTrash from "./UndoRedoTrash";
@@ -157,11 +157,16 @@ export default function Controls() {
               activeTool === "shape" && "bg-[#4387f4]"
             }`}
             tool="shape"
-            title="Tool - shape"
-            onClick={() => setActiveTool("shape")}
+            title="Tool - shapes"
+            onClick={() =>
+              dialog !== "controls" ? setDialog("controls") : reset()
+            }
           >
-            <GeoRect />
+            <Shapes />
           </Button>
+          <dialog open={dialog === "controls"} className="mr-0 bottom-full">
+            <ExtraControlsDialog />
+          </dialog>
         </>
       )}
       {windowWidth < 768 && (
