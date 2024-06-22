@@ -296,7 +296,7 @@ export default function Canvas() {
       general,
       loc,
       adjustCompId,
-      shape
+      shape,
     ]
   );
   const handlePointerUp = useCallback(

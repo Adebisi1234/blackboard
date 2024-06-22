@@ -232,7 +232,6 @@ export function adjustShape({
   pos,
   location,
 }: Omit<AdjustProp, "compType">) {
-  console.log(location![id], e);
   const edit = produce(drawing[id] as Drawings<"shape">[0], (draft) => {
     if (draft.prop.shape === "rect") {
       if (pos === "tl") {
