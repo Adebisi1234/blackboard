@@ -32,7 +32,6 @@ Implemented better versions of all main branch features
 - Better customisation
 - Undo, Redo, Refresh, Delete
 - Export drawings as images (svg, png, jpg)
-- Collaboration with multiple people
 - Minimap
 - And more 
 
