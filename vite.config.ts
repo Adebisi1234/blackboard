@@ -13,5 +13,6 @@ const config: ViteConfig = {
     environment: "jsdom",
     setupFiles: "./tests/setup.js",
   },
+  base: "/blackboard/"
 };
 export default defineConfig(config);
