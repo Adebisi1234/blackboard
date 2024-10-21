@@ -13,6 +13,6 @@ const config: ViteConfig = {
     environment: "jsdom",
     setupFiles: "./tests/setup.js",
   },
-  base: "/blackboard/"
+  base: process.env.VERCEL ? "/" : "/blackboard/"
 };
 export default defineConfig(config);
