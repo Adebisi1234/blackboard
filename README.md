@@ -5,7 +5,7 @@ Please give this repo a Star
 [live link](https://myblackboard.vercel.app)
 ![showcase image](/public/og.png)
 
-## Main Branch / Archive
+## Main Branch -> Archive
 
 A simple, fast and efficient drawing tool with the following features
 
@@ -27,6 +27,14 @@ Implemented better versions of all main branch features
 
 - Image upload feature
 - Collaboration feature (read-only and true)
+- Zoom, pan, infinite canvas
+- Shapes recognition using ML
+- Better customisation
+- Undo, Redo, Refresh, Delete
+- Export drawings as images (svg, png, jpg)
+- Collaboration with multiple people
+- Minimap
+- And more 
 
 ## TODO
 
@@ -35,6 +43,7 @@ Implemented better versions of all main branch features
 - Embedding other media
 - Better curve arrow feature
 - Component Snapping
+- Recognition of more shapes 
 
 
 <!-- 
